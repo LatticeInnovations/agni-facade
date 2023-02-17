@@ -58,20 +58,5 @@ typings/
 .env
 
 package-lock.json
-
-upload/enerMap/*
 upload/logo/*
-#!upload/enerMap/*.*
 
-# upload/sunSensor/*
-# !upload/sunSensor/*.*
-upload/cover
-upload/showcase
-
-routes/blocklist.json
-
-test/testdata.json
-
-test/userData.json
-
-utils/app_roles.json
