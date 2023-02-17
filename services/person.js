@@ -32,7 +32,7 @@ class Person {
     }
 
     getFirstName() {
-        if (!checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].given[0])) {
+        if (this.fhir_resource.name && !checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].given[0])) {
             this.person_obj.first_name = this.fhir_resource.name[this.fhir_resource.name.length - 1].given[0]
         }
     }
@@ -53,7 +53,7 @@ class Person {
     }
 
     getLastName() {
-        if (!checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].family)) {
+        if (this.fhir_resource.name && !checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].family)) {
             this.person_obj.last_name = this.fhir_resource.name[this.fhir_resource.name.length - 1].family
         }
     }
@@ -75,7 +75,7 @@ class Person {
 
 
     getMiddleName() {
-        if (!checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].given[1])) {
+        if (this.fhir_resource.name && !checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].given[1])) {
             this.person_obj.middle_name = this.fhir_resource.name[this.fhir_resource.name.length - 1].given[1];
         }
     }

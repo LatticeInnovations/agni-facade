@@ -11,7 +11,7 @@ let createResource = async function (req, res, next) {
             "Content-Type": "application/json"
         }
         if(req.body.identifier) 
-            header["If-None-Exist"] = "identifier=" + req.body.identifier[0].identifier_type + "|" + req.body.identifier[0].identifier_number
+            headers["If-None-Exist"] = "identifier=" + req.body.identifier[0].identifier_type + "|" + req.body.identifier[0].identifier_number
         let response = await axios.post(baseUrl + req.params.resourceType, resourceData, {
             headers: headers
         });
@@ -35,8 +35,7 @@ let createResource = async function (req, res, next) {
         }
         return res.status(500).json({
             status: 0,
-            message: "Unable to process",
-            error: e
+            message: "Unable to process. Please try again."
         })
     }
 

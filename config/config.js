@@ -12,7 +12,7 @@ let config = function () {
             version: process.env.version
         };
         case 'dev': return {
-            port: '3001',
+            port: process.env.PORT,
             timeout: 20000,
             version: process.env.version
         };

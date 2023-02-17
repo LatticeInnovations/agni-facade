@@ -25,7 +25,7 @@ sendDBError = function(res, code) {
     }
     else {
         res.status(504).json({
-            error: 1,
+            status: 0,
             message: "Unable to process. Please try again."
         })
     }
