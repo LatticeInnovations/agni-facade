@@ -298,7 +298,7 @@ class Person {
                 city: this.person_obj[address_type].value.city,
                 district: this.person_obj[address_type].value.district,
                 state: this.person_obj[address_type].value.state,
-                postalCode: this.person_obj[address_type].postalCode,
+                postalCode: this.person_obj[address_type].value.postalCode,
                 country: this.person_obj[address_type].value.country
             };
             
