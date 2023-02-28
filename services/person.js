@@ -13,70 +13,70 @@ class Person {
     setFirstName() {
 
         this.fhir_resource.name = [];
-        let first_name = this.person_obj.first_name;
-        if (!checkEmptyData(first_name)) {
+        let firstName = this.person_obj.firstName;
+        if (!checkEmptyData(firstName)) {
             let length = this.fhir_resource.name.length
             console.log(this.fhir_resource)
             this.fhir_resource.name[length] = {};
             this.fhir_resource.name[length].given = [];
-            this.fhir_resource.name[length].given.push(first_name);
+            this.fhir_resource.name[length].given.push(firstName);
         }
 
     }
 
     patchFirstName(fetchedData) {
         let isEmpty = checkEmptyData(fetchedData.name);
-        if (!checkEmptyData(this.person_obj.first_name) && !isEmpty) {
-            this.fhir_resource.push({ "op": this.person_obj.first_name.operation, "path": "/name/0/given/0", "value": this.person_obj.first_name.value });
+        if (!checkEmptyData(this.person_obj.firstName) && !isEmpty) {
+            this.fhir_resource.push({ "op": this.person_obj.firstName.operation, "path": "/name/0/given/0", "value": this.person_obj.firstName.value });
         }
     }
 
     getFirstName() {
-        if (!checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].given[0])) {
-            this.person_obj.first_name = this.fhir_resource.name[this.fhir_resource.name.length - 1].given[0]
+        if (this.fhir_resource.name && !checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].given[0])) {
+            this.person_obj.firstName = this.fhir_resource.name[this.fhir_resource.name.length - 1].given[0]
         }
     }
 
     setLastName() {
-        let last_name = this.person_obj.last_name;
-        if (!checkEmptyData(last_name)) {
+        let lastName = this.person_obj.lastName;
+        if (!checkEmptyData(lastName)) {
             let length = this.fhir_resource.name.length > 0 ? this.fhir_resource.name.length - 1 : 0;
-            this.fhir_resource.name[length].family = last_name;
+            this.fhir_resource.name[length].family = lastName;
         }
 
     }
 
     patchLastName(fetchedData) {
         let isEmpty = checkEmptyData(fetchedData.name);
-        if (!checkEmptyData(this.person_obj.last_name) && !isEmpty)
-            this.fhir_resource.push({ "op": this.person_obj.last_name.operation, "path": "/name/0/family", "value": this.person_obj.last_name.value })
+        if (!checkEmptyData(this.person_obj.lastName) && !isEmpty)
+            this.fhir_resource.push({ "op": this.person_obj.lastName.operation, "path": "/name/0/family", "value": this.person_obj.lastName.value })
     }
 
     getLastName() {
-        if (!checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].family)) {
-            this.person_obj.last_name = this.fhir_resource.name[this.fhir_resource.name.length - 1].family
+        if (this.fhir_resource.name && !checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].family)) {
+            this.person_obj.lastName = this.fhir_resource.name[this.fhir_resource.name.length - 1].family
         }
     }
 
     setMiddleName(fetchedData) {
-        let middle_name = this.person_obj.middle_name;
-        if (!checkEmptyData(middle_name)) {
+        let middleName = this.person_obj.middleName;
+        if (!checkEmptyData(middleName)) {
             let length = this.fhir_resource.name.length;
-            this.fhir_resource.name[length - 1].given.push(middle_name);
+            this.fhir_resource.name[length - 1].given.push(middleName);
         }
 
     }
 
     patchMiddleName(fetchedData) {
         let isEmpty = checkEmptyData(fetchedData.name);
-        if (!checkEmptyData(this.person_obj.middle_name) && !isEmpty)
-            this.fhir_resource.push({ "op": this.person_obj.middle_name.operation, "path": "/name/0/given/1", "value": this.person_obj.middle_name.value })
+        if (!checkEmptyData(this.person_obj.middleName) && !isEmpty)
+            this.fhir_resource.push({ "op": this.person_obj.middleName.operation, "path": "/name/0/given/1", "value": this.person_obj.middleName.value })
     }
 
 
     getMiddleName() {
-        if (!checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].given[1])) {
-            this.person_obj.middle_name = this.fhir_resource.name[this.fhir_resource.name.length - 1].given[1];
+        if (this.fhir_resource.name && !checkEmptyData(this.fhir_resource.name[this.fhir_resource.name.length - 1].given[1])) {
+            this.person_obj.middleName = this.fhir_resource.name[this.fhir_resource.name.length - 1].given[1];
         }
     }
 
@@ -91,13 +91,13 @@ class Person {
                     }
                     ]
                 },
-                system: element.identifier_type,
-                value: element.identifier_number,
+                system: element.identifierType,
+                value: element.identifierNumber,
 
             }
         }
         else {
-            jsonObj = { value: element.identifier_number, system: element.identifier_type }
+            jsonObj = { value: element.identifierNumber, system: element.identifierType }
         }
         return jsonObj;
     }
@@ -114,9 +114,9 @@ class Person {
 
     patchIdentifier(fetchedData) {
         let isEmpty = checkEmptyData(fetchedData.identifier);
-        if (this.person_obj.identifier.length > 0) {
+        if (this.person_obj.identifier && this.person_obj.identifier.length > 0) {
             this.person_obj.identifier.forEach(element => {
-                let index = !isEmpty ? fetchedData.identifier.findIndex(idCard => idCard.system == element.identifier_type) : 0;
+                let index = !isEmpty ? fetchedData.identifier.findIndex(idCard => idCard.system == element.identifierType) : 0;
                 let path = isEmpty ? "/identifier" : "/identifier/" + index;
                 index = index > -1 ? index : 0;
                 let jsonObj = this.setIdentifierJSON(element);
@@ -132,8 +132,8 @@ class Person {
             this.person_obj.identifier = [];
             this.fhir_resource.identifier.forEach(element => {
                 this.person_obj.identifier.push({
-                    identifier_type: element.system,
-                    identifier_number: element.value,
+                    identifierType: element.system,
+                    identifierNumber: element.value,
                     code: element.type ? element.type.coding[0].code : null
                 })
             });
@@ -223,22 +223,22 @@ class Person {
 
     setPhone() {
         this.fhir_resource.telecom = [];
-        if (!checkEmptyData(this.person_obj.mobile_number)) {
+        if (!checkEmptyData(this.person_obj.mobileNumber)) {
             this.fhir_resource.telecom.push({
                 system: "phone",
-                value: this.person_obj.mobile_number,
+                value: this.person_obj.mobileNumber,
                 rank: 1
             });
         }
     }
 
     patchPhone(fetchedData) {
-        if (!checkEmptyData(this.person_obj.mobile_number)) {
+        if (!checkEmptyData(this.person_obj.mobileNumber)) {
             let index = fetchedData.telecom ? fetchedData.telecom.findIndex(ele => ele.system == "phone") : 0
             index = index == -1 ? 0 : index;
             let path = !fetchedData.telecom ? "/telecom" : "/telecom/" + index;
-            let jsonData = { system: "phone", value: this.person_obj.mobile_number.value }
-            this.fhir_resource.push({ "op": this.person_obj.mobile_number.operation, "path": path, "value":  fetchedData.telecom ? jsonData : [jsonData]})
+            let jsonData = { system: "phone", value: this.person_obj.mobileNumber.value }
+            this.fhir_resource.push({ "op": this.person_obj.mobileNumber.operation, "path": path, "value":  fetchedData.telecom ? jsonData : [jsonData]})
         }
     }
 
@@ -247,20 +247,20 @@ class Person {
             let index = this.fhir_resource.telecom.findIndex(e => e.system == "phone");
             console.log("index of mobile number", index, this.fhir_resource.telecom)
             if (index > -1) {
-                this.person_obj.mobile_number = this.fhir_resource.telecom[index].value
+                this.person_obj.mobileNumber = this.fhir_resource.telecom[index].value
             }
         }
     }
 
     setAddress(type) {
-        let address_type = type == "home" ? "permanent_address" : "temp_address"
+        let address_type = type == "home" ? "permanentAddress" : "tempAddress"
         if (type == "home")
             this.fhir_resource.address = [];
         console.log(address_type)
         if (this.person_obj[address_type] && Object.keys(this.person_obj[address_type]).length > 0) {
-            let line = [this.person_obj[address_type].address_line1];
-            if (!checkEmptyData(this.person_obj[address_type].address_line2)) {
-                line.push(this.person_obj[address_type].address_line2)
+            let line = [this.person_obj[address_type].addressLine1];
+            if (!checkEmptyData(this.person_obj[address_type].addressLine2)) {
+                line.push(this.person_obj[address_type].addressLine2)
             }
             this.fhir_resource.address.push({
                 use: type,
@@ -275,7 +275,7 @@ class Person {
     }
 
     patchAddress(type, fetchedResourceData) {
-        let address_type = type == "home" ? "permanent_address" : "temp_address";
+        let address_type = type == "home" ? "permanentAddress" : "tempAddress";
         let isAddressEmpty = checkEmptyData(fetchedResourceData.address);
         let index = 0;
         let path = "/address";
@@ -285,19 +285,21 @@ class Person {
             path = "/address/" + index
         }     
 
-        if (Object.keys(this.person_obj[address_type]).length > 0) {
-            let line = [this.person_obj[address_type].address_line1];
-            if (!checkEmptyData(this.person_obj[address_type].address_line2)) {
-                line.push(this.person_obj[address_type].address_line2)
+        console.log()
+
+        if (Object.keys(this.person_obj[address_type].value).length > 0) {
+            let line = [this.person_obj[address_type].value.addressLine1];
+            if (!checkEmptyData(this.person_obj[address_type].value.addressLine2)) {
+                line.push(this.person_obj[address_type].value.addressLine2)
             }
             let jsonData = {
                 use: type,
                 line: line,
-                city: this.person_obj[address_type].city,
-                district: this.person_obj[address_type].district,
-                state: this.person_obj[address_type].state,
-                postalCode: this.person_obj[address_type].postalCode,
-                country: this.person_obj[address_type].country
+                city: this.person_obj[address_type].value.city,
+                district: this.person_obj[address_type].value.district,
+                state: this.person_obj[address_type].value.state,
+                postalCode: this.person_obj[address_type].value.postalCode,
+                country: this.person_obj[address_type].value.country
             };
             
             this.fhir_resource.push({
@@ -312,9 +314,9 @@ class Person {
         if (this.fhir_resource.address && this.fhir_resource.address.length > 0) {
             let length = this.fhir_resource.address.length;
             for (let i = 0; i < length; i++) {
-                let address_type = i == 0 ? "permanent_address" : "temp_address";
+                let address_type = i == 0 ? "permanentAddress" : "tempAddress";
                 this.person_obj[address_type] = {
-                    address_line1: this.fhir_resource.address[i].line[0],
+                    addressLine1: this.fhir_resource.address[i].line[0],
                     city: this.fhir_resource.address[i].city,
                     district: this.fhir_resource.address[i].district,
                     state: this.fhir_resource.address[i].state,
@@ -322,7 +324,7 @@ class Person {
                     country: this.fhir_resource.address[i].country
                 }
                 if (this.fhir_resource.address[i].line[1]) {
-                    this.person_obj[address_type].address_line2 = this.fhir_resource.address[i].line[1];
+                    this.person_obj[address_type].addressLine2 = this.fhir_resource.address[i].line[1];
                 }
 
             }
@@ -375,9 +377,9 @@ class Person {
         this.patchBirthDate();
         this.patchPhone(fetchedResourceData);
         this.patchEmailAddress(fetchedResourceData);
-        if (this.person_obj["permanent_address"] !== undefined)
+        if (this.person_obj["permanentAddress"] !== undefined)
             this.patchAddress("home", fetchedResourceData);
-        if (this.person_obj["temp_address"] !== undefined)
+        if (this.person_obj["tempAddress"] !== undefined)
             this.patchAddress("temp", fetchedResourceData);
 
     }

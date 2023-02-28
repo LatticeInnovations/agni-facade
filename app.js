@@ -4,7 +4,6 @@ const logger = require('morgan')
 const bodyParser =  require('body-parser')
 const expressSwagger = require('express-swagger-generator')(app)
 const cors = require('cors')
-//datastore.getFhirStoreCapabilities();
 
 let options = {
     swaggerDefinition: {
