@@ -11,7 +11,7 @@ let createResource = async function (req, res, next) {
             "Content-Type": "application/json"
         }
         if(req.body.identifier) 
-            headers["If-None-Exist"] = "identifier=" + req.body.identifier[0].identifier_type + "|" + req.body.identifier[0].identifier_number
+            headers["If-None-Exist"] = "identifier=" + req.body.identifier[0].identifierType + "|" + req.body.identifier[0].identifierNumber
         let response = await axios.post(baseUrl + req.params.resourceType, resourceData, {
             headers: headers
         });
@@ -53,7 +53,7 @@ const patchResource = async function (req, res, next) {
                 "Content-Type": "application/json-patch+json"
             }
         });
-        console.log("======>",response.data, response.status);
+        console.log("======> ================================>",response.data, response.status);
         if (response.status == 200)
             res.status(201).json({ status: 1, message: "Data updated successfully.", id: response.data.id })
         else
