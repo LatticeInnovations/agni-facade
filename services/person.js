@@ -16,7 +16,6 @@ class Person {
         let firstName = this.person_obj.firstName;
         if (!checkEmptyData(firstName)) {
             let length = this.fhir_resource.name.length
-            console.log(this.fhir_resource)
             this.fhir_resource.name[length] = {};
             this.fhir_resource.name[length].given = [];
             this.fhir_resource.name[length].given.push(firstName);
@@ -245,7 +244,7 @@ class Person {
     getPhone() {
         if (this.fhir_resource.telecom) {
             let index = this.fhir_resource.telecom.findIndex(e => e.system == "phone");
-            console.log("index of mobile number", index, this.fhir_resource.telecom)
+            // console.log("index of mobile number", index, this.fhir_resource.telecom)
             if (index > -1) {
                 this.person_obj.mobileNumber = this.fhir_resource.telecom[index].value
             }
@@ -256,7 +255,7 @@ class Person {
         let address_type = type == "home" ? "permanentAddress" : "tempAddress"
         if (type == "home")
             this.fhir_resource.address = [];
-        console.log(address_type)
+        // console.log(address_type)
         if (this.person_obj[address_type] && Object.keys(this.person_obj[address_type]).length > 0) {
             let line = [this.person_obj[address_type].addressLine1];
             if (!checkEmptyData(this.person_obj[address_type].addressLine2)) {
@@ -285,7 +284,7 @@ class Person {
             path = "/address/" + index
         }     
 
-        console.log()
+        // console.log(address_type, this.person_obj[address_type].value)
 
         if (Object.keys(this.person_obj[address_type].value).length > 0) {
             let line = [this.person_obj[address_type].value.addressLine1];
@@ -298,7 +297,7 @@ class Person {
                 city: this.person_obj[address_type].value.city,
                 district: this.person_obj[address_type].value.district,
                 state: this.person_obj[address_type].value.state,
-                postalCode: this.person_obj[address_type].postalCode,
+                postalCode: this.person_obj[address_type].value.postalCode,
                 country: this.person_obj[address_type].value.country
             };
             

@@ -6,7 +6,6 @@ let resourceController = require("../../controllers/manageResource");
  * @typedef resource
  * @property {Array} identfier - resource Identifier
  * @property {boolean} active  - resource is active or not
- * @property {Array} name - resource name
  */
 
 /**
