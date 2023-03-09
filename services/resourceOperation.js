@@ -25,7 +25,7 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
             }
             else if (["patch", "PATCH"].includes(reqMethod)) {
                 patient.patchUserInputToFHIR(fetchedResourceData);
-                resource_result.push(person.getFHIRResource());
+                resource_result = patient.getFHIRResource();
             }
             else {
                 patient.getFHIRToUserInput();
@@ -47,7 +47,7 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
             }
 
     }
-    //   console.log("check reouces =====================>", resource_data)
+
     return resource_result;
 }
 
@@ -85,6 +85,7 @@ let searchData = async function (link, reqQuery) {
 }
 
 let setBundlePatch = async function (resource_data, resource_type, id) {
+    console.log(resource_data)
     let objJsonStr = JSON.stringify(resource_data)
     let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
     let bundlePatchStructure = {

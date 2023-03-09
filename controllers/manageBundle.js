@@ -63,11 +63,12 @@ let patchBundle = async function (req, res, next) {
             let resourceSavedData = await resourceOp.searchData(link, { "_id": element.id });
             let resourceData = await resourceOp.getResource(req.params.resourceType, element, [], req.method, resourceSavedData.data.entry[0].resource);
             let bundlePatchJSON = await resourceOp.setBundlePatch(resourceData, req.params.resourceType, element.id)
-            bundle.entry = bundle.entry.concat(bundlePatchJSON)
+            bundle.entry = bundle.entry.concat(bundlePatchJSON);
         };
-       
+       console.log("check where it starts from: ", bundle)
+       let response = await axios.post(config.baseUrl, bundle);
         if (response.status == 200 || response.status == 201) {
-            console.log(response.data.entry)
+            
             let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry,"PATCH", req.params.resourceType)
             res.status(201).json({ status: 1, message: "Data updated successfully.", data: responseData })
         }

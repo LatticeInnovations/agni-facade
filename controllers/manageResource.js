@@ -129,11 +129,10 @@ let searchResourceData = async function (req, res, next) {
         console.log(responseData.data, req.method);
         let response_data = [];
         for(let i=0; i< responseData.data.total; i++) {
-                console.log(responseData.data.entry[i].resource)
                 let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, 0);
-                response_data.push(res_data);
+                response_data = response_data.concat(res_data)
         }
-        console.log(response_data)
+        console.log("response data is: ", response_data)
         res.status(200).json({status: 1, message: "details fetched successfully", data: response_data})
 
     }
