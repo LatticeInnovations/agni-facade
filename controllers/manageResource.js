@@ -126,14 +126,15 @@ let searchResourceData = async function (req, res, next) {
         resourceType = req.params.resourceType;
         let link = config.baseUrl + resourceType;
         let responseData = await resourceFunc.searchData(link, req.query);
-        console.log(responseData.data, req.method);
-        let response_data = [];
-        for(let i=0; i< responseData.data.total; i++) {
-                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, 0);
-                response_data = response_data.concat(res_data)
+        let result = [];
+        console.log(responseData.data)
+        for(let i=0; i< responseData.data.entry.length; i++) {
+                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, null,0);
+                console.log("result here: ", res_data)
+                result = result.concat(res_data)
         }
-        console.log("response data is: ", response_data)
-        res.status(200).json({status: 1, message: "details fetched successfully", data: response_data})
+        
+        res.status(200).json({status: 1, message: "details fetched successfully", data: result})
 
     }
     catch (e) {
