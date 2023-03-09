@@ -3,7 +3,6 @@ let { checkEmptyData } = require("./CheckEmpty");
 class Person {
     person_obj;
     fhir_resource;
-    reqType;
     constructor(person_obj, fhir_resource) {
         this.person_obj = person_obj;
         this.fhir_resource = fhir_resource;
@@ -328,6 +327,14 @@ class Person {
 
             }
         }
+    }
+
+    setLink(patientId) {
+        this.fhir_resource.link = [];
+        this.fhir_resource.link.push({
+            "target": patientId,
+            "assurance": "level3"
+        })
     }
 
     getFHIRResource() {

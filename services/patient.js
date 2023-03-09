@@ -25,11 +25,11 @@ setLink() {
     })
 }
 
-// getLink() {
-//     if(!checkEmptyData(this.fhir_resource.link)) {
-//         this.patient_obj.relation = 
-//     }
-// }
+getLink() {
+    if(!checkEmptyData(this.fhir_resource.link)) {
+       // this.patient_obj.relation = 
+    }
+}
    
 }
 

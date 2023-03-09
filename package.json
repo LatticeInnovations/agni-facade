@@ -21,6 +21,7 @@
     "express": "^4.18.2",
     "express-swagger-generator": "^1.1.17",
     "express-validator": "^6.14.3",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "uuid": "^9.0.0"
   }
 }

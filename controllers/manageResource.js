@@ -5,7 +5,7 @@ let config = require("../config/config")
 let createResource = async function (req, res, next) {
     try {
         resourceType = req.params.resourceType;
-        let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, {}, req.method, null);
+        let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, {}, req.method, null, 0);
         let headers = {
             "Content-Type": "application/json"
         }
@@ -44,7 +44,7 @@ const patchResource = async function (req, res, next) {
         resourceType = req.params.resourceType;
         let link = config.baseUrl + resourceType;
         let resourceSavedData = await resourceFunc.searchData(link, {"_id": req.params.id})
-        let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, [], req.method, resourceSavedData.data.entry[0].resource);
+        let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, [], req.method, resourceSavedData.data.entry[0].resource, 0);
         console.log("====>", resourceData);
         resourceData.id = req.params.id;
         let response = await axios.patch(config.baseUrl + req.params.resourceType + "/" + req.params.id, resourceData, {
@@ -77,7 +77,7 @@ let updateResource = async function (req, res, next) {
     try {
         resourceType = req.params.resourceType;
         console.log(req.method)
-        let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, {}, req.method, null);
+        let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, {}, req.method, null, 0);
         resourceData.id = req.params.id;
         console.log(resourceData, config.baseUrl + req.params.resourceType + "/" + req.params.id)
         let response = await axios.put(config.baseUrl + req.params.resourceType + "/" + req.params.id, resourceData, {
@@ -130,7 +130,7 @@ let searchResourceData = async function (req, res, next) {
         let response_data = [];
         for(let i=0; i< responseData.data.total; i++) {
                 console.log(responseData.data.entry[i].resource)
-                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method);
+                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, 0);
                 response_data.push(res_data);
         }
         console.log(response_data)
