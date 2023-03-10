@@ -6,7 +6,6 @@ let resourceController = require("../../controllers/manageResource");
  * @typedef resource
  * @property {Array} identfier - resource Identifier
  * @property {boolean} active  - resource is active or not
- * @property {Array} name - resource name
  */
 
 /**
@@ -22,7 +21,7 @@ let resourceController = require("../../controllers/manageResource");
  * @returns {Error} 504 - Database connection error
  */
 
-router.post("/:resourceType", resourceController.createResource);   
+//router.post("/:resourceType", resourceController.createResource);   
 
 
 /**
@@ -38,7 +37,7 @@ router.post("/:resourceType", resourceController.createResource);
  * @returns {Error} 504 - Database connection error
  */
 
-router.delete("/:resourceType/:id", resourceController.deleteResource);  
+//router.delete("/:resourceType/:id", resourceController.deleteResource);  
 
 
 /**
@@ -55,7 +54,7 @@ router.delete("/:resourceType/:id", resourceController.deleteResource);
  * @returns {Error} 504 - Database connection error
  */
 
-router.put("/:resourceType/:id", resourceController.updateResource);   
+//router.put("/:resourceType/:id", resourceController.updateResource);   
 
 /**
  * Patch a resource values
