@@ -8,7 +8,7 @@ let createBundle = async function (req, res, next) {
         resourceType = req.params.resourceType;
         let bundle = {
             "resourceType": "Bundle",
-            "type": "batch",
+            "type": "transaction",
             "entry": []
         }
         let reqInput = req.body;
@@ -16,7 +16,7 @@ let createBundle = async function (req, res, next) {
             let resourceData = await resourceOp.getResource(req.params.resourceType, element, {}, "POST", null, 1);
             bundle.entry = bundle.entry.concat(resourceData)
         };
-       // res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
+        // res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
         let response = await axios.post(config.baseUrl, bundle);
         if (response.status == 200) {
             let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType);

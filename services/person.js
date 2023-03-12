@@ -332,7 +332,7 @@ class Person {
     setLink(patientId) {
         this.fhir_resource.link = [];
         this.fhir_resource.link.push({
-            "target": patientId,
+            "target": {"reference": "urn:uuid:" +patientId},
             "assurance": "level3"
         })
     }
