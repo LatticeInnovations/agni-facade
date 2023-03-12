@@ -8,7 +8,7 @@ let createBundle = async function (req, res, next) {
         resourceType = req.params.resourceType;
         let bundle = {
             "resourceType": "Bundle",
-            "type": "transaction",
+            "type": "batch",
             "entry": []
         }
         let reqInput = req.body;
