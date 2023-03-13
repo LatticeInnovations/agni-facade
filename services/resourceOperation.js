@@ -1,4 +1,5 @@
 let Person = require("./person");
+let RelatedPerson = require("./relatedPerson");
 let axios = require("axios");
 let config = require("../config/config");
 const { v4: uuidv4 } = require('uuid');
@@ -19,9 +20,10 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
                 personResource.identifier = resource_data.identifier;
                 personResource.resourceType = "Person";
                 personResource.id = uuidv4();
-                let patientBundle = await setBundlePost(resource_data, inputData.identifier, inputData.id, "PUT");
-                let personBundle = await setBundlePost(personResource, inputData.identifier, personResource.id, "PUT");
+                let patientBundle = await setBundlePost(resource_data, inputData.identifier, inputData.id, "POST");
+                let personBundle = await setBundlePost(personResource, inputData.identifier, personResource.id, "POST");
                 resource_result.push(patientBundle, personBundle);
+                console.log(resource_result)
             }
             else if (["patch", "PATCH"].includes(reqMethod)) {
                 patient.patchUserInputToFHIR(fetchedResourceData);
@@ -35,15 +37,39 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
         case "RelatedPerson":
             if (["post", "POST", "put", "PUT"].includes(reqMethod)) {
                 resourceData = [];
-                inputData
-                inputData.relationship.forEach(element => {
-                    let relatedPerson1 = new RelatedPerson({ patientId: element.relativeId, relationCode: patientRelationCode });
+                let person1Link = await searchData(config.baseUrl + "Person", {link: "Patient/" + inputData.id});                
+                let person1Data = person1Link.data.entry[0].resource;
+                for(let i=0; i<inputData.relationship.length; i++) {
+                    let element = inputData.relationship[i];
+                    let relatedPerson1 = new RelatedPerson({ patientId: element.relativeId, relationCode: element.patientIs }, {});
                     let fhirResource1 = relatedPerson1.getJsonToFhirTranslator();
-                    let relatedPerson2 = new RelatedPerson({ patientId: inputData.id, relationCode: relativeRelationCode });
+                    let relatedPerson2 = new RelatedPerson({ patientId: inputData.id, relationCode: element.relativeIs }, {});
                     let fhirResource2 = relatedPerson2.getJsonToFhirTranslator();
-                    resource_data.resourceType = resType;
-                    //let person1Link = searchData(link, {link: "Patient/" + inputData.id})
-                });
+                    let relatedPerson1Post = await setBundlePost(fhirResource1, null, fhirResource1.id, "POST" )
+                    let relatedPerson2Post = await setBundlePost(fhirResource2, null, fhirResource2.id, "POST" )                   
+                    let person2Link = await searchData(config.baseUrl + "Person", {link: "Patient/" + element.relativeId});
+                    if(person1Link.data.total != 1 || person2Link.data.total != 1)
+                    Promise.reject({status: 0, ERR: "Data does not exist"});
+                    let person2Data = person2Link.data.entry[0].resource;
+                     person1Data.link.push({
+                        target: {
+                            "reference": "urn:uuid:"+relatedPerson1Post.resource.id
+                        },
+                        "assurance": "level3"
+                     });
+                     person2Data.link.push({
+                        target: {
+                            "reference": "urn:uuid:"+relatedPerson2Post.resource.id
+                        },
+                        "assurance": "level3"
+                     });
+                     let person2Post = await setBundlePost(person2Data, null, person2Data.id, "PUT" );
+                    resourceData.push(relatedPerson1Post, relatedPerson2Post, person2Post);
+                    resource_result = resourceData;
+                }
+                let person1Post = await setBundlePost(person1Data, null, person1Data.id, "PUT" );
+                resourceData.push(person1Post);
+
             }
 
     }
@@ -54,7 +80,9 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
 let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resType) {
     let response = [], filtereredData = [];
     let mergedArray = bundleResponse.map((data, i) => Object.assign({}, data, reqData[i]));
-    if (["post", "POST", "put", "PUT"].includes(reqMethod))
+    if (["post", "POST", "put", "PUT"].includes(reqMethod)&& resType == "Patient")
+        filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
+    else if (["post", "POST", "put", "PUT"].includes(reqMethod)&& resType == "RelatedPerson")
         filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
     else
         filtereredData = mergedArray;
@@ -101,24 +129,28 @@ let setBundlePatch = async function (resource_data, resource_type, id) {
             "url": resource_type + "/" + id
         }
     }
-
+    //console.log(bundlePatchStructure)
     return bundlePatchStructure;
 
 }
 
 let setBundlePost = async function (resourceData, identifier, id, reqMethod) {
-    let identifierConcat = "?";
-    identifier.forEach(element => {
-        identifierConcat += "identifier="+ element.identifierType + "|" + element.identifierNumber + "&"
-    })
-    identifierConcat = identifierConcat.slice(0, -1);
+    let identifierConcat = "";
+    if(identifier || identifier != null) {
+        identifierConcat = "?";
+        identifier.forEach(element => {
+            identifierConcat += "identifier="+ element.identifierType + "|" + element.identifierNumber + "&"
+        })
+        identifierConcat = identifierConcat.slice(0, -1);
+    }
+
     let bundlePostStructure = {
-        "fullUrl": "urn:uuid:"+id,
+        "fullUrl": reqMethod == "PUT"? resourceData.resourceType + "/" + id :  "urn:uuid:"+id,
         "resource": resourceData,
         "request": {
-            "method": "POST",
-            "url": resourceData.resourceType,
-            "ifNoneExist": identifier ? resourceData.resourceType + identifierConcat: null
+            "method": reqMethod,
+            "url": reqMethod == "PUT" ? resourceData.resourceType + "/" + id : resourceData.resourceType,
+            "ifNoneExist": reqMethod == "POST" && identifier ? resourceData.resourceType + identifierConcat: null
         }
     }
 
