@@ -18,7 +18,7 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
                 let personResource = person1.getFHIRResource();
                 personResource.identifier = resource_data.identifier;
                 personResource.resourceType = "Person";
-                personResource.id = "urn:uuid:" + uuidv4();
+                personResource.id = uuidv4();
                 let patientBundle = await setBundlePost(resource_data, inputData.identifier, inputData.id, "PUT");
                 let personBundle = await setBundlePost(personResource, inputData.identifier, personResource.id, "PUT");
                 resource_result.push(patientBundle, personBundle);
@@ -34,16 +34,16 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
             break;
         case "RelatedPerson":
             if (["post", "POST", "put", "PUT"].includes(reqMethod)) {
-                // resourceData = [];
-                // inputData
-                // inputData.relationship.forEach(element => {
-                //     let relatedPerson1 = new RelatedPerson({ patientId: element.relativeId, relationCode: patientRelationCode });
-                //     let fhirResource1 = relatedPerson1.getJsonToFhirTranslator();
-                //     let relatedPerson2 = new RelatedPerson({ patientId: inputData.id, relationCode: relativeRelationCode });
-                //     let fhirResource2 = relatedPerson2.getJsonToFhirTranslator();
-                //     resource_data.resourceType = resType;
-                //     let person1Link
-                // });
+                resourceData = [];
+                inputData
+                inputData.relationship.forEach(element => {
+                    let relatedPerson1 = new RelatedPerson({ patientId: element.relativeId, relationCode: patientRelationCode });
+                    let fhirResource1 = relatedPerson1.getJsonToFhirTranslator();
+                    let relatedPerson2 = new RelatedPerson({ patientId: inputData.id, relationCode: relativeRelationCode });
+                    let fhirResource2 = relatedPerson2.getJsonToFhirTranslator();
+                    resource_data.resourceType = resType;
+                    //let person1Link = searchData(link, {link: "Patient/" + inputData.id})
+                });
             }
 
     }
@@ -58,6 +58,7 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
         filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
     else
         filtereredData = mergedArray;
+        console.log(mergedArray)
     filtereredData.forEach(element => {
         console.log(element.resource.resourceType, resType)
         let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length)
@@ -112,7 +113,7 @@ let setBundlePost = async function (resourceData, identifier, id, reqMethod) {
     })
     identifierConcat = identifierConcat.slice(0, -1);
     let bundlePostStructure = {
-        "fullUrl": id,
+        "fullUrl": "urn:uuid:"+id,
         "resource": resourceData,
         "request": {
             "method": "POST",
