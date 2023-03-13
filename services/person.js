@@ -78,6 +78,9 @@ class Person {
         }
     }
 
+    getId() {
+        this.person_obj.fhirId = this.fhir_resource.id
+    }
     setIdentifierJSON(element) {
         let jsonObj = {}
         if (element.code && element.code !== null && element.code !== "") {
@@ -283,7 +286,6 @@ class Person {
             path = "/address/" + index
         }     
 
-        // console.log(address_type, this.person_obj[address_type].value)
 
         if (Object.keys(this.person_obj[address_type].value).length > 0) {
             let line = [this.person_obj[address_type].value.addressLine1];
@@ -337,6 +339,14 @@ class Person {
         })
     }
 
+    patchLink(fetchedResourceData) {
+        let index = 0;
+        if(fetchedResourceData.link)
+            index = fetchedResourceData.link.length
+        this.fhir_resource.push(
+        {"op": this.person_obj.relation.operation, "path": "/link/" + index, value: {"target": {"reference:": this.person_obj.relation.value}, assurance: "level3"}})
+    }
+
     getFHIRResource() {
         return this.fhir_resource;
     }
@@ -361,6 +371,7 @@ class Person {
     }
 
     getFHIRToUserInput() {
+        this.getId();
         this.getFirstName();
         this.getMiddleName();
         this.getLastName();

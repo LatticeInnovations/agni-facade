@@ -77,7 +77,7 @@ let patchBundle = async function (req, res, next) {
         }
 
     }
-    catch (e) {
+    catch (e) {FTH
         console.log(e)
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
