@@ -137,7 +137,10 @@ class Person {
                     identifierNumber: element.value,
                     code: element.type ? element.type.coding[0].code : null
                 })
+                console.log("=====>", this.fhir_resource.id, element.type)
+                this.person_obj.id = element.type && element.type.coding[0].code == "MR" ? element.value : null;
             });
+            
         }
     }
 
