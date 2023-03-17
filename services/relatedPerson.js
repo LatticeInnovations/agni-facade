@@ -1,38 +1,55 @@
 const { v4: uuidv4 } = require('uuid');
+let { checkEmptyData } = require("./CheckEmpty");
 class RelatedPerson {
 
-    relation_object; fhir_resource;
+    relationObject; fhirResource;
 
-    constructor(relation_object, fhir_resource) {
-        this.relation_object = relation_object;
-        this.fhir_resource = fhir_resource;
-        this.fhir_resource.id = uuidv4();
-        this.fhir_resource.resourceType = "RelatedPerson"
-        this.fhir_resource.relationship = [];
+    constructor(relationObject, fhirResource) {
+        this.relationObject = relationObject;
+        this.fhirResource = fhirResource;        
     }
 
+    setRelationData() {
+        this.fhirResource.id = uuidv4();
+        this.fhirResource.resourceType = "RelatedPerson";
+        this.fhirResource.relationship = [];
+    }
     setPatientReference() {
-        this.fhir_resource.patient = {"reference" : this.relation_object.patientId.toString()};
+        this.fhirResource.patient = {"reference" : "Patient/" + this.relationObject.patientId.toString()};
     }
 
-
+    getPatientReference() {
+        this.relationObject.patientId = this.fhirResource.patient.reference.substring(this.fhirResource.patient.reference.indexOf('/') + 1);
+    }
+    
     setRelationship() {
-        this.fhir_resource.relationship.push({
+        this.fhirResource.relationship.push({
             "coding": [{
                 "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
-                "code": this.relation_object.relationCode,
+                "code": this.relationObject.relationCode
             }]
         })
+        console.log("check relation object", this.relationObject)
+    }
 
+    getRelationship() {
+        if(this.fhirResource.relationship) {
+            this.relationObject.relationCode = this.fhirResource.relationship[0].coding[0].code;
+        }
     }
 
     getJsonToFhirTranslator(relation_data) {
+        this.setRelationData();
         this.setPatientReference();
-        this.setRelationship(relation_data);
-        return this.fhir_resource;
+        this.setRelationship();
+        return this.fhirResource;
     }
 
-
+    getFHIRtoJsonTranslator() {
+        this.getPatientReference();
+        this.getRelationship();
+        return this.relationObject;
+    }
 }
 
 module.exports = RelatedPerson

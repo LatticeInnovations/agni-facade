@@ -13,7 +13,7 @@ class Patient  extends Person{
     }
 
 setLink() {
-    if(this.patient_obj.relation && this.patient_obj.relation.length > 0)
+    if(!checkEmptyData(this.patient_obj.relation) && this.patient_obj.relation.length > 0)
     this.fhir_resource.link = [];
     this.patient_obj.relation.forEach(element => {
         this.fhir_resource.link.push({
@@ -24,14 +24,8 @@ setLink() {
         })
     })
 }
-
-getLink() {
-    if(!checkEmptyData(this.fhir_resource.link)) {
-       // this.patient_obj.relation = 
-    }
-}
-   
+  
 }
 
 
-module.exports = patient;
+module.exports = Patient;

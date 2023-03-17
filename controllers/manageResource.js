@@ -9,7 +9,7 @@ let createResource = async function (req, res, next) {
         let headers = {
             "Content-Type": "application/json"
         }
-        if(req.body.identifier) 
+        if (req.body.identifier)
             headers["If-None-Exist"] = "identifier=" + req.body.identifier[0].identifierType + "|" + req.body.identifier[0].identifierNumber
         let response = await axios.post(config.baseUrl + req.params.resourceType, resourceData, {
             headers: headers
@@ -43,9 +43,8 @@ const patchResource = async function (req, res, next) {
     try {
         resourceType = req.params.resourceType;
         let link = config.baseUrl + resourceType;
-        let resourceSavedData = await resourceFunc.searchData(link, {"_id": req.params.id})
+        let resourceSavedData = await resourceFunc.searchData(link, { "_id": req.params.id })
         let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, [], req.method, resourceSavedData.data.entry[0].resource, 0);
-        console.log("====>", resourceData);
         resourceData.id = req.params.id;
         let response = await axios.patch(config.baseUrl + req.params.resourceType + "/" + req.params.id, resourceData, {
             headers: {
@@ -76,16 +75,13 @@ const patchResource = async function (req, res, next) {
 let updateResource = async function (req, res, next) {
     try {
         resourceType = req.params.resourceType;
-        console.log(req.method)
         let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, {}, req.method, null, 0);
         resourceData.id = req.params.id;
-        console.log(resourceData, config.baseUrl + req.params.resourceType + "/" + req.params.id)
         let response = await axios.put(config.baseUrl + req.params.resourceType + "/" + req.params.id, resourceData, {
             headers: {
                 "Content-Type": "application/json"
             }
         });
-        console.log(response.data, response.status);
         if (response.status == 200)
             res.status(201).json({ status: 1, message: "Data updated successfully.", data: response.data.id })
         else
@@ -120,21 +116,45 @@ let deleteResource = async function (req, res, next) {
     }
 }
 
+let getResourceUrl = async function (resourceType, queryParams) {
+    let url = "", dataEntryLength = null;
+    switch (resourceType) {
+        case "Patient": queryParams = queryParams;
+            queryParams._sort = "_id";
+            url = config.baseUrl + resourceType;
+            break;
+        case "RelatedPerson":
+            url = config.baseUrl + `Patient/${queryParams.patientId}/$everything`;
+            queryParams = {};
+            dataEntryLength = 1;
+            break;
+
+    }
+
+    return { link: url, reqQuery: queryParams, dataEntryLength: dataEntryLength }
+}
 
 let searchResourceData = async function (req, res, next) {
     try {
         resourceType = req.params.resourceType;
         let link = config.baseUrl + resourceType;
-        let responseData = await resourceFunc.searchData(link, req.query);
+        let resouceUrl = await getResourceUrl(resourceType, req.query);
+        console.log("resouceUrl: ", resouceUrl)
+        let responseData = await resourceFunc.searchData(resouceUrl.link, resouceUrl.reqQuery);
         let result = [];
-        console.log(responseData.data)
-        for(let i=0; i< responseData.data.entry.length; i++) {
-                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, null,0);
-                console.log("result here: ", res_data)
-                result = result.concat(res_data)
+        if (resouceUrl.dataEntryLength == 1) {
+            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
+            result = result.concat(res_data);
         }
-        
-        res.status(200).json({status: 1, message: "details fetched successfully", data: result})
+        else {
+            for (let i = 0; i < responseData.data.entry.length; i++) {
+                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, null, 0);
+                result = result.concat(res_data);
+            }
+        }
+
+
+        res.status(200).json({ status: 1, message: "details fetched successfully", data: result })
 
     }
     catch (e) {
@@ -149,10 +169,6 @@ let searchResourceData = async function (req, res, next) {
         return response.sendDBError(res, e.code);
     }
 }
-
-
-
-
 
 module.exports = {
     createResource, patchResource, updateResource, deleteResource, searchResourceData
