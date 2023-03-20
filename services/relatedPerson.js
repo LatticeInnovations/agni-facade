@@ -38,6 +38,11 @@ class RelatedPerson {
         }
     }
 
+    patchRelationship() {
+        this.fhirResource.push({ "op": this.personObj.operation, "path": "/relationship/0/coding/0/code", value: this.personObj.relationCode});
+        return this.fhirResource;
+    }
+
     getJsonToFhirTranslator(relation_data) {
         this.setRelationData();
         this.setPatientReference();

@@ -4,12 +4,12 @@ let axios = require("axios");
 let config = require("../config/config");
 const { v4: uuidv4 } = require('uuid');
 
-let getResource = async function (resType, inputData, FHIRData, reqMethod, fetchedResourceData, isBundle) {
+let getResource = async function (resType, inputData, FHIRData, reqMethod, fetchedResourceData) {
     try {
     let resource_result = [];
     switch (resType) {
         case "Patient":
-            resource_result = await setPatientData(resType, inputData, FHIRData, reqMethod, fetchedResourceData);
+            resource_result = await setPatientData(resType, inputData, FHIRData, reqMethod);
             break;
         case "RelatedPerson":
             resource_result = await setRelatedPersonData(inputData, FHIRData, reqMethod, fetchedResourceData)
@@ -66,11 +66,11 @@ let searchData = async function (link, reqQuery) {
 
 }
 
-let setBundlePatch = async function (resource_data, resource_type, id) {
+let setBundlePatch = async function (resource_data, patchUrl) {
     let objJsonStr = JSON.stringify(resource_data)
     let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
     let bundlePatchStructure = {
-        "fullUrl": resource_type + "/" + id,
+        "fullUrl": patchUrl,
         "resource": {
             "resourceType": "Binary",
             "contentType": "application/json-patch+json",
@@ -78,7 +78,7 @@ let setBundlePatch = async function (resource_data, resource_type, id) {
         },
         "request": {
             "method": "PATCH",
-            "url": resource_type + "/" + id
+            "url": patchUrl
         }
     }
     return bundlePatchStructure;
@@ -140,7 +140,23 @@ let setBundlePut = async function (resourceData, identifier, id, reqMethod) {
 }
 }
 
-let setPatientData = async function (resType, inputData, FHIRData, reqMethod, fetchedResourceData) {
+let setBundleDelete = async function (resourceType, id) {
+    try {
+    let bundlePostStructure = {
+        "request": {
+            "method": "Delete",
+            "url": resourceType + "/" + id
+        }
+    }
+    return bundlePostStructure;
+} catch (e) {
+    console.log(e)
+    e = { status: 0, code: "ERR", e: e }
+    return Promise.reject(e);
+}
+}
+
+let setPatientData = async function (resType, inputData, FHIRData, reqMethod) {
     try {
         let resource_result = [];
         let resource_data = {};
@@ -162,8 +178,12 @@ let setPatientData = async function (resType, inputData, FHIRData, reqMethod, fe
             resource_result.push(patientBundle, personBundle);
         }
         else if (["patch", "PATCH"].includes(reqMethod)) {
-            patient.patchUserInputToFHIR(fetchedResourceData);
-            resource_result = patient.getFHIRResource();
+            let link = config.baseUrl + resType;
+            let resourceSavedData = await searchData(link, { "_id": inputData.id });
+            patient.patchUserInputToFHIR(resourceSavedData);
+            let resourceData = patient.getFHIRResource();
+            const patchUrl = resType+"/"+inputData.id;
+            resource_result = await setBundlePatch(resourceData, patchUrl);
         }
         else {
             patient.getFHIRToUserInput();
@@ -220,10 +240,21 @@ let setRelatedPersonData = async function (inputData, FHIRData, reqMethod, fetch
         return patientRelation;
     }
     else if(["patch", "PATCH"].includes(reqMethod)) {
+        let replaceList = inputData.relationship.filter(e => e.operation == "replace");  
         let removeList = inputData.relationship.filter(e => e.operation == "remove");
         let addList = inputData.relationship.filter(e => e.operation == "add");
-        let replaceList = inputData.relationship.filter(e => e.operation == "relpace");
-        
+        // patient's person and related person data                  
+        let person1Link = await searchData(config.baseUrl + "Person", { link: "Patient/" + inputData.id ,_include: "Person:link:RelatedPerson" });
+        let person1Data = person1Link.data.entry[0].resource;
+        let relatedPersonList = person1Link.data.entry.filter(e => e.resource.resourceType == "RelatedPerson");
+        let replacePatchList = await replaceRelation(inputData.id,replaceList);
+        resourceData = resourceData.concat(replacePatchList);
+        let removePatchJSON = await removeRelation(inputData.id, removeList, relatedPersonList, person1Data);
+         const url1 = "Person/"+ person1Data.id
+        let patchPerson1Bundle = await setBundlePatch(removePatchJSON.person1Patch, url1);
+        removePatchJSON.person1Patch = patchPerson1Bundle;
+        resourceData = resourceData.concat(removePatchJSON.bundleRemovePatch, removePatchJSON.person1Patch);
+        return resourceData;
     }
 
 }
@@ -271,6 +302,62 @@ catch(e) {
     e = { status: 0, code: "ERR", e: e }
     return Promise.reject(e);
 }
+}
+
+let removeRelation= async function(patientId, removeList, relatedPersonList, person1Data) {
+    try {
+        let person1Patch = [];
+        bundlePatch = [];
+        let deleteRelatedPersonID1, deleteRelatedPersonID2, patchPerson2Bundle, person1;
+        for(let relation of removeList) {
+            // person data for patching further of the relative
+            let relativePersonData = await searchData(config.baseUrl + "Person", { link: "Patient/" + relation.value.relativeId ,_include: "Person:link:RelatedPerson"});
+            let relaterdPerson1Id = relatedPersonList.filter(e => e.resource.patient.reference == "Patient/" + relation.value.relativeId)[0];
+            deleteRelatedPersonID1 = await setBundleDelete("RelatedPerson", relaterdPerson1Id.resource.id);
+            let relatedPerson2Id = relativePersonData.data.entry.filter(e => e.resource.resourceType == "RelatedPerson" && e.resource.patient.reference == "Patient/" + patientId)[0];
+            deleteRelatedPersonID2 = await setBundleDelete("RelatedPerson", relatedPerson2Id.resource.id);
+            let person2LinkIndex = relativePersonData.data.entry[0].resource.link.findIndex(e => e.target.reference == "RelatedPerson/" + relatedPerson2Id.resource.id);
+            let person2 = new Person(relation, []);
+            person2.patchLink(person2LinkIndex)
+            let person2Data = person2.getFHIRResource();
+            let url1 = "Person/"+ relativePersonData.data.entry[0].resource.id
+            patchPerson2Bundle = await setBundlePatch(person2Data, url1);
+            let person1LinkIndex = person1Data.link.findIndex(e => e.target.reference == "RelatedPerson/" + relaterdPerson1Id.resource.id);
+            person1 = new Person(relation, []);
+            person1.patchLink(person1LinkIndex);
+            person1Patch = person1Patch.concat(person1.getFHIRResource());
+            bundlePatch.push(deleteRelatedPersonID1, deleteRelatedPersonID2, patchPerson2Bundle);
+        }
+        return {bundleRemovePatch: bundlePatch, person1Patch}
+    }
+    catch(e) {
+        console.log(e)
+        e = { status: 0, code: "ERR", e: e }
+        return Promise.reject(e);  
+    }
+
+}
+
+let replaceRelation = async function(patientId, replaceList) {
+    try {
+        let relationBundle = []
+        for(let relation of replaceList) {
+            // person data for patching further of the relative
+            let patchPatienttoRelativeURL = `RelatedPerson?patient=Patient/${relation.value.relativeId}&_has:Person:link:patient=${patientId}`;
+            let patchRelativeToPatientURL = `RelatedPerson?patient=Patient/${patientId}&_has:Person:link:patient=${relation.value.relativeId}`;
+            let relationPatient = new RelatedPerson({operation: "patch", value: relation.value.patientIs});
+            let relationRelative = new RelatedPerson({operation: "patch", value: relation.value.RelativeIs});
+            let patchPatientRelation = await setBundlePatch(relationPatient, patchPatienttoRelativeURL);
+            let patchRelativeRelation = await setBundlePatch(relationRelative, patchRelativeToPatientURL);
+            relationBundle.push(patchPatientRelation, patchRelativeRelation);
+        }        
+        return relationBundle;
+    }
+    catch(e) {
+        console.log(e)
+        e = { status: 0, code: "ERR", e: e }
+        return Promise.reject(e);  
+    } 
 }
 
 

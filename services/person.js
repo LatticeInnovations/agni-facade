@@ -349,12 +349,9 @@ class Person {
         })
     }
 
-    patchLink(fetchedResourceData) {
-        let index = 0;
-        if (fetchedResourceData.link)
-            index = fetchedResourceData.link.length
-        this.fhirResource.push(
-            { "op": this.personObj.relation.operation, "path": "/link/" + index, value: { "target": { "reference:": this.personObj.relation.value }, assurance: "level3" } })
+    patchLink(index) {
+        if(this.personObj.operation == "remove")
+         this.fhirResource.push({ "op": this.personObj.operation, "path": "/link/" + index});
     }
 
     getFHIRResource() {
