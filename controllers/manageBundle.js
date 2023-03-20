@@ -8,26 +8,36 @@ let createBundle = async function (req, res, next) {
         resourceType = req.params.resourceType;
         let bundle = {
             "resourceType": "Bundle",
-            "type": "batch",
+            "type": "transaction",
             "entry": []
         }
         let reqInput = req.body;
         for (let element of reqInput) {
             let resourceData = await resourceOp.getResource(req.params.resourceType, element, {}, "POST", null, 1);
-            bundle.entry = bundle.entry.concat(resourceData)
+            if (resourceData.length > 0)
+                bundle.entry = bundle.entry.concat(resourceData)
         };
         // res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
+        console.log(bundle.entry)
         let response = await axios.post(config.baseUrl, bundle);
-        if (response.status == 200) {
-            let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType);
-            res.status(201).json({ status: 1, message: "Data saved successfully.", data: responseData })
+        if (bundle.entry.length > 0) {            
+            if (response.status == 200) {
+                let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType);
+                res.status(201).json({ status: 1, message: "Data saved successfully.", data: responseData })
+            }
+            else {
+                return res.status(500).json({
+                    status: 0, message: "Unable to process. Please try again.", error: response
+                })
+            }
         }
         else {
-            return Promise.reject({ status: 0, code: "ERR", e: response })
+            return res.status(409).json({ status: 0,message: "Data already exists." })
         }
+
     }
     catch (e) {
-       console.log(e)
+        console.log("is the error here:", e)
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
                 status: 0,
@@ -65,20 +75,20 @@ let patchBundle = async function (req, res, next) {
             let bundlePatchJSON = await resourceOp.setBundlePatch(resourceData, req.params.resourceType, element.id)
             bundle.entry = bundle.entry.concat(bundlePatchJSON);
         };
-       console.log("check where it starts from: ", bundle)
-       let response = await axios.post(config.baseUrl, bundle);
+        let response = await axios.post(config.baseUrl, bundle);
         if (response.status == 200 || response.status == 201) {
-            
-            let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry,"PATCH", req.params.resourceType)
+            let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
             res.status(201).json({ status: 1, message: "Data updated successfully.", data: responseData })
         }
         else {
-            return Promise.reject({ status: 0, code: "ERR", data: response })
+            return res.status(500).json({
+                status: 0, message: "Unable to process. Please try again.", error: response
+            })
         }
 
     }
     catch (e) {
-        console.log(e)
+        console.log(e.response.data)
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
                 status: 0,
