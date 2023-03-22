@@ -74,10 +74,9 @@ class Person {
     }
 
     setMiddleName() {
-        let middleName = this.personObj.middleName;
-        if (!checkEmptyData(middleName)) {
+        if (!checkEmptyData(this.personObj.middleName)) {
             let length = this.fhirResource.name.length;
-            this.fhirResource.name[length - 1].given.push(middleName);
+            this.fhirResource.name[length - 1].given.push(this.personObj.middleName);
         }
 
     }
@@ -350,8 +349,12 @@ class Person {
     }
 
     patchLink(index) {
-        if(this.personObj.operation == "remove")
-         this.fhirResource.push({ "op": this.personObj.operation, "path": "/link/" + index});
+        if (this.personObj.operation == "remove")
+            this.fhirResource.push({ "op": this.personObj.operation, "path": "/link/" + index });
+        else if (this.personObj.operation == "add")
+            this.fhirResource.push({
+                "op": this.personObj.operation, "path": "/link/1", value: this.personObj.value
+            });
     }
 
     getFHIRResource() {

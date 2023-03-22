@@ -67,7 +67,8 @@ let searchData = async function (link, reqQuery) {
 }
 
 let setBundlePatch = async function (resource_data, patchUrl) {
-    let objJsonStr = JSON.stringify(resource_data)
+    let objJsonStr = JSON.stringify(resource_data);
+    console.log("objJsonStr ====>", objJsonStr)
     let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
     let bundlePatchStructure = {
         "fullUrl": patchUrl,
@@ -144,7 +145,7 @@ let setBundleDelete = async function (resourceType, id) {
     try {
     let bundlePostStructure = {
         "request": {
-            "method": "Delete",
+            "method": "DELETE",
             "url": resourceType + "/" + id
         }
     }
@@ -205,16 +206,10 @@ let setRelatedPersonData = async function (inputData, FHIRData, reqMethod, fetch
     if (["post", "POST", "put", "PUT"].includes(reqMethod)) {
         let person1Link = await searchData(config.baseUrl + "Person", { link: "Patient/" + inputData.id ,_include: "Person:link:RelatedPerson" });
         let person1Data = person1Link.data.entry[0].resource;
-        let allowPost = 0;
-        let retrievedData;
-        for (let i = 0; i < inputData.relationship.length; i++) {   
-            let element = inputData.relationship[i];
-             retrievedData = await createNewRelation(element, person1Link, person1Data, inputData)
-            resourceData = resourceData.concat(retrievedData.resourceData);
-            allowPost = retrievedData.allowPost;
-        }
-        if(allowPost) {
-            let person1Post = await setBundlePut(person1Data, null, person1Data.id, "PUT");
+        resourcePost = await createNewRelation(person1Link, person1Data, inputData.id, inputData.relationship);
+        resourceData = resourceData.concat(resourcePost.resourceList);
+        if(resourcePost.allowPost) {
+            let person1Post = await setBundlePatch(resourcePost.person1PatchData, "Person/"+ person1Data.id);
             resourceData.push(person1Post);
             resource_result = resourceData;
         }
@@ -242,7 +237,8 @@ let setRelatedPersonData = async function (inputData, FHIRData, reqMethod, fetch
     else if(["patch", "PATCH"].includes(reqMethod)) {
         let replaceList = inputData.relationship.filter(e => e.operation == "replace");  
         let removeList = inputData.relationship.filter(e => e.operation == "remove");
-        let addList = inputData.relationship.filter(e => e.operation == "add");
+        let addList = inputData.relationship.filter(e => e.operation == "add").map(e => {return e.value});
+        let person1Patch = [];
         // patient's person and related person data                  
         let person1Link = await searchData(config.baseUrl + "Person", { link: "Patient/" + inputData.id ,_include: "Person:link:RelatedPerson" });
         let person1Data = person1Link.data.entry[0].resource;
@@ -250,10 +246,20 @@ let setRelatedPersonData = async function (inputData, FHIRData, reqMethod, fetch
         let replacePatchList = await replaceRelation(inputData.id,replaceList);
         resourceData = resourceData.concat(replacePatchList);
         let removePatchJSON = await removeRelation(inputData.id, removeList, relatedPersonList, person1Data);
-         const url1 = "Person/"+ person1Data.id
-        let patchPerson1Bundle = await setBundlePatch(removePatchJSON.person1Patch, url1);
-        removePatchJSON.person1Patch = patchPerson1Bundle;
-        resourceData = resourceData.concat(removePatchJSON.bundleRemovePatch, removePatchJSON.person1Patch);
+        console.log(removePatchJSON)
+        person1Patch = person1Patch.concat(removePatchJSON.person1PatchData);
+        resourceData = resourceData.concat(removePatchJSON.bundlePatch);
+        let addData = await createNewRelation(person1Link, person1Data, inputData.id, addList);
+        resourceData = resourceData.concat(addData.resourceList);
+        person1Patch =  person1Patch.concat(addData.person1PatchData);
+        if(person1Patch.length > 0) {
+            let person1Post = await setBundlePatch(person1Patch, "Person/"+ person1Data.id);
+            resourceData.push(person1Post);
+        }
+        if(removePatchJSON.deleteBundleList.length > 0) {
+            resourceData = resourceData.concat(removePatchJSON.deleteBundleList);
+        }
+        console.log()
         return resourceData;
     }
 
@@ -265,37 +271,45 @@ catch(e) {
 }
 }
 
-let createNewRelation = async function(element, person1Link, person1Data, inputData) {
+let createNewRelation = async function(person1Link, person1Data, patientId, relationship) {
     try {
     resourceData = [];
+    person1PatchData = [];
     allowPost = 0;
-    let index = person1Link.data.entry.findIndex(e => 
-        e.resource.resourceType == "RelatedPerson" && e.resource.patient.reference == "Patient/" + element.relativeId);
-    if(index == -1) {
-        let relatedPerson1 = new RelatedPerson({ patientId: element.relativeId, relationCode: element.patientIs }, {});
-        let fhirResource1 = relatedPerson1.getJsonToFhirTranslator();
-        let relatedPerson2 = new RelatedPerson({ patientId: inputData.id, relationCode: element.relativeIs }, {});
-        let fhirResource2 = relatedPerson2.getJsonToFhirTranslator();
-        let relatedPerson1Post = await setBundlePost(fhirResource1, null, fhirResource1.id, "POST")
-        let relatedPerson2Post = await setBundlePost(fhirResource2, null, fhirResource2.id, "POST")
-        let person2Link = await searchData(config.baseUrl + "Person", { link: "Patient/" + element.relativeId });
-        if (person1Link.data.total != 1 || person2Link.data.total != 1)
-            Promise.reject({ status: 0, ERR: "Data does not exist" });
-        let person2Data = person2Link.data.entry[0].resource;
-        person1Data.link.push({
-            "target": { "reference": "urn:uuid:" + relatedPerson1Post.resource.id },
-            "assurance": "level3"
-        });
-        person2Data.link.push({
-            "target": { "reference": "urn:uuid:" + relatedPerson2Post.resource.id },
-            "assurance": "level3"
-        });
-        let person2Post = await setBundlePut(person2Data, null, person2Data.id, "PUT");
-        resourceData.push(relatedPerson1Post, relatedPerson2Post, person2Post);
-        allowPost = 1;
+    for(let element of relationship) {
+        let index = person1Link.data.entry.findIndex(e => 
+            e.resource.resourceType == "RelatedPerson" && e.resource.patient.reference == "Patient/" + element.relativeId);
+        if(index == -1) {
+            let relatedPerson1 = new RelatedPerson({ patientId: element.relativeId, relationCode: element.patientIs }, {});
+            let fhirResource1 = relatedPerson1.getJsonToFhirTranslator();
+            let relatedPerson2 = new RelatedPerson({ patientId: patientId, relationCode: element.relativeIs }, {});
+            let fhirResource2 = relatedPerson2.getJsonToFhirTranslator();
+            let relatedPerson1Post = await setBundlePost(fhirResource1, null, fhirResource1.id, "POST")
+            let relatedPerson2Post = await setBundlePost(fhirResource2, null, fhirResource2.id, "POST")
+            let person2Link = await searchData(config.baseUrl + "Person", { link: "Patient/" + element.relativeId });
+            if (person1Link.data.total != 1 || person2Link.data.total != 1)
+                Promise.reject({ status: 0, ERR: "Data does not exist" });
+            let person2Data = person2Link.data.entry[0].resource;
+            let person1 = new Person({operation: "add", value: {
+                "target": { "reference": "urn:uuid:" + relatedPerson1Post.resource.id },
+                "assurance": "level3"
+            }}, []);
+            person1.patchLink();
+            person1PatchData = person1PatchData.concat(person1.getFHIRResource());
+            let person2 = new Person({operation: "add", value: {
+                "target": { "reference": "urn:uuid:" + relatedPerson2Post.resource.id },
+                "assurance": "level3"
+            }}, []);
+            person2.patchLink();
+            let person2Url = "Person/" + person2Data.id;
+            console.log(person2.getFHIRResource())
+            let person2Patch = await setBundlePatch(person2.getFHIRResource(), person2Url);
+            resourceData.push(relatedPerson1Post, relatedPerson2Post, person2Patch);
+            allowPost = 1;
+        }
     }
-
-    return {resourceData: resourceData, allowPost: allowPost};
+    
+    return {resourceList: resourceData, allowPost, person1PatchData};
 }
 catch(e) {
     console.log(e)
@@ -306,15 +320,19 @@ catch(e) {
 
 let removeRelation= async function(patientId, removeList, relatedPersonList, person1Data) {
     try {
-        let person1Patch = [];
+        let person1PatchData = [];
         bundlePatch = [];
+       let deleteBundleList = []
         let deleteRelatedPersonID1, deleteRelatedPersonID2, patchPerson2Bundle, person1;
         for(let relation of removeList) {
             // person data for patching further of the relative
             let relativePersonData = await searchData(config.baseUrl + "Person", { link: "Patient/" + relation.value.relativeId ,_include: "Person:link:RelatedPerson"});
+            console.log(relativePersonData.data.entry)
             let relaterdPerson1Id = relatedPersonList.filter(e => e.resource.patient.reference == "Patient/" + relation.value.relativeId)[0];
             deleteRelatedPersonID1 = await setBundleDelete("RelatedPerson", relaterdPerson1Id.resource.id);
-            let relatedPerson2Id = relativePersonData.data.entry.filter(e => e.resource.resourceType == "RelatedPerson" && e.resource.patient.reference == "Patient/" + patientId)[0];
+            let relatedPerson2Id = relativePersonData.data.entry.filter(e =>  e.resource.resourceType == "RelatedPerson" && e.resource.patient.reference == "Patient/" + patientId);
+            console.log("relatedPerson2Id", relatedPerson2Id)
+            relatedPerson2Id = relatedPerson2Id[0];
             deleteRelatedPersonID2 = await setBundleDelete("RelatedPerson", relatedPerson2Id.resource.id);
             let person2LinkIndex = relativePersonData.data.entry[0].resource.link.findIndex(e => e.target.reference == "RelatedPerson/" + relatedPerson2Id.resource.id);
             let person2 = new Person(relation, []);
@@ -325,10 +343,11 @@ let removeRelation= async function(patientId, removeList, relatedPersonList, per
             let person1LinkIndex = person1Data.link.findIndex(e => e.target.reference == "RelatedPerson/" + relaterdPerson1Id.resource.id);
             person1 = new Person(relation, []);
             person1.patchLink(person1LinkIndex);
-            person1Patch = person1Patch.concat(person1.getFHIRResource());
-            bundlePatch.push(deleteRelatedPersonID1, deleteRelatedPersonID2, patchPerson2Bundle);
+            person1PatchData = person1PatchData.concat(person1.getFHIRResource());
+            bundlePatch.push(patchPerson2Bundle);
+            deleteBundleList.push(deleteRelatedPersonID1, deleteRelatedPersonID2)
         }
-        return {bundleRemovePatch: bundlePatch, person1Patch}
+        return {bundlePatch, deleteBundleList, person1PatchData}
     }
     catch(e) {
         console.log(e)

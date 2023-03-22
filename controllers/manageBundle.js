@@ -18,7 +18,6 @@ let createBundle = async function (req, res, next) {
                 bundle.entry = bundle.entry.concat(resourceData)
         };
         // res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
-        console.log(bundle.entry)
         let response = await axios.post(config.baseUrl, bundle);
         if (bundle.entry.length > 0) {            
             if (response.status == 200) {
@@ -73,17 +72,16 @@ let patchBundle = async function (req, res, next) {
             bundle.entry = bundle.entry.concat(bundlePatchJSON);
         };
 
-        console.log(bundle)
-        // let response = await axios.post(config.baseUrl, bundle);
-        // if (response.status == 200 || response.status == 201) {
-        //     let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
-        //     res.status(201).json({ status: 1, message: "Data updated successfully.", data: responseData })
-        // }
-        // else {
+        let response = await axios.post(config.baseUrl, bundle);
+        if (response.status == 200 || response.status == 201) {
+           // let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
+            res.status(201).json({ status: 1, message: "Data updated successfully.", data: null })
+        }
+        else {
             return res.status(500).json({
                 status: 0, message: "Unable to process. Please try again.", error: response
             })
-       // }
+         }
 
     }
     catch (e) {

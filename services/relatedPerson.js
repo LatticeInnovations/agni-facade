@@ -15,6 +15,7 @@ class RelatedPerson {
         this.fhirResource.relationship = [];
     }
     setPatientReference() {
+        console.log(this.relationObject)
         this.fhirResource.patient = {"reference" : "Patient/" + this.relationObject.patientId.toString()};
     }
 
