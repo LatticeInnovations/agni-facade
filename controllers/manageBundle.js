@@ -18,7 +18,6 @@ let createBundle = async function (req, res, next) {
                 bundle.entry = bundle.entry.concat(resourceData)
         };
         // res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
-        console.log(bundle.entry)
         let response = await axios.post(config.baseUrl, bundle);
         if (bundle.entry.length > 0) {            
             if (response.status == 200) {
@@ -64,31 +63,29 @@ let patchBundle = async function (req, res, next) {
         let reqInput = req.body;
         let bundle = {
             "resourceType": "Bundle",
-            "type": "batch",
+            "type": "transaction",
             "entry": []
         }
         for (let element of reqInput) {
             resourceType = req.params.resourceType;
-            let link = config.baseUrl + resourceType;
-            let resourceSavedData = await resourceOp.searchData(link, { "_id": element.id });
-            let resourceData = await resourceOp.getResource(req.params.resourceType, element, [], req.method, resourceSavedData.data.entry[0].resource);
-            let bundlePatchJSON = await resourceOp.setBundlePatch(resourceData, req.params.resourceType, element.id)
+            let bundlePatchJSON = await resourceOp.getResource(req.params.resourceType, element, [], req.method, {});
             bundle.entry = bundle.entry.concat(bundlePatchJSON);
         };
+
         let response = await axios.post(config.baseUrl, bundle);
         if (response.status == 200 || response.status == 201) {
-            let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
-            res.status(201).json({ status: 1, message: "Data updated successfully.", data: responseData })
+           // let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
+            res.status(201).json({ status: 1, message: "Data updated successfully.", data: null })
         }
         else {
             return res.status(500).json({
                 status: 0, message: "Unable to process. Please try again.", error: response
             })
-        }
+         }
 
     }
     catch (e) {
-        console.log(e.response.data)
+        console.log(e)
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
                 status: 0,

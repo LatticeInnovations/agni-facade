@@ -15,6 +15,7 @@ class RelatedPerson {
         this.fhirResource.relationship = [];
     }
     setPatientReference() {
+        console.log(this.relationObject)
         this.fhirResource.patient = {"reference" : "Patient/" + this.relationObject.patientId.toString()};
     }
 
@@ -36,6 +37,11 @@ class RelatedPerson {
         if(this.fhirResource.relationship) {
             this.relationObject.relationCode = this.fhirResource.relationship[0].coding[0].code;
         }
+    }
+
+    patchRelationship() {
+        this.fhirResource.push({ "op": this.personObj.operation, "path": "/relationship/0/coding/0/code", value: this.personObj.relationCode});
+        return this.fhirResource;
     }
 
     getJsonToFhirTranslator(relation_data) {
