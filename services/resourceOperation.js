@@ -420,7 +420,6 @@ let replaceRelation = async function(patientId, replaceList) {
         return relationBundle;
     }
     catch(e) {
-        console.log(e)
         e = { status: 0, code: "ERR", e: e }
         return Promise.reject(e);  
     } 
