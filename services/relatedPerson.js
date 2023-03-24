@@ -40,11 +40,11 @@ class RelatedPerson {
     }
 
     patchRelationship() {
-        this.fhirResource.push({ "op": this.personObj.operation, "path": "/relationship/0/coding/0/code", value: this.personObj.relationCode});
+        this.fhirResource.push({ "op": this.relationObject.operation, "path": "/relationship/0/coding/0/code", value: this.relationObject.value});
         return this.fhirResource;
     }
 
-    getJsonToFhirTranslator(relation_data) {
+    getJsonToFhirTranslator() {
         this.setRelationData();
         this.setPatientReference();
         this.setRelationship();
