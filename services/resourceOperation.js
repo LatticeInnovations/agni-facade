@@ -48,7 +48,6 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
 
     return response;
 } catch (e) {
-    console.log(e)
     e = { status: 0, code: "ERR", e: e }
     return Promise.reject(e);
 }
@@ -121,7 +120,6 @@ let setBundlePost = async function (resourceData, identifier, id, reqMethod) {
     }
     return bundlePostStructure;
 } catch (e) {
-    console.log(e)
     e = { status: 0, code: "ERR", e: e }
     return Promise.reject(e);
 }
@@ -148,7 +146,6 @@ let setBundlePut = async function (resourceData, identifier, id, reqMethod) {
     }
     return bundlePostStructure;
 } catch (e) {
-    console.log(e)
     e = { status: 0, code: "ERR", e: e }
     return Promise.reject(e);
 }
@@ -164,7 +161,6 @@ let setBundleDelete = async function (resourceType, id) {
     }
     return bundlePostStructure;
 } catch (e) {
-    console.log(e)
     e = { status: 0, code: "ERR", e: e }
     return Promise.reject(e);
 }
@@ -216,7 +212,6 @@ let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
         return resource_result;
     }
     catch(e) {
-        console.log(e)
         e = { status: 0, code: "ERR", e: e }
         return Promise.reject(e);
     }
@@ -305,7 +300,6 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
 
 }
 catch(e) {
-    console.log(e)
     e = { status: 0, code: "ERR", e: e }
     return Promise.reject(e);
 }
@@ -354,7 +348,6 @@ let createNewRelation = async function(person1Link, patientArrayById, patientId,
     return {resourceList: resourceData, patientArrayById};
 }
 catch(e) {
-    console.log(e)
     e = { status: 0, code: "ERR", e: e }
     return Promise.reject(e);
 }
@@ -395,7 +388,6 @@ let removeRelation= async function(patientId, removeList, relatedPersonList, per
         return {patientArrayById, deleteBundleList}
     }
     catch(e) {
-        console.log(e)
         e = { status: 0, code: "ERR", e: e }
         return Promise.reject(e);  
     }
