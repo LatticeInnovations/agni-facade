@@ -54,6 +54,19 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
 }
 }
 
+
+let getBundleJSON = async function(reqInput, resourceType,fhirResource, reqMethod) {
+    let bundle = {
+        "resourceType": "Bundle",
+        "type": "transaction",
+        "entry": []
+    };
+
+        let resourceData = await getResource(resourceType, reqInput, fhirResource, reqMethod, null);
+        bundle.entry = resourceData;
+        return bundle;
+}
+
 let searchData = async function (link, reqQuery) {
     try {
         let responseData = await axios.get(link, { params: reqQuery });
@@ -68,7 +81,6 @@ let searchData = async function (link, reqQuery) {
 
 let setBundlePatch = async function (resource_data, patchUrl) {
     let objJsonStr = JSON.stringify(resource_data);
-    console.log("objJsonStr ====>", objJsonStr)
     let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
     let bundlePatchStructure = {
         "fullUrl": patchUrl,
@@ -92,6 +104,7 @@ let setBundlePost = async function (resourceData, identifier, id, reqMethod) {
     if (identifier || identifier != null) {
         identifierConcat = "?";
         identifier.forEach(element => {
+           
             identifierConcat += "identifier=" + element.identifierType + "|" + element.identifierNumber + "&"
         })
         identifierConcat = identifierConcat.slice(0, -1);
@@ -157,36 +170,46 @@ let setBundleDelete = async function (resourceType, id) {
 }
 }
 
-let setPatientData = async function (resType, inputData, FHIRData, reqMethod) {
+let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
     try {
+        console.log(reqMethod)
         let resource_result = [];
         let resource_data = {};
-        let patient = new Person(inputData, FHIRData);
         if (["post", "POST"].includes(reqMethod)) {
-            patient.getJsonToFhirTranslator();
-            resource_data = patient.getFHIRResource();
-            resource_data.resourceType = resType;
-            let personInput = { patientId: inputData.id };
-            let person1 = new Person(personInput, {});
-            person1.setBasicStructure();
-            person1.setLink(inputData.id);
-            let personResource = person1.getFHIRResource();
-            personResource.identifier = resource_data.identifier;
-            personResource.resourceType = "Person";
-            personResource.id = uuidv4();
-            let patientBundle = await setBundlePost(resource_data, inputData.identifier, inputData.id, "POST");
-            let personBundle = await setBundlePost(personResource, inputData.identifier, personResource.id, "POST");
-            resource_result.push(patientBundle, personBundle);
+            for(let inputData of reqInput) {
+                let patient = new Person(inputData, FHIRData);
+                patient.getJsonToFhirTranslator();
+                resource_data = patient.getFHIRResource();
+                console.log(resource_data);
+                resource_data.resourceType = resType;
+                let personInput = { patientId: inputData.id };
+                let person1 = new Person(personInput, {});
+                person1.setBasicStructure();
+                person1.setLink(inputData.id);
+                let personResource = person1.getFHIRResource();
+                personResource.identifier = resource_data.identifier;
+                personResource.resourceType = "Person";
+                personResource.id = uuidv4();
+                let patientBundle = await setBundlePost(resource_data, inputData.identifier, inputData.id, "POST");
+                let personBundle = await setBundlePost(personResource, inputData.identifier, personResource.id, "POST");
+                resource_result.push(patientBundle, personBundle);
+            }
         }
         else if (["patch", "PATCH"].includes(reqMethod)) {
-            let link = config.baseUrl + resType;
-            let resourceSavedData = await searchData(link, { "_id": inputData.id });
-            patient.patchUserInputToFHIR(resourceSavedData);
-            let resourceData = patient.getFHIRResource();
-            const patchUrl = resType+"/"+inputData.id;
-            resource_result = await setBundlePatch(resourceData, patchUrl);
+            for(let inputData of reqInput) {
+                let patient = new Person(inputData, []);
+                let link = config.baseUrl + resType;
+                let resourceSavedData = await searchData(link, { "_id": inputData.id });
+                patient.patchUserInputToFHIR(resourceSavedData.data.entry[0].resource);
+                let resourceData = patient.getFHIRResource();
+                const patchUrl = resType+"/"+inputData.id;
+                let patchResource = await setBundlePatch(resourceData, patchUrl);
+                resource_result.push(patchResource);
+            }
+            console.log(resource_result);
         }
         else {
+            let patient = new Person(reqInput, FHIRData);
             patient.getFHIRToUserInput();
             resource_result.push(patient.getPersonResource())
         }
@@ -382,4 +405,4 @@ let replaceRelation = async function(patientId, replaceList) {
 
 
 
-module.exports = { getResource, getBundleResponse, searchData, setBundlePatch }
+module.exports = { getBundleJSON, getResource, getBundleResponse, searchData, setBundlePatch }

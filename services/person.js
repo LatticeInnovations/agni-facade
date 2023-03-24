@@ -20,7 +20,7 @@ class Person {
     setIdAsIdentifier() {
         if (this.personObj.id) {
             let jsonObj = this.setIdentifierJSON({
-                "identifierType": "urn:uuid:" + this.personObj.id,
+                "identifierType": "https://www.thelattice.in/",
                 "identifierNumber": this.personObj.id,
                 "code": "MR"
             })
@@ -131,16 +131,19 @@ class Person {
     patchIdentifier(fetchedData) {
         let isEmpty = checkEmptyData(fetchedData.identifier);
         if (this.personObj.identifier && this.personObj.identifier.length > 0) {
+            let index = 0;
             this.personObj.identifier.forEach(element => {
-                let index = !isEmpty ? fetchedData.identifier.findIndex(idCard => idCard.system == element.identifierType) : 0;
+                index = fetchedData.identifier.findIndex(idCard => idCard.system == element.identifierType);
+                index = index == -1 && !isEmpty ? fetchedData.identifier.length : index;
                 let path = isEmpty ? "/identifier" : "/identifier/" + index;
-                index = index > -1 ? index : 0;
-                let jsonObj = this.setIdentifierJSON(element);
+                console.log("element is", element)
+                let jsonObj = this.setIdentifierJSON(element.value);
                 this.fhirResource.push(
                     { "op": element.operation, "path": path, "value": isEmpty ? [jsonObj] : jsonObj });
             })
         }
 
+        console.log("check the fhir resource: ", this.fhirResource.identifier)
     }
 
     getIdentifier() {

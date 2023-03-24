@@ -5,21 +5,14 @@ let resourceOp = require("../services/resourceOperation");
 let config = require("../config/config")
 let createBundle = async function (req, res, next) {
     try {
-        resourceType = req.params.resourceType;
-        let bundle = {
-            "resourceType": "Bundle",
-            "type": "transaction",
-            "entry": []
-        }
-        let reqInput = req.body;
-        for (let element of reqInput) {
-            let resourceData = await resourceOp.getResource(req.params.resourceType, element, {}, "POST", null, 1);
-            if (resourceData.length > 0)
-                bundle.entry = bundle.entry.concat(resourceData)
-        };
+        const resourceType = req.params.resourceType;
+        const reqInput = req.body;
+        let bundle;
+        let fhirResource = {};
+        bundle = await resourceOp.getBundleJSON(reqInput, resourceType, fhirResource, "POST");
         // res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
         let response = await axios.post(config.baseUrl, bundle);
-        if (bundle.entry.length > 0) {            
+        if (bundle.entry.length > 0) {
             if (response.status == 200) {
                 let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType);
                 res.status(201).json({ status: 1, message: "Data saved successfully.", data: responseData })
@@ -31,7 +24,7 @@ let createBundle = async function (req, res, next) {
             }
         }
         else {
-            return res.status(409).json({ status: 0,message: "Data already exists." })
+            return res.status(409).json({ status: 0, message: "Data already exists." })
         }
 
     }
@@ -59,29 +52,23 @@ let createBundle = async function (req, res, next) {
 
 let patchBundle = async function (req, res, next) {
     try {
-        resourceType = req.params.resourceType;
-        let reqInput = req.body;
-        let bundle = {
-            "resourceType": "Bundle",
-            "type": "transaction",
-            "entry": []
-        }
-        for (let element of reqInput) {
-            resourceType = req.params.resourceType;
-            let bundlePatchJSON = await resourceOp.getResource(req.params.resourceType, element, [], req.method, {});
-            bundle.entry = bundle.entry.concat(bundlePatchJSON);
-        };
+        const resourceType = req.params.resourceType;
+        const reqInput = req.body;
+        let bundle;
+        let fhirResource = [];
+        let bundlePatchJSON = await resourceOp.getBundleJSON(reqInput, resourceType, fhirResource, "PATCH");
+        bundle = bundlePatchJSON;
 
         let response = await axios.post(config.baseUrl, bundle);
         if (response.status == 200 || response.status == 201) {
-           // let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
+            // let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
             res.status(201).json({ status: 1, message: "Data updated successfully.", data: null })
         }
         else {
             return res.status(500).json({
                 status: 0, message: "Unable to process. Please try again.", error: response
             })
-         }
+        }
 
     }
     catch (e) {
