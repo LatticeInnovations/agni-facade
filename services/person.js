@@ -133,8 +133,8 @@ class Person {
         if (this.personObj.identifier && this.personObj.identifier.length > 0) {
             let index = 0;
             this.personObj.identifier.forEach(element => {
-                index = fetchedData.identifier.findIndex(idCard => idCard.system == element.identifierType);
-                index = index == -1 && !isEmpty ? fetchedData.identifier.length : index;
+                index = fetchedData.identifier.findIndex(idCard => idCard.system == element.value.identifierType);
+                index = index == -1 && !isEmpty && element.operation == "add" ?  fetchedData.identifier.length : index;
                 let path = isEmpty ? "/identifier" : "/identifier/" + index;
                 console.log("element is", element)
                 let jsonObj = this.setIdentifierJSON(element.value);
