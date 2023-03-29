@@ -1,7 +1,5 @@
-let response = require("../utils/responseStatus");
 let axios = require("axios");
-let Person = require("../services/person");
-let resourceOp = require("../services/resourceOperation");
+let resourceFun = require("../services/resourceOperation");
 let config = require("../config/config")
 let createBundle = async function (req, res, next) {
     try {
@@ -9,12 +7,12 @@ let createBundle = async function (req, res, next) {
         const reqInput = req.body;
         let bundle;
         let fhirResource = {};
-        bundle = await resourceOp.getBundleJSON(reqInput, resourceType, fhirResource, "POST");
-        // res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
-        let response = await axios.post(config.baseUrl, bundle);
+        bundle = await getBundleJSON(reqInput, resourceType, fhirResource, "POST");
+       // res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
+       let response = await axios.post(config.baseUrl, bundle);
         if (bundle.entry.length > 0) {
             if (response.status == 200) {
-                let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType);
+                let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType);
                 res.status(201).json({ status: 1, message: "Data saved successfully.", data: responseData })
             }
             else {
@@ -56,12 +54,12 @@ let patchBundle = async function (req, res, next) {
         const reqInput = req.body;
         let bundle;
         let fhirResource = [];
-        let bundlePatchJSON = await resourceOp.getBundleJSON(reqInput, resourceType, fhirResource, "PATCH");
+        let bundlePatchJSON = await getBundleJSON(reqInput, resourceType, fhirResource, "PATCH");
         bundle = bundlePatchJSON;
         //res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
         let response = await axios.post(config.baseUrl, bundle);
         if (response.status == 200 || response.status == 201) {
-            // let responseData = await resourceOp.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
+            // let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
             res.status(201).json({ status: 1, message: "Data updated successfully.", data: null })
         }
         else {
@@ -90,6 +88,17 @@ let patchBundle = async function (req, res, next) {
 
     }
 
+}
+
+let getBundleJSON = async function (reqInput, resourceType, fhirResource, reqMethod) {
+    let bundle = {
+        "resourceType": "Bundle",
+        "type": "transaction",
+        "entry": []
+    };
+    let resourceData = await resourceFun.getResource(resourceType, reqInput, fhirResource, reqMethod, null);
+    bundle.entry = resourceData;
+    return bundle;
 }
 
 

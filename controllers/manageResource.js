@@ -1,6 +1,7 @@
 let response = require("../utils/responseStatus");
 let axios = require("axios");
 let resourceFunc = require("../services/resourceOperation");
+let bundleFun = require("../services/bundleOperation");
 let config = require("../config/config")
 let createResource = async function (req, res, next) {
     try {
@@ -43,7 +44,7 @@ const patchResource = async function (req, res, next) {
     try {
         resourceType = req.params.resourceType;
         let link = config.baseUrl + resourceType;
-        let resourceSavedData = await resourceFunc.searchData(link, { "_id": req.params.id })
+        let resourceSavedData = await bundleFun.searchData(link, { "_id": req.params.id })
         let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, [], req.method, resourceSavedData.data.entry[0].resource, 0);
         resourceData.id = req.params.id;
         let response = await axios.patch(config.baseUrl + req.params.resourceType + "/" + req.params.id, resourceData, {
@@ -139,8 +140,7 @@ let searchResourceData = async function (req, res, next) {
         resourceType = req.params.resourceType;
         let link = config.baseUrl + resourceType;
         let resouceUrl = await getResourceUrl(resourceType, req.query);
-        console.log("resouceUrl: ", resouceUrl)
-        let responseData = await resourceFunc.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
         let result = [];
         if (resouceUrl.dataEntryLength == 1) {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
@@ -152,9 +152,7 @@ let searchResourceData = async function (req, res, next) {
                 result = result.concat(res_data);
             }
         }
-
-
-        res.status(200).json({ status: 1, message: "details fetched successfully", data: result })
+        res.status(200).json({ status: 1, message: "details fetched successfully", total: responseData.data.total, data: result  })
 
     }
     catch (e) {

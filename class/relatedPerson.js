@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
-let { checkEmptyData } = require("./CheckEmpty");
+let { checkEmptyData } = require("../services/CheckEmpty");
 class RelatedPerson {
 
     relationObject; fhirResource;
