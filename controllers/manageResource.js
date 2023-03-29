@@ -152,7 +152,7 @@ let searchResourceData = async function (req, res, next) {
                 result = result.concat(res_data);
             }
         }
-        res.status(200).json({ status: 1, message: "details fetched successfully", total: responseData.data.total, data: result  })
+        res.status(200).json({ status: 1, message: "details fetched successfully", total: result.length, data: result  })
 
     }
     catch (e) {

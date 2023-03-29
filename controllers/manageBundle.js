@@ -31,15 +31,15 @@ let createBundle = async function (req, res, next) {
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
                 status: 0,
-                message: e.message,
-                error: e.response.data
+                message: "Unable to process. Please try again.",
+                error: e.response.data != null ? e.response.data : e.response
             })
         }
         else {
             return res.status(500).json({
                 status: 0,
                 message: "Unable to process. Please try again.",
-                error: e.response.data
+                error: e.response != null ? e.response.data : null
             })
         }
 
@@ -74,15 +74,15 @@ let patchBundle = async function (req, res, next) {
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
                 status: 0,
-                message: e.message,
-                error: e.response.data
+                message: "Unable to process. Please try again.",
+                error: e.response.data != null ? e.response.data : e.response
             })
         }
         else {
             return res.status(500).json({
                 status: 0,
                 message: "Unable to process. Please try again.",
-                error: e.response.data
+                error: e.response != null ? e.response.data : null
             })
         }
 

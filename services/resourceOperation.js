@@ -17,7 +17,6 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
         return bundleData;
     }
     catch (e) {
-        e = { status: 0, code: "ERR", e: e }
         return Promise.reject(e);
     }
 }
@@ -45,7 +44,6 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
 
         return response;
     } catch (e) {
-        e = { status: 0, code: "ERR", e: e }
         return Promise.reject(e);
     }
 }
