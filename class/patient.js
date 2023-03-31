@@ -1,4 +1,4 @@
-let { checkEmptyData } = require("./CheckEmpty");
+let { checkEmptyData } = require("../services/CheckEmpty");
 const Person = require("./person");
 
 class Patient  extends Person{
