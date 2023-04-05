@@ -147,23 +147,26 @@ let searchResourceData = async function (req, res, next) {
         if (resouceUrl.dataEntryLength == 1) {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
             result = result.concat(res_data);
+            res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length, data: result  })
         }
         else {
-            console.log(responseData.data.link)
+            let reqUrl = url.parse(req.originalUrl, true)
+            let reqQuery = reqUrl.query;
             if(responseData.data.link) {
                 let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
                 if(nextIndex != -1) {
                      let urlPart = url.parse(responseData.data.link[nextIndex].url, true);                   
                     let query = urlPart.query;
                     resStatus = query._offset >= responseData.data.total ? 2 : 1;
+                    console.log("reqQuery", reqQuery)
                 }                
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {
                 let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, null, 0);
                 result = result.concat(res_data);
             }
+            return  res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length,"offset": +reqQuery._offset, data: result  })
         }
-        res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length, data: result  })
 
     }
     catch (e) {
