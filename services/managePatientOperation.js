@@ -31,7 +31,6 @@ let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
                 let patient = new Person(inputData, []);
                 let link = config.baseUrl + resType;
                 let resourceSavedData = await bundleFun.searchData(link, { "_id": inputData.id });
-                console.log(resourceSavedData.data.total)
                 if (resourceSavedData.data.total != 1) {
                     let e = { status: 0, code: "ERR", response: "Patient Id " + inputData.id + " does not exist."}
                    return Promise.reject(e);

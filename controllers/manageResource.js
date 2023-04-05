@@ -2,7 +2,8 @@ let response = require("../utils/responseStatus");
 let axios = require("axios");
 let resourceFunc = require("../services/resourceOperation");
 let bundleFun = require("../services/bundleOperation");
-let config = require("../config/config")
+let config = require("../config/config");
+let url = require('url');
 let createResource = async function (req, res, next) {
     try {
         resourceType = req.params.resourceType;
@@ -121,7 +122,6 @@ let getResourceUrl = async function (resourceType, queryParams) {
     let url = "", dataEntryLength = null;
     switch (resourceType) {
         case "Patient": queryParams = queryParams;
-            queryParams._sort = "_id";
             url = config.baseUrl + resourceType;
             break;
         case "RelatedPerson":
@@ -142,17 +142,27 @@ let searchResourceData = async function (req, res, next) {
         let resouceUrl = await getResourceUrl(resourceType, req.query);
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
         let result = [];
+        let resStatus = 1;
         if (resouceUrl.dataEntryLength == 1) {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
             result = result.concat(res_data);
         }
         else {
+            console.log(responseData.data.link)
+            if(responseData.data.link) {
+                let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
+                if(nextIndex != -1) {
+                     let urlPart = url.parse(responseData.data.link[nextIndex].url, true);                   
+                    let query = urlPart.query;
+                    resStatus = responseData.data.entry.length < query._count ? 2 : 1;
+                }                
+            }
             for (let i = 0; i < responseData.data.entry.length; i++) {
                 let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, null, 0);
                 result = result.concat(res_data);
             }
         }
-        res.status(200).json({ status: 1, message: "details fetched successfully", total: result.length, data: result  })
+        res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length, data: result  })
 
     }
     catch (e) {

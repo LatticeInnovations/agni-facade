@@ -25,7 +25,6 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
     try {
         let response = [], filtereredData = [];
         let mergedArray = bundleResponse.map((data, i) => Object.assign({}, data, reqData[i]));
-        console.log(mergedArray)
         if (["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "Patient")
             filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
         // else if (["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "RelatedPerson")
