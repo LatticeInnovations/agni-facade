@@ -90,7 +90,9 @@ let setBundleDelete = async function (resourceType, id) {
 
 let searchData = async function (link, reqQuery) {
     try {
+        
         let responseData = await axios.get(link, { params: reqQuery });
+        console.log("link is: ", responseData)
         return responseData;
     } catch (e) {
         e = { status: 0, code: "ERR", e: e }
