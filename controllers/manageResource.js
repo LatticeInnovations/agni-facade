@@ -122,6 +122,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
     let url = "", dataEntryLength = null;
     switch (resourceType) {
         case "Patient": queryParams = queryParams;
+             queryParams._total = "accurate"
             url = config.baseUrl + resourceType;
             break;
         case "RelatedPerson":
@@ -154,7 +155,7 @@ let searchResourceData = async function (req, res, next) {
                 if(nextIndex != -1) {
                      let urlPart = url.parse(responseData.data.link[nextIndex].url, true);                   
                     let query = urlPart.query;
-                    resStatus = responseData.data.entry.length < query._count ? 2 : 1;
+                    resStatus = query._offset >= responseData.data.total ? 2 : 1;
                 }                
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {
