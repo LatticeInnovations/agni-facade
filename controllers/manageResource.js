@@ -165,7 +165,7 @@ let searchResourceData = async function (req, res, next) {
                 let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, null, 0);
                 result = result.concat(res_data);
             }
-            return  res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length,"offset": +reqQuery._offset, data: result  })
+             res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length,"offset": +reqQuery._offset, data: result  })
         }
 
     }

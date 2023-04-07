@@ -10,7 +10,7 @@ let bundleController = require("../../controllers/manageBundle")
 
 /**
  * Patient multiple resources
- * @route PUT /v1/sync/{resourceType}
+ * @route POST /v1/sync/{resourceType}
  * @group Bundle
  * @param {Array.<resource>} resourceList.body.required
  * @param {string} resourceType.path.required
@@ -21,7 +21,7 @@ let bundleController = require("../../controllers/manageBundle")
  * @returns {Error} 504 - Database connection error
  */
 
-router.put("/:resourceType", bundleController.createBundle);
+router.post("/:resourceType", bundleController.createBundle);
 
 
 /**
