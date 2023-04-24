@@ -15,9 +15,8 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                 }
 
                 let person1Link = await bundleOp.searchData(config.baseUrl + "Person", { link: "Patient/" + inputData.id, _include: "Person:link:RelatedPerson" });
-                if(person1Link.data.total != 1)
-                {
-                    let e = { status: 0, code: "ERR", response: "Patient Id " + inputData.id + " does not exist."}
+                if (person1Link.data.total != 1) {
+                    let e = { status: 0, code: "ERR", response: "Patient Id " + inputData.id + " does not exist." }
                     return Promise.reject(e)
                 }
                 console.log(person1Link)
@@ -34,22 +33,33 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
 
         }
         else if (["GET", "get"].includes(reqMethod)) {
-            let personResource = FHIRData.filter(e => e.resource.resourceType == "Person")[0].resource;
-            let relatedPersonLink = personResource.link.filter(e => e.target.reference.includes("RelatedPerson"));
-            let patientRelation = {
-                "patientId": FHIRData[0].resource.id,
-                "relationship": relatedPersonLink ? [] : null
+            let outputArray = [];
+            let personResource = FHIRData.filter(e => e.resource.resourceType == "Person");
+            for (let i = 0; i < personResource.length; i++) {
+                let linkList = personResource[i].resource.link;
+                let patientIdIndex = linkList.findIndex(e => e.target.reference.includes("Patient"));
+                let patientId = linkList[patientIdIndex].target.reference.split('Patient/')[1];
+                let patientRelation = {
+                    "patientId": patientId,
+                    "relationship": []
+                }
+                console.log(linkList)
+                for (let j = 0; j < linkList.length; j++) {
+                    if (linkList[j].target.reference.includes("RelatedPerson")) {
+                        let id = linkList[j].target.reference.split('RelatedPerson/')[1];
+                        let relatedPersonindex = FHIRData.findIndex(e => e.resource.resourceType == "RelatedPerson" && id == e.resource.id)
+                        console.log(FHIRData[relatedPersonindex].resource)
+                        let patientId = FHIRData[relatedPersonindex].resource.patient.reference.split("/")
+                        console.log(patientId[1])
+                        patientRelation.relationship.push({
+                            "relativeId": patientId[1],
+                            "patientIs": FHIRData[relatedPersonindex].resource.relationship[0].coding[0].code
+                        })
+                    }
+                }
+                outputArray.push(patientRelation)
             }
-            for (let i = 0; i < relatedPersonLink.length; i++) {
-                let relativeResource = FHIRData.filter(e => e.resource.id == relatedPersonLink[i].target.reference.substring(relatedPersonLink[i].target.reference.indexOf('/') + 1));
-                let relatedPerson1 = new RelatedPerson({}, relativeResource[0].resource);
-                relationData = relatedPerson1.getFHIRtoJsonTranslator();
-                patientRelation.relationship.push({
-                    "relativeId": relationData.patientId,
-                    "patientIs": relationData.relationCode
-                });
-            };
-            return patientRelation;
+            return outputArray;
         }
         else if (["patch", "PATCH"].includes(reqMethod)) {
             let deleteList = [];
@@ -62,9 +72,9 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                 let addList = inputData.relationship.filter(e => e.operation == "add").map(e => { return e.value });
                 // patient's person and related person data                  
                 let person1Link = await bundleOp.searchData(config.baseUrl + "Person", { link: "Patient/" + inputData.id, _include: "Person:link:RelatedPerson" });
-                if(person1Link.data.total != 1){
+                if (person1Link.data.total != 1) {
                     console.log(person1Link)
-                    let e = { status: 0, code: "ERR", response: "Patient Id " + inputData.id + " does not exist."}
+                    let e = { status: 0, code: "ERR", response: "Patient Id " + inputData.id + " does not exist." }
                     return Promise.reject(e)
                 }
                 let person1Data = person1Link.data.entry[0].resource;

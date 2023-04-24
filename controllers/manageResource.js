@@ -126,8 +126,13 @@ let getResourceUrl = async function (resourceType, queryParams) {
             url = config.baseUrl + resourceType;
             break;
         case "RelatedPerson":
-            url = config.baseUrl + `Patient/${queryParams.patientId}/$everything`;
-            queryParams = {};
+            let patientIds = queryParams.patientId
+            url = config.baseUrl + `Person`;
+            console.log(url)
+            queryParams = {
+                "_include" : "Person:link:RelatedPerson",
+                "patient._id" : patientIds
+            };
             dataEntryLength = 1;
             break;
 
@@ -170,7 +175,7 @@ let searchResourceData = async function (req, res, next) {
 
     }
     catch (e) {
-        console.log(e)
+        console.log("ye hai kya",e.e)
         if (e.code && e.code == "ERR") {
             return res.status(200).json({
                 status: 0,
