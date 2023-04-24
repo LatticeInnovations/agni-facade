@@ -175,7 +175,7 @@ let searchResourceData = async function (req, res, next) {
 
     }
     catch (e) {
-        console.log("ye hai kya",e.e)
+        console.log("Error",e)
         if (e.code && e.code == "ERR") {
             return res.status(200).json({
                 status: 0,
