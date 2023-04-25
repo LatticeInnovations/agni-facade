@@ -128,10 +128,10 @@ let getResourceUrl = async function (resourceType, queryParams) {
         case "RelatedPerson":
             let patientIds = queryParams.patientId
             url = config.baseUrl + `Person`;
-            console.log(url)
             queryParams = {
                 "_include" : "Person:link:RelatedPerson",
-                "patient._id" : patientIds
+                "patient._id" : patientIds,
+                "_total": "accurate"
             };
             dataEntryLength = 1;
             break;
@@ -147,9 +147,13 @@ let searchResourceData = async function (req, res, next) {
         let link = config.baseUrl + resourceType;
         let resouceUrl = await getResourceUrl(resourceType, req.query);
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        console.log(responseData.data)
         let result = [];
         let resStatus = 1;
-        if (resouceUrl.dataEntryLength == 1) {
+        if(responseData.data.total == 0) {
+            return res.status(200).json({ status: resStatus, message: "details fetched successfully", total: 0, data: null  })
+        }
+        else if (resouceUrl.dataEntryLength == 1) {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
             result = result.concat(res_data);
             res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length, data: result  })

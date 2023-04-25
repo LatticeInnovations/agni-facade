@@ -1,7 +1,6 @@
 let express = require("express");
 let router = express.Router();
 let bundleController = require("../../controllers/manageBundle")
-
 /**
  * @typedef resource
  * @property {Array} identfier - resource Identifier
@@ -21,7 +20,7 @@ let bundleController = require("../../controllers/manageBundle")
  * @returns {Error} 504 - Database connection error
  */
 
-router.post("/:resourceType", bundleController.createBundle);
+router.post("/:resourceType",  bundleController.createBundle);
 
 
 /**

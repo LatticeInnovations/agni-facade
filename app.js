@@ -68,9 +68,6 @@ app.use(logger(loggerFormat, {
   stream: process.stderr
 }));
 
-
-
-
 require('./router')(app);
 
 app.use((req, res, next) => {

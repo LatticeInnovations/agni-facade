@@ -1,8 +1,18 @@
 let axios = require("axios");
 let resourceFun = require("../services/resourceOperation");
 let config = require("../config/config")
+let validate = require("../services/validateRsource").validate;
+const { validationResult } = require('express-validator');
+
 let createBundle = async function (req, res, next) {
     try {
+        // let data = await validate(req);
+        // const errors = validationResult(req);
+        // console.log("error is", errors, data)
+        // if (!errors.isEmpty()) {
+        //     return res.status(422).json({ errors: errors.array() });
+            
+        // }
         const resourceType = req.params.resourceType;
         const reqInput = req.body;
         let bundle;

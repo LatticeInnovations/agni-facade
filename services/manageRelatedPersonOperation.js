@@ -40,10 +40,9 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                 let patientIdIndex = linkList.findIndex(e => e.target.reference.includes("Patient"));
                 let patientId = linkList[patientIdIndex].target.reference.split('Patient/')[1];
                 let patientRelation = {
-                    "patientId": patientId,
+                    "id": patientId,
                     "relationship": []
                 }
-                console.log(linkList)
                 for (let j = 0; j < linkList.length; j++) {
                     if (linkList[j].target.reference.includes("RelatedPerson")) {
                         let id = linkList[j].target.reference.split('RelatedPerson/')[1];
@@ -179,7 +178,6 @@ let removeRelation = async function (patientId, removeList, relatedPersonList, p
             }
             // person data for patching further of the relative
             let relativePersonData = await bundleOp.searchData(config.baseUrl + "Person", { link: "Patient/" + relation.value.relativeId, _include: "Person:link:RelatedPerson" });
-            console.log("relativePersonData =======>", relativePersonData)
             let relaterdPerson1Id = relatedPersonList.filter(e => e.resource.patient.reference == "Patient/" + relation.value.relativeId)[0];
             // console.log(relaterdPerson1Id)
             if(relativePersonData.data.total != 1 || relaterdPerson1Id == undefined) {
