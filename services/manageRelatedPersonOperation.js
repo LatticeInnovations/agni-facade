@@ -62,7 +62,8 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                         })
                     }
                 }
-                outputArray.push(patientRelation)
+                if(patientRelation.relationship.length > 0)
+                    outputArray.push(patientRelation)
             }
             return outputArray;
         }
@@ -96,7 +97,7 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                 }
             }
             for (const key of Object.keys(patientArrayById)) {
-                console.log(patientArrayById[key])
+                console.log("check hereeeeee ============>", patientArrayById[key])
                 if (patientArrayById[key].relation.length > 0) {
                     let patchData = await bundleOp.setBundlePatch(patientArrayById[key].relation, "Person/" + patientArrayById[key].personId);
                     resourceData.push(patchData);
