@@ -147,7 +147,7 @@ let searchResourceData = async function (req, res, next) {
         let link = config.baseUrl + resourceType;
         let resouceUrl = await getResourceUrl(resourceType, req.query);
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
-        console.log(responseData.data)
+       // console.log(responseData.data)
         let result = [];
         let resStatus = 1;
         if(responseData.data.total == 0) {
@@ -167,7 +167,7 @@ let searchResourceData = async function (req, res, next) {
                      let urlPart = url.parse(responseData.data.link[nextIndex].url, true);                   
                     let query = urlPart.query;
                     resStatus = query._offset >= responseData.data.total ? 2 : 1;
-                    console.log("reqQuery", reqQuery)
+                  //  console.log("reqQuery", reqQuery)
                 }                
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {

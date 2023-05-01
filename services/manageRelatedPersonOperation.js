@@ -20,7 +20,7 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                     return Promise.reject(e)
                 }
                 resourcePost = await createNewRelation(person1Link, patientArrayById, inputData.id, inputData.relationship);
-                console.log("resourcePost", resourcePost)
+                //console.log("resourcePost", resourcePost)
                 patientArrayById = resourcePost.patientArrayById;
                 resourceData = resourceData.concat(resourcePost.resourceList);
             }
@@ -53,9 +53,9 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                     if (linkList[j].target.reference.includes("RelatedPerson")) {
                         let id = linkList[j].target.reference.split('RelatedPerson/')[1];
                         let relatedPersonindex = FHIRData.findIndex(e => e.resource.resourceType == "RelatedPerson" && id == e.resource.id)
-                        console.log(FHIRData[relatedPersonindex].resource)
+                      //  console.log(FHIRData[relatedPersonindex].resource)
                         let patientId = FHIRData[relatedPersonindex].resource.patient.reference.split("/")
-                        console.log(patientId[1])
+                      //  console.log(patientId[1])
                         patientRelation.relationship.push({
                             "relativeId": patientId[1],
                             "patientIs": FHIRData[relatedPersonindex].resource.relationship[0].coding[0].code
@@ -79,7 +79,7 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                 // patient's person and related person data                  
                 let person1Link = await bundleOp.searchData(config.baseUrl + "Person", { link: "Patient/" + inputData.id, _include: "Person:link:RelatedPerson" });
                 if (person1Link.data.total != 1) {
-                    console.log(person1Link)
+                   // console.log(person1Link)
                     let e = { status: 0, code: "ERR", response: "Patient Id " + inputData.id + " does not exist." }
                     return Promise.reject(e)
                 }
@@ -97,7 +97,7 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                 }
             }
             for (const key of Object.keys(patientArrayById)) {
-                console.log("check hereeeeee ============>", patientArrayById[key])
+               // console.log("check hereeeeee ============>", patientArrayById[key])
                 if (patientArrayById[key].relation.length > 0) {
                     let patchData = await bundleOp.setBundlePatch(patientArrayById[key].relation, "Person/" + patientArrayById[key].personId);
                     resourceData.push(patchData);
