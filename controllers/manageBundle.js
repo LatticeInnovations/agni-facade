@@ -38,7 +38,7 @@ let createBundle = async function (req, res, next) {
 
     }
     catch (e) {
-        console.log("the error is here:", e)
+        console.error("the error is here:", e)
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
                 status: 0,
@@ -81,7 +81,7 @@ let patchBundle = async function (req, res, next) {
 
     }
     catch (e) {
-        console.log(e)
+        console.error(e)
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
                 status: 0,
