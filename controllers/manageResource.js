@@ -6,7 +6,7 @@ let config = require("../config/config");
 let url = require('url');
 let createResource = async function (req, res, next) {
     try {
-        resourceType = req.params.resourceType;
+        let resourceType = req.params.resourceType;
         let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, {}, req.method, null, 0);
         let headers = {
             "Content-Type": "application/json"
@@ -43,7 +43,7 @@ let createResource = async function (req, res, next) {
 }
 const patchResource = async function (req, res, next) {
     try {
-        resourceType = req.params.resourceType;
+        let resourceType = req.params.resourceType;
         let link = config.baseUrl + resourceType;
         let resourceSavedData = await bundleFun.searchData(link, { "_id": req.params.id })
         let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, [], req.method, resourceSavedData.data.entry[0].resource, 0);
@@ -76,7 +76,6 @@ const patchResource = async function (req, res, next) {
 
 let updateResource = async function (req, res, next) {
     try {
-        resourceType = req.params.resourceType;
         let resourceData = await resourceFunc.getResource(req.params.resourceType, req.body, {}, req.method, null, 0);
         resourceData.id = req.params.id;
         let response = await axios.put(config.baseUrl + req.params.resourceType + "/" + req.params.id, resourceData, {
@@ -104,7 +103,7 @@ let updateResource = async function (req, res, next) {
 
 let deleteResource = async function (req, res, next) {
     try {
-        resourceType = req.params.resourceType;
+        let resourceType = req.params.resourceType;
     }
     catch (e) {
         console.log(e)
@@ -143,15 +142,13 @@ let getResourceUrl = async function (resourceType, queryParams) {
 
 let searchResourceData = async function (req, res, next) {
     try {
-        resourceType = req.params.resourceType;
-        let link = config.baseUrl + resourceType;
+        let resourceType = req.params.resourceType;
         let resouceUrl = await getResourceUrl(resourceType, req.query);
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
-       // console.log(responseData.data)
         let result = [];
         let resStatus = 1;
         if(responseData.data.total == 0) {
-            return res.status(200).json({ status: resStatus, message: "details fetched successfully", total: 0, data: null  })
+            return res.status(200).json({ status: resStatus, message: "details fetched successfully", total: 0, data: []  })
         }
         else if (resouceUrl.dataEntryLength == 1) {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
@@ -167,7 +164,6 @@ let searchResourceData = async function (req, res, next) {
                      let urlPart = url.parse(responseData.data.link[nextIndex].url, true);                   
                     let query = urlPart.query;
                     resStatus = query._offset >= responseData.data.total ? 2 : 1;
-                  //  console.log("reqQuery", reqQuery)
                 }                
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {

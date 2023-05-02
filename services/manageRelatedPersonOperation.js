@@ -53,9 +53,7 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                     if (linkList[j].target.reference.includes("RelatedPerson")) {
                         let id = linkList[j].target.reference.split('RelatedPerson/')[1];
                         let relatedPersonindex = FHIRData.findIndex(e => e.resource.resourceType == "RelatedPerson" && id == e.resource.id)
-                      //  console.log(FHIRData[relatedPersonindex].resource)
                         let patientId = FHIRData[relatedPersonindex].resource.patient.reference.split("/")
-                      //  console.log(patientId[1])
                         patientRelation.relationship.push({
                             "relativeId": patientId[1],
                             "patientIs": FHIRData[relatedPersonindex].resource.relationship[0].coding[0].code

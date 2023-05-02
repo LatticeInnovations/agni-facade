@@ -3,6 +3,7 @@ let relatedPerson = require("./manageRelatedPersonOperation");
 
 let getResource = async function (resType, inputData, FHIRData, reqMethod, fetchedResourceData) {
     try {
+        console.log("FHIR data in get resource", resType, FHIRData)
         let bundleData = [];
         switch (resType) {
             case "Patient":
