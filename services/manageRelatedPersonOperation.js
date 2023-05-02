@@ -77,7 +77,6 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                 // patient's person and related person data                  
                 let person1Link = await bundleOp.searchData(config.baseUrl + "Person", { link: "Patient/" + inputData.id, _include: "Person:link:RelatedPerson" });
                 if (person1Link.data.total != 1) {
-                   // console.log(person1Link)
                     let e = { status: 0, code: "ERR", response: "Patient Id " + inputData.id + " does not exist." }
                     return Promise.reject(e)
                 }
@@ -95,14 +94,12 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                 }
             }
             for (const key of Object.keys(patientArrayById)) {
-               // console.log("check hereeeeee ============>", patientArrayById[key])
                 if (patientArrayById[key].relation.length > 0) {
                     let patchData = await bundleOp.setBundlePatch(patientArrayById[key].relation, "Person/" + patientArrayById[key].personId);
                     resourceData.push(patchData);
                 }
             }
             resourceData = resourceData.concat(deleteList)
-            console.log("check patching of data", resourceData)
             return resourceData;
         }
 
@@ -158,7 +155,6 @@ let removeRelation = async function (patientId, removeList, relatedPersonList, p
         let deleteRelatedPersonID1, person1;
         for (let relation of removeList) {
             let relaterdPerson1Id = relatedPersonList.filter(e => e.resource.patient.reference == "Patient/" + relation.value.relativeId)[0];
-            // console.log(relaterdPerson1Id)
             if(relaterdPerson1Id == undefined) {
                 let e = { status: 0, code: "ERR", response: `Relation of ${patientId} with ${relation.value.relativeId} does not exist.` }
                 return Promise.reject(e);

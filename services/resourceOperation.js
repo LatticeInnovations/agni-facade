@@ -3,7 +3,7 @@ let relatedPerson = require("./manageRelatedPersonOperation");
 
 let getResource = async function (resType, inputData, FHIRData, reqMethod, fetchedResourceData) {
     try {
-        console.log("FHIR data in get resource", resType, FHIRData)
+        console.log("FHIR data in get resource", resType)
         let bundleData = [];
         switch (resType) {
             case "Patient":
@@ -28,8 +28,6 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
         let mergedArray = bundleResponse.map((data, i) => Object.assign({}, data, reqData[i]));
         if (["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "Patient")
             filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
-        // else if (["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "RelatedPerson")
-        //     filtereredData = mergedArray.filter(e => e.resource.resourceType == "Person");
         else
             filtereredData = mergedArray;
         filtereredData.forEach(element => {

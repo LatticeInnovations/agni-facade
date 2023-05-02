@@ -25,7 +25,7 @@ let createResource = async function (req, res, next) {
             return Promise.reject({ status: 0, code: "ERR", e: response })
     }
     catch (e) {
-        console.log(e)
+        console.error(e)
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
                 status: 0,
@@ -59,7 +59,7 @@ const patchResource = async function (req, res, next) {
             return Promise.reject({ status: 0, code: "ERR" })
     }
     catch (e) {
-        console.log(e)
+        console.error(e)
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
                 status: 0,
@@ -89,7 +89,7 @@ let updateResource = async function (req, res, next) {
             return Promise.reject({ status: 0, code: "ERR" })
     }
     catch (e) {
-        console.log(e)
+        console.error(e)
         if (e.code && e.code == "ERR") {
             return res.status(200).json({
                 status: 0,
@@ -106,7 +106,7 @@ let deleteResource = async function (req, res, next) {
         let resourceType = req.params.resourceType;
     }
     catch (e) {
-        console.log(e)
+        console.error(e)
         if (e.code && e.code == "ERR") {
             return res.status(200).json({
                 status: 0,
@@ -175,7 +175,7 @@ let searchResourceData = async function (req, res, next) {
 
     }
     catch (e) {
-        console.log("Error",e)
+        console.error("Error",e)
         if (e.code && e.code == "ERR") {
             return res.status(200).json({
                 status: 0,
