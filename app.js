@@ -56,14 +56,14 @@ app.use(bodyParser.json());
 
 app.use(logger(loggerFormat, {
   skip: function (req, res) {
-      return res.statusCode < 400
+      return res.statusCode >= 400
   },
   stream: process.stdout
 }));
 
 app.use(logger(loggerFormat, {
   skip: function (req, res) {
-      return res.statusCode >= 400
+      return res.statusCode < 400
   },
   stream: process.stderr
 }));
