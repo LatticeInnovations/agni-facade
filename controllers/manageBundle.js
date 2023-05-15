@@ -1,6 +1,6 @@
 let axios = require("axios");
 let resourceFun = require("../services/resourceOperation");
-let config = require("../config/config")
+let config = require("../config/nodeConfig")
 let validate = require("../services/validateRsource").validate;
 const { validationResult } = require('express-validator');
 
