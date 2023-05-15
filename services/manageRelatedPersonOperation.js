@@ -1,7 +1,7 @@
 let Person = require("../class/person");
 let RelatedPerson = require("../class/relatedPerson");
 let bundleOp = require("./bundleOperation");
-let config = require("../config/config");
+let config = require("../config/nodeConfig");
 
 let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMethod, fetchedResourceData) {
     try {

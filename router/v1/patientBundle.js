@@ -11,6 +11,7 @@ let bundleController = require("../../controllers/manageBundle")
  * Patient multiple resources
  * @route POST /v1/sync/{resourceType}
  * @group Bundle
+ * @security JWT
  * @param {Array.<resource>} resourceList.body.required
  * @param {string} resourceType.path.required
  * @returns {object} 201 - User data created successfully.
@@ -27,6 +28,7 @@ router.post("/:resourceType",  bundleController.createBundle);
  * Patch a resource values
  * @route PATCH /v1/sync/{resourceType}
  * @group Bundle
+ * @security JWT
  * @param {Array.<resource>} resource.body.required
  * @param {string} id.path.required - resource Id to be updated
  * @param {string} resourceType.path.required
