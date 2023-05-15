@@ -1,31 +1,55 @@
-require('dotenv').config()
-let config = function () {
-    switch (process.env.NODE_ENV) {
-        case 'prod': return {
-            port: '3001',
-            timeout: 120000,
-            version: process.env.version,
-            baseUrl: process.env.FHIRServerBaseURL
-        };
-        case 'local': return {
-            port: process.env.PORT,
-            timeout: 120000,
-            version: process.env.version,
-            baseUrl: process.env.FHIRServerBaseURL
-
-        };
-        case 'dev': return {
-            port: process.env.PORT,
-            timeout: 120000,
-            version: process.env.version,
-            baseUrl: process.env.FHIRServerBaseURL
-        };
-        case 'test': return {
-            port: '3001',
-            timeout: 20000,
-            version: process.env.version,
-            baseUrl: process.env.FHIRServerBaseURL
-        };
+require('dotenv').config(); // this is important!
+module.exports = {
+    "local": {
+        "username": process.env.DB_USER,
+        "password": process.env.DB_PASSWORD,
+        "database": process.env.DB_NAME,
+        "host": process.env.DB_HOST,
+        "dialect": process.env.DB_DIALECT,
+        pool: {
+            max: 100,
+            min: 0,
+            acquire: 30000,
+            idle: 10000
+        }
+    },
+    "dev": {
+        "username": process.env.DB_USER,
+        "password": process.env.DB_PASSWORD,
+        "database": process.env.DB_NAME,
+        "host": process.env.DB_HOST,
+        "dialect": process.env.DB_DIALECT,
+        pool: {
+            max: 100,
+            min: 0,
+            acquire: 30000,
+            idle: 10000
+        }
+    },
+    "test": {
+        "username": process.env.DB_USER,
+        "password": process.env.DB_PASSWORD,
+        "database": process.env.DB_NAME,
+        "host": process.env.DB_HOST,
+        "dialect": process.env.DB_DIALECT,
+        pool: {
+            max: 100,
+            min: 0,
+            acquire: 30000,
+            idle: 10000
+        }
+    },
+    "prod": {
+        "username": process.env.DB_USER,
+        "password": process.env.DB_PASSWORD,
+        "database": process.env.DB_NAME,
+        "host": process.env.DB_HOST,
+        "dialect": process.env.DB_DIALECT,
+        pool: {
+            max: 100,
+            min: 0,
+            acquire: 30000,
+            idle: 10000
+        }
     }
-};
-module.exports = new config();
+}; 

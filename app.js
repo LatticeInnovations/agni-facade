@@ -3,7 +3,8 @@ const app = express();
 const logger = require('morgan')
 const bodyParser =  require('body-parser')
 const expressSwagger = require('express-swagger-generator')(app)
-const cors = require('cors')
+const cors = require('cors');
+const cookieParser = require("cookie-parser");
 
 let options = {
     swaggerDefinition: {
@@ -49,10 +50,12 @@ app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Blu
  
 app.use(cors());
 
+//console.log= function(){}
 
-app.use(bodyParser.urlencoded({
-  extended: false}))
+app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json());
+
+app.use(cookieParser());
 
 app.use(logger(loggerFormat, {
   skip: function (req, res) {
@@ -86,5 +89,21 @@ app.use((error, req, res, next) => {
     }
   })
 })
+
+const { exec } = require('child_process');
+
+(async function () {
+    await new Promise((resolve, reject) => {
+        const migrate = exec(
+            'sequelize db:migrate',
+            { env: process.env },
+            err => (err ? reject(err) : resolve())
+        );
+
+        // Forward stdout+stderr to this process
+        migrate.stdout.pipe(process.stdout);
+        migrate.stderr.pipe(process.stderr);
+    });
+}());
 
 module.exports = app;

@@ -7,8 +7,8 @@
 let app = require("../app")
 let debug = require('debug')('glowship-backend:server');
 let http = require('http');
-let env_port =  require('../config/config').port;
-let timeout = require('../config/config').timeout
+let env_port =  require('../config/nodeConfig').port;
+let timeout = require('../config/nodeConfig').timeout
 /**
  * Get port from environment and store in Express.
  */
