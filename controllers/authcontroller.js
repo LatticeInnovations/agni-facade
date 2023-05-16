@@ -3,14 +3,19 @@ const db = require('../models/index');
 let sendSms = require('../utils/twilio.util');
 let emailContent = require("../utils/emailContent");
 let util = require('util');
-const authentication_detail = require("../models/authentication_detail");
 let sendEmail = require("../utils/sendgrid.util").sendEmail
 let jwt = require("jsonwebtoken");
 const config = require("../config/nodeConfig");
+let { validationResult } = require('express-validator');
 
 // login by using email or mobile number to send OTP
 let login = async function (req, res, next) {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return response.sendInvalidDataError(res, errors);
+        }
+
         let isEmail = checkIsEmail(req.body.userContact);
         let contact = isEmail ? 'user_email' : 'mobile_number';
         let userDetail = await getUserDetail(req, contact);
@@ -23,15 +28,15 @@ let login = async function (req, res, next) {
         let diffMinutes = authentication_detail != null ? await checkAuthAttempts(authentication_detail.dataValues.lockTime, currentTime) : 0;       
         let otp = generateOTP();
         let expireTime = new Date(currentTime);
-        expireTime = expireTime.setMinutes(expireTime.getMinutes() + 2);
+        expireTime = expireTime.setMinutes(expireTime.getMinutes() + config.OTPExpireMin);
         console.log("check exp time and current time again", currentTime, expireTime, diffMinutes);
 
         // total freeze time is 5 min.
-        if (authentication_detail != null && authentication_detail.dataValues.login_attempts >= 5 && diffMinutes > 0) {
+        if (authentication_detail != null && authentication_detail.dataValues.login_attempts >= config.totalLoginAttempts && diffMinutes > 0) {
             let e = { status: 0, message: "You have 0 attempts left. Please try after 5 mins"}
             return res.status(401).json(e)
         }
-        else if (authentication_detail != null && authentication_detail.dataValues.login_attempts < 5) {
+        else if (authentication_detail != null && authentication_detail.dataValues.login_attempts < config.totalLoginAttempts) {
             loginAttempts = authentication_detail.dataValues.login_attempts;
         }        
         messageDetail = await sendOTP(isEmail, userDetail, otp); 
@@ -60,6 +65,10 @@ let login = async function (req, res, next) {
 // authenticate OTP
 let OTPAuthentication = async function (req, res, next) {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return response.sendInvalidDataError(res, errors);
+        }
         let isEmail = checkIsEmail(req.body.userContact);
         let contact = isEmail ? 'user_email' : 'mobile_number';
         let userDetail = await getUserDetail(req, contact);
@@ -79,25 +88,25 @@ let OTPAuthentication = async function (req, res, next) {
         else if (userDetail == null || !userDetail.dataValues.is_active)
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
             // if no of attempts is > 5 and 5 min freeze time has not elapsed
-        else if (authentication_detail.dataValues.login_attempts >= 5 && diffMinutes > 0) {
-            loginAttempts = 5;
-            attemptsLeft = 5 - loginAttempts;
+        else if (authentication_detail.dataValues.login_attempts >= config.totalLoginAttempts && diffMinutes > 0) {
+            loginAttempts = config.totalLoginAttempts;
+            attemptsLeft = config.totalLoginAttempts - loginAttempts;
             e = { status: 0, message: "You have 0 attempts left. Please try after 5 mins"};
             return res.status(401).json(e)
         }
         else if (req.body.otp != authentication_detail.dataValues.otp) {
-            if (authentication_detail.dataValues.login_attempts >= 5 && diffMinutes <= 0) {
+            if (authentication_detail.dataValues.login_attempts >= config.totalLoginAttempts && diffMinutes <= 0) {
                 loginAttempts = 1;
-                attemptsLeft = 5 - loginAttempts;
+                attemptsLeft = config.totalLoginAttempts - loginAttempts;
                 e = { status: 0, message: `Invalid OTP, you have ${attemptsLeft} attempts left.`, "code": "ERR"}
             }
             else {
                 let lockTime = new Date(currentTime);
-                authentication_detail.dataValues.lockTime = authentication_detail.dataValues.login_attempts == 4? lockTime.setMinutes(lockTime.getMinutes() + 5) : null;
+                authentication_detail.dataValues.lockTime = authentication_detail.dataValues.login_attempts == config.totalLoginAttempts - 1? lockTime.setMinutes(lockTime.getMinutes() + config.lockTimeInMin) : null;
                 loginAttempts = authentication_detail.dataValues.login_attempts + 1;
-                attemptsLeft = 5 - loginAttempts;
+                attemptsLeft = config.totalLoginAttempts - loginAttempts;
                 console.log("Check if it's in this section: ", is5MinTimer)
-                let errMessage = loginAttempts >= 5 ? "You have 0 attempts left. Please try after 5 mins" : `Invalid OTP, you have ${attemptsLeft} attempts left.`;
+                let errMessage = loginAttempts >= config.totalLoginAttempts ? "You have 0 attempts left. Please try after 5 mins" : `Invalid OTP, you have ${attemptsLeft} attempts left.`;
                 e = { status: 0, message: errMessage }
             }
             let upsertResult = await upsertOTP(authentication_detail.dataValues.otp, userDetail.dataValues, currentTime, authentication_detail.dataValues.expire_time, loginAttempts, authentication_detail.dataValues.lockTime);

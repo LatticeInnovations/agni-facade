@@ -1,6 +1,7 @@
 let express = require("express");
 let router = express.Router();
-let authController = require("../../controllers/authcontroller")
+let authController = require("../../controllers/authcontroller");
+let { check, oneOf, checkIf, body } = require('express-validator');
 /**
  * @typedef login
  * @property {string} userContact.required User mobile number or email address - eg: tulika@thelattice.in
@@ -18,7 +19,9 @@ let authController = require("../../controllers/authcontroller")
  * @returns {Error} 504 - Database connection error
  */
 
-router.post("/login", authController.login);
+router.post("/login", [oneOf([
+    check("userContact").notEmpty().isEmail().isLength({max: 70}), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})
+])], authController.login);
 
 /**
 * @typedef OTPAuth
@@ -38,12 +41,9 @@ router.post("/login", authController.login);
 * @returns {Error} 504 - Database connection error
 */
 
-router.post("/otp", authController.OTPAuthentication);
-
-
-
-
-
+router.post("/otp",[oneOf([
+    check("userContact").notEmpty().isEmail().isLength({max: 70}), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})
+]), check("otp").notEmpty().isNumeric().isLength({min: 6, max: 6})], authController.OTPAuthentication);
 
 
 module.exports = router
