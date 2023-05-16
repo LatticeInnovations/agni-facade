@@ -8,7 +8,10 @@ let config = function () {
             twilioNumber: process.env.twilioNumber,
             sendgridKey: process.env.sendgridKey,
             mailFrom: "dev@thelattice.in",
-            jwtSecretKey: process.env.jwtSecretKey
+            jwtSecretKey: process.env.jwtSecretKey,
+            lockTimeInMin: 5,
+            OTPExpireMin: 2,
+            totalLoginAttempts: 5
         };
 };
 module.exports = new config();
