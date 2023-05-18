@@ -29,11 +29,10 @@ let login = async function (req, res, next) {
         let otp = generateOTP();
         let expireTime = new Date(currentTime);
         expireTime = expireTime.setMinutes(expireTime.getMinutes() + config.OTPExpireMin);
-        console.log("check exp time and current time again", currentTime, expireTime, diffMinutes);
 
         // total freeze time is 5 min.
         if (authentication_detail != null && authentication_detail.dataValues.login_attempts >= config.totalLoginAttempts && diffMinutes > 0) {
-            let e = { status: 0, message: "You have 0 attempts left. Please try after 5 mins"}
+            let e = { status: 0, message: "Too many attempts. Please try after 5 mins"}
             return res.status(401).json(e)
         }
         else if (authentication_detail != null && authentication_detail.dataValues.login_attempts < config.totalLoginAttempts) {
@@ -91,26 +90,24 @@ let OTPAuthentication = async function (req, res, next) {
         else if (authentication_detail.dataValues.login_attempts >= config.totalLoginAttempts && diffMinutes > 0) {
             loginAttempts = config.totalLoginAttempts;
             attemptsLeft = config.totalLoginAttempts - loginAttempts;
-            e = { status: 0, message: "You have 0 attempts left. Please try after 5 mins"};
+            e = { status: 0, message: "Too many attempts. Please try after 5 mins"};
             return res.status(401).json(e)
         }
         else if (req.body.otp != authentication_detail.dataValues.otp) {
             if (authentication_detail.dataValues.login_attempts >= config.totalLoginAttempts && diffMinutes <= 0) {
                 loginAttempts = 1;
                 attemptsLeft = config.totalLoginAttempts - loginAttempts;
-                e = { status: 0, message: `Invalid OTP, you have ${attemptsLeft} attempts left.`, "code": "ERR"}
+                e = { status: 0, message: `Invalid OTP`, "code": "ERR"}
             }
             else {
                 let lockTime = new Date(currentTime);
                 authentication_detail.dataValues.lockTime = authentication_detail.dataValues.login_attempts == config.totalLoginAttempts - 1? lockTime.setMinutes(lockTime.getMinutes() + config.lockTimeInMin) : null;
                 loginAttempts = authentication_detail.dataValues.login_attempts + 1;
                 attemptsLeft = config.totalLoginAttempts - loginAttempts;
-                console.log("Check if it's in this section: ", is5MinTimer)
-                let errMessage = loginAttempts >= config.totalLoginAttempts ? "You have 0 attempts left. Please try after 5 mins" : `Invalid OTP, you have ${attemptsLeft} attempts left.`;
+                let errMessage = loginAttempts >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : `Invalid OTP`;
                 e = { status: 0, message: errMessage }
             }
             let upsertResult = await upsertOTP(authentication_detail.dataValues.otp, userDetail.dataValues, currentTime, authentication_detail.dataValues.expire_time, loginAttempts, authentication_detail.dataValues.lockTime);
-            console.log("============>", loginAttempts, attemptsLeft)
             return res.status(401).json(e)
         }
         else {            
