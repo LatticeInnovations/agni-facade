@@ -18,7 +18,7 @@ let login = async function (req, res, next) {
         let isEmail = checkIsEmail(req.body.userContact);
         let contact = isEmail ? 'user_email' : 'mobile_number';
         let userDetail = await getUserDetail(req, contact);
-        let loginAttempts = 0;
+        let loginAttempts = 0, otp = 0;;
         let OTPGenerateAttempt = 1;
         if (userDetail == null || !userDetail.dataValues.is_active)
             return res.status(404).json({ status: 0, message: "Unauthorized user" });
@@ -40,9 +40,11 @@ let login = async function (req, res, next) {
             OTPGenerateAttempt = authentication_detail.dataValues.otp_generate_attempt + 1;
         }
 
-        let otp = 0;
-        if(req.body.userContact == 1111111111 || req.body.userContact == "devtest@gmail.com") {
-            otp = 111111;
+       if(req.body.userContact == 1111111111 || req.body.userContact == "devtest@gmail.com") {            otp = 111111;
+        }else if(req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") {
+            otp = 222222;
+            OTPGenerateAttempt = 1;
+            loginAttempts = 0;
         }
         else {
              otp = generateOTP();
@@ -92,8 +94,14 @@ let OTPAuthentication = async function (req, res, next) {
             loginAttempts = authentication_detail.dataValues.login_attempts = 0;
             authentication_detail.dataValues.otp_generate_attempt = 0;
         }
-        // if otp is invalid
-        if (req.body.otp != authentication_detail.dataValues.otp) {
+       
+        // bypass for testing purpose
+        if((req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") && req.body.otp != 222222) {
+            loginAttempts = 1;
+            resMessage = { status: 0, message: "Invalid OTP" };
+        }
+         // if otp is invalid
+        else if (req.body.otp != authentication_detail.dataValues.otp) {
             apiStatus = 401; 
             loginAttempts = authentication_detail.dataValues.login_attempts + 1;
             let e = loginAttempts >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : `Invalid OTP`;
@@ -108,7 +116,7 @@ let OTPAuthentication = async function (req, res, next) {
             let userProfile = {
                 "userId": userDetail.dataValues.user_id, "userName": userDetail.dataValues.user_name
             }
-            let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '1m' });
+            let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '5d' });
             upsertOTP(null, userDetail.dataValues, timeData.currentTime, null, 0, authentication_detail.dataValues.otp_generate_attempt);
             resMessage = { status: 1, message: "Logged in successfully", data: { "token": `Bearer ${token}` } }
         }
