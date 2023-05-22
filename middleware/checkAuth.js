@@ -22,7 +22,7 @@ router.use(function (req, res, next) {
                     if(err.name == 'TokenExpiredError')
                         return res.status(401).json({ status: 0, message: 'Session expired.' });
                     else
-                        return res.status(401).json({ status: 0, message: 'Failed to authenticate token.' });
+                        return res.status(401).json({ status: 0, message: 'Unauthorized' });
             } else {
                 // if everything is good, save to request for use in other routes
                 console.log(decoded);
