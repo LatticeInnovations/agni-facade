@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     otp: DataTypes.INTEGER,
     expire_time: DataTypes.DATE,
     login_attempts: DataTypes.INTEGER,
-    lockTime: DataTypes.DATE,
+    otp_generate_attempt: DataTypes.INTEGER,
     createdOn: DataTypes.DATE
   }, {
     sequelize,

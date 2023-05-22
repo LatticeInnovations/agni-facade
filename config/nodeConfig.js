@@ -9,9 +9,11 @@ let config = function () {
             sendgridKey: process.env.sendgridKey,
             mailFrom: "dev@thelattice.in",
             jwtSecretKey: process.env.jwtSecretKey,
+            totalLoginAttempts: 5,
             lockTimeInMin: 5,
             OTPExpireMin: 2,
-            totalLoginAttempts: 5
+            OTPGenAttempt: 5 
+
         };
 };
 module.exports = new config();

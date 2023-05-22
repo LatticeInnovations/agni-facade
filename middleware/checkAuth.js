@@ -18,11 +18,11 @@ router.use(function (req, res, next) {
         // verifies secret and checks exp
         jwt.verify(token, secretKey,function (err, decoded) {
             if (err) {
-                console.log("dsadsad", err)
-                return res.status(401).json({ error: 1, message: 'Failed to authenticate token.' });
-            } else if (decoded.user_type_id && isBlocked(decoded)) {
-                console.log("dsadsad1", decoded)
-                return res.status(401).json({ error: 1, message: 'Failed to authenticate token.' });
+                    console.log(err, err.name )
+                    if(err.name == 'TokenExpiredError')
+                        return res.status(401).json({ status: 0, message: 'Session expired.' });
+                    else
+                        return res.status(401).json({ status: 0, message: 'Failed to authenticate token.' });
             } else {
                 // if everything is good, save to request for use in other routes
                 console.log(decoded);
@@ -33,7 +33,7 @@ router.use(function (req, res, next) {
     } else {
         // if there is no token
         // return an error
-        return res.status(403).send({ success: 0, message: 'No token provided.' });
+        return res.status(403).send({ status: 0, message: 'No token provided.' });
     }
 });
 
