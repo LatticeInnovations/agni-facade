@@ -20,7 +20,10 @@ let getResourceUrl = async function (resourceType, queryParams) {
                 "patient._id" : patientIds,
                 "_total": "accurate"
             };
-            dataEntryLength = 1;
+        case "Medication" :
+            url = config.baseUrl + resourceType;
+            queryParams = queryParams;
+            dataEntryLength = 2;
             break;
 
     }
@@ -32,7 +35,9 @@ let searchResourceData = async function (req, res, next) {
     try {
         let resourceType = req.params.resourceType;
         let resouceUrl = await getResourceUrl(resourceType, req.query);
+        console.log(resouceUrl)
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        console.log(responseData.data.entry)
         let result = [];
         let resStatus = 1;
         if( !responseData.data.entry || responseData.data.total == 0) {

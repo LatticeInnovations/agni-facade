@@ -1,6 +1,6 @@
 let patient = require("./managePatientOperation");
 let relatedPerson = require("./manageRelatedPersonOperation");
-
+let medication = require("./manageMedication")
 let getResource = async function (resType, inputData, FHIRData, reqMethod, fetchedResourceData) {
     try {
         console.log("FHIR data in get resource", resType)
@@ -12,7 +12,9 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
             case "RelatedPerson":
                 bundleData = await relatedPerson.setRelatedPersonData(inputData, FHIRData, reqMethod, fetchedResourceData)
                 break;
-
+            case "Medication":  bundleData =await medication.setMedicationData(resType, inputData, FHIRData, reqMethod)
+            break;
+            
         }
 
         return bundleData;
