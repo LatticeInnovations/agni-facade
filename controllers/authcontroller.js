@@ -21,7 +21,7 @@ let login = async function (req, res, next) {
         let loginAttempts = 0, otp = 0;;
         let OTPGenerateAttempt = 1;
         if (userDetail == null || !userDetail.dataValues.is_active)
-            return res.status(404).json({ status: 0, message: "Unauthorized user" });
+            return res.status(401).json({ status: 0, message: "Unauthorized user" });
         let authentication_detail = userDetail.dataValues.authentication_detail;
         let timeData = await calculateTime(authentication_detail);
         // if user comes back after >= 5 mins reset every value 
@@ -76,7 +76,7 @@ let OTPAuthentication = async function (req, res, next) {
         let contact = isEmail ? 'user_email' : 'mobile_number';
         let userDetail = await getUserDetail(req, contact);
         if (userDetail == null || !userDetail.dataValues.is_active)
-            return res.status(404).json({ status: 0, message: "Unauthorized user" });
+            return res.status(401).json({ status: 0, message: "Unauthorized user" });
         let loginAttempts = 0, apiStatus = 200;
         let resMessage = {};
         let authentication_detail = userDetail.dataValues.authentication_detail;
