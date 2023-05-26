@@ -4,7 +4,6 @@ let resourceController = require("../../controllers/manageResource");
 
 
 
-
 // /**
 //  * Delete a resource
 //  * @route DELETE /v1/{resourceType}/{id}
@@ -20,7 +19,6 @@ let resourceController = require("../../controllers/manageResource");
 //  */
 
 //router.delete("/:resourceType/:id", resourceController.deleteResource);  
-
 
 /**
  * Get resource list
@@ -38,6 +36,8 @@ let resourceController = require("../../controllers/manageResource");
  */
 
 router.get("/:resourceType", resourceController.searchResourceData); 
+
+
 
 
 

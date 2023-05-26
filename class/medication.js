@@ -18,7 +18,6 @@ class Medication {
         }
     }
     getDoseForm() {
-        console.log(this.fhirResource.form)
         if (!checkEmptyData(this.fhirResource.form) && this.fhirResource.form.coding) {
             this.medicine_obj.doseForm = this.fhirResource.form.coding[0].display;
             this.medicine_obj.doseFormCode = this.fhirResource.form.coding[0].code
