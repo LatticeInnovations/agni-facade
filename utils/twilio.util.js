@@ -5,16 +5,18 @@ const config = require('../config/nodeConfig')
 const client = require('twilio')(accountid, authToken);
 let sendSms = async function (phoneNumber, text) {
   try {
+    console.info("sms tak aaya")
     const message = await client.messages.create({
         body: text,
         from: config.twilioNumber,
         to: "+91" + phoneNumber
       })
+      console.info("sms response", message);
       return message;
   }
   catch (error) {
-    console.error(error);
-    return Promise.reject(error)
+      console.log("error is: ", error)
+        return Promise.reject(error)
   }
 }
 
