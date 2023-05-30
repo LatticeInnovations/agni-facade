@@ -154,7 +154,7 @@ async function sendOTP(isEmail, userDetail, otp) {
               messageDetail = await sendEmail(mailData);
         }
         else {
-            let text = `Hello ${userDetail.dataValues.user_name}, Please use OTP ${otp} to login to agni App`;
+            let text = `<#> Use OTP ${otp} to login to agni App\noJp0khKsmyW`;
               messageDetail = await sendSms(userDetail.dataValues.mobile_number, text);
         }
     }

@@ -26,6 +26,11 @@ let getResourceUrl = async function (resourceType, queryParams) {
             url = config.baseUrl + resourceType;
             queryParams = queryParams;
             break;
+        case "MedicationRequest" : 
+            url = config.baseUrl + resourceType;
+            queryParams = queryParams;
+            dataEntryLength = 1;
+            break;
 
     }
 
@@ -38,7 +43,7 @@ let searchResourceData = async function (req, res, next) {
         let resouceUrl = await getResourceUrl(resourceType, req.query);
         console.log("resource url", resouceUrl)
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
-        console.log(responseData.data.entry)
+        //console.log(responseData.data.entry)
         let result = [];
         let resStatus = 1;
         if( !responseData.data.entry || responseData.data.total == 0) {

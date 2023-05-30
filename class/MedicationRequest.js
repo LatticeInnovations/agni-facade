@@ -13,10 +13,14 @@ class MedicationRquest {
    setIdentifier() {
     this.fhirResource.identifier = this.medReqObj.identifier;
    }
+   getIdentifier() {
+    this.medReqObj.identifier = this.fhirResource.identifier;
+   }
 
     getId() {
-        this.medReqObj.medFirId = this.fhirResource.id
+        this.medReqObj.medFhirId = this.fhirResource.medicationReference.reference.split("/")[1];
     }
+
 
     setIntent() {
         this.fhirResource.intent = "order";
@@ -26,8 +30,7 @@ class MedicationRquest {
         this.fhirResource.medicationReference.reference = "Medication/" + this.medReqObj.medFhirId
     }
 
-    setGroupIdentifier() {
-      
+    setGroupIdentifier() {      
         this.fhirResource.groupIdentifier = {
             "system": "http://hospital.smarthealthit.org/prescriptions",
             "value": this.medReqObj.grpIdentify
@@ -40,7 +43,7 @@ class MedicationRquest {
     }
 
     getPatientReference() {
-        this.medReqObj.patientId = this.fhirResource.subject.reference;
+        this.medReqObj.patientId = this.fhirResource.subject.reference.split("/")[1];
     }
 
     setEncounter() {
@@ -53,6 +56,12 @@ class MedicationRquest {
         }
     }
 
+    getNote() {
+        if(!checkEmptyData(this.fhirResource.note)) {
+            this.medReqObj.note = this.fhirResource.note[0].text;
+        }
+    }
+
     setEffectiveDosePeriod() {
         let startDate = this.medReqObj.generatedOn;
         let endDate = new Date(startDate);  
@@ -60,6 +69,17 @@ class MedicationRquest {
         this.fhirResource.effectiveDosePeriod = {
             start: startDate,
             end: endDate
+        }
+    }
+
+    getDoseInstruction() {
+        this.medReqObj.qtyPerDose = this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.value;
+        this.medReqObj.frequency = this.fhirResource.dosageInstruction[0].timing.repeat.frequency;
+        this.medReqObj.doseForm = this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.unit;
+        this.medReqObj.duration = this.fhirResource.dosageInstruction[0].timing.repeat.period;
+        console.log()
+        if(this.fhirResource.dosageInstruction[0].additionalInstruction) {
+            this.medReqObj.timing = this.fhirResource.dosageInstruction[0].additionalInstruction[0].coding[0].code;
         }
     }
 
@@ -122,11 +142,11 @@ class MedicationRquest {
 
     getFhirToJson() {
         this.getId();
-        this.getEncounterTime();
-        this.getPatientReference();
+        this.getNote();
+        this.getDoseInstruction();
     }
 
-    getEncounterResource() {
+    getMedReqResource() {
         return this.medReqObj;
     }
 

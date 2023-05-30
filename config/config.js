@@ -6,6 +6,7 @@ module.exports = {
         "database": process.env.DB_NAME,
         "host": process.env.DB_HOST,
         "dialect": process.env.DB_DIALECT,
+        "logging": false,
         pool: {
             max: 100,
             min: 0,
@@ -19,6 +20,7 @@ module.exports = {
         "database": process.env.DB_NAME,
         "host": process.env.DB_HOST,
         "dialect": process.env.DB_DIALECT,
+        "logging": false,
         pool: {
             max: 100,
             min: 0,
@@ -32,6 +34,7 @@ module.exports = {
         "database": process.env.DB_NAME,
         "host": process.env.DB_HOST,
         "dialect": process.env.DB_DIALECT,
+        "logging": false,
         pool: {
             max: 100,
             min: 0,
@@ -45,6 +48,7 @@ module.exports = {
         "database": process.env.DB_NAME,
         "host": process.env.DB_HOST,
         "dialect": process.env.DB_DIALECT,
+        "logging": false,
         pool: {
             max: 100,
             min: 0,

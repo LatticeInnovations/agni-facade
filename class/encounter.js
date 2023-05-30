@@ -18,7 +18,9 @@ class Encounter {
     }
     
     getId() {
+        console.log(this.fhirResource)
         this.prescriptionObj.prescriptionId = this.fhirResource.identifier[0].value;
+        this.prescriptionObj.prescriptionFhirId = this.fhirResource.id;
     }
 
     setPatientReference() {
@@ -26,7 +28,7 @@ class Encounter {
     }
 
     getPatientReference() {
-        this.prescriptionObj.patientId = this.fhirResource.subject.reference;
+        this.prescriptionObj.patientId = this.fhirResource.subject.reference.split("/")[1];
     }
 
     setEncounterTime() {
@@ -37,7 +39,7 @@ class Encounter {
     }
 
     getEncounterTime() {
-        this.prescriptionObj.generatedOn = this.fhirResource.authoredOn;
+        this.prescriptionObj.generatedOn = this.fhirResource.period.start;
     }
 
     getUserInputToFhir() {

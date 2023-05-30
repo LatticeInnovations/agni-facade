@@ -43,9 +43,23 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
             }
         }
         else {
-            // let medication = new Medication(reqInput, FHIRData);
-            // medication.getFHIRToUserInput();
-            // resource_result.push(medication.getMedicationResource())
+            let encounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource);
+            for(let encData of encounterList) {
+                let encounter = new Encounter({}, encData);
+                encounter.getFhirToJson();
+                let encounterData = encounter.getEncounterResource();
+            let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);
+             encounterData.prescription = [];
+                    for(let medReq of medReqList) {                     
+                            let medReqData = new MedicationRquest({}, medReq);
+                            medReqData.getFhirToJson();
+                            let medData = medReqData.getMedReqResource();
+                            medData.qtyPrescribed = medData.qtyPerDose * medData.frequency * medData.duration;
+                            encounterData.prescription.push(medData)
+                    }
+                resource_result.push(encounterData)
+            }
+
         }
         return resource_result;
     }
