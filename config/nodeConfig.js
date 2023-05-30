@@ -12,7 +12,8 @@ let config = function () {
             totalLoginAttempts: 5,
             lockTimeInMin: 5,
             OTPExpireMin: 2,
-            OTPGenAttempt: 5 
+            OTPGenAttempt: 5,
+            OTPHash: process.env.OTPHash
 
         };
 };

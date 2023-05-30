@@ -5,7 +5,7 @@ const bodyParser =  require('body-parser')
 const expressSwagger = require('express-swagger-generator')(app)
 const cors = require('cors');
 const cookieParser = require("cookie-parser");
-
+require('dotenv').config();
 let options = {
     swaggerDefinition: {
         info: {
@@ -50,7 +50,7 @@ app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Blu
  
 app.use(cors());
 
-//console.log= function(){}
+console.log= function(){}
 
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json());

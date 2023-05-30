@@ -47,8 +47,14 @@ let login = async function (req, res, next) {
             loginAttempts = 0;
         }
         else {
-             otp = generateOTP();
-             await sendOTP(isEmail, userDetail, otp);
+             otp =  generateOTP();
+             console.log("check if otp is generated before sending")
+             try {
+                  await sendOTP(isEmail, userDetail, otp);
+             }
+             catch(e) {
+                    return res.status(500).json({status: 0, message: "Unable to process. Please try again."})
+             }
         }            
 
         await upsertOTP(otp, userDetail.dataValues, timeData.currentTime, timeData.expireTime, loginAttempts, OTPGenerateAttempt);
@@ -138,7 +144,6 @@ async function calculateTime(authentication_detail) {
     let expireTimeDiffOTP = authentication_detail != null ? await checkAuthAttempts(authentication_detail.dataValues.expire_time, currentTime) : 0;
      let lastAttemptTimeDiff = authentication_detail != null ? await checkAuthAttempts(currentTime, authentication_detail.dataValues.createdOn) : 0;
     let data = { currentTime, expireTime, expireTimeDiffOTP, lastAttemptTimeDiff };
-    console.log(data)
     return data;
 }
 
@@ -151,14 +156,18 @@ async function sendOTP(isEmail, userDetail, otp) {
                 subject: util.format(`${(emailContent.find(e => e.notification_type_id == 1).subject)}`,),
                 content: util.format(`${(emailContent.find(e => e.notification_type_id == 1).content)}`, userDetail.dataValues.user_name, otp.toString())
             }
-              messageDetail = await sendEmail(mailData);
+            console.info("check mail data")
+            messageDetail = await sendEmail(mailData);
         }
         else {
-            let text = `Hello ${userDetail.dataValues.user_name}, Please use OTP ${otp} to login to agni App`;
-              messageDetail = await sendSms(userDetail.dataValues.mobile_number, text);
+            let text = `<#> Use OTP ${otp} to login to agni App\n` + config.OTPHash;
+            console.log("check text message", text);
+            messageDetail = await sendSms(userDetail.dataValues.mobile_number, text);
+            console.log(messageDetail, messageDetail.code)
         }
     }
     catch(e) {
+        console.error(" check if message is sent1111", e);
         return Promise.reject(e);
     }
 

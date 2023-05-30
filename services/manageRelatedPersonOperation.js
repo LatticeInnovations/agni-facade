@@ -40,7 +40,9 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
         }
         else if (["GET", "get"].includes(reqMethod)) {
             let outputArray = [];
+            console.log(FHIRData)
             let personResource = FHIRData.filter(e => e.resource.resourceType == "Person");
+
             for (let i = 0; i < personResource.length; i++) {
                 let linkList = personResource[i].resource.link;
                 let patientIdIndex = linkList.findIndex(e => e.target.reference.includes("Patient"));
