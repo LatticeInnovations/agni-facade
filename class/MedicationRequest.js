@@ -1,6 +1,7 @@
 let { checkEmptyData } = require("../services/CheckEmpty");
 const { v4: uuidv4 } = require('uuid');
-let timing = require("../utils/medtime.json")
+let timing = require("../utils/medtime.json");
+const doseFormList = require("../utils/dosForm.json")
 class MedicationRquest {
     medReqObj;
     fhirResource;
@@ -76,6 +77,7 @@ class MedicationRquest {
         this.medReqObj.qtyPerDose = this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.value;
         this.medReqObj.frequency = this.fhirResource.dosageInstruction[0].timing.repeat.frequency;
         this.medReqObj.doseForm = this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.unit;
+        this.medReqObj.doseFormCode = doseFormList[this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.unit];
         this.medReqObj.duration = this.fhirResource.dosageInstruction[0].timing.repeat.period;
         console.log()
         if(this.fhirResource.dosageInstruction[0].additionalInstruction) {
@@ -104,7 +106,7 @@ class MedicationRquest {
                         "value":this.medReqObj.qtyPerDose,
                         "unit":this.medReqObj.doseForm,
                         "system":"http://snomed.info/sct",
-                        "code": this.medReqObj.doseFormCode
+                        "code": doseFormList[this.medReqObj.doseForm]
                      }
 
                 }

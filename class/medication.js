@@ -35,8 +35,8 @@ class Medication {
                     return e.itemCodeableConcept.coding[0].code})
                 .join("+");
             if(this.fhirResource.ingredient[0].strength) {
-                this.medicine_obj.medUnit = this.fhirResource.ingredient[0].strength.numerator.code;
-                this.medicine_obj.medNumeratorVal = this.fhirResource.ingredient[0].strength.numerator.value;
+                this.medicine_obj.medUnit = this.fhirResource.ingredient[0].strength.denominator.code;
+                this.medicine_obj.medNumeratorVal = this.fhirResource.ingredient[0].strength.denominator.value;
             }
         }
     }

@@ -29,6 +29,8 @@ let getResourceUrl = async function (resourceType, queryParams) {
         case "MedicationRequest" : 
             url = config.baseUrl + resourceType;
             queryParams = queryParams;
+            queryParams.patient = queryParams.patientId;
+            delete queryParams.patientId;
             queryParams._include = "MedicationRequest:encounter:Encounter";
             dataEntryLength = 1;
             break;
