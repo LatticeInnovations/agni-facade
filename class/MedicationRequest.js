@@ -61,6 +61,9 @@ class MedicationRquest {
         if(!checkEmptyData(this.fhirResource.note)) {
             this.medReqObj.note = this.fhirResource.note[0].text;
         }
+        else {
+            this.medReqObj.note = null;
+        }
     }
 
     setEffectiveDosePeriod() {
@@ -82,6 +85,9 @@ class MedicationRquest {
         console.log()
         if(this.fhirResource.dosageInstruction[0].additionalInstruction) {
             this.medReqObj.timing = this.fhirResource.dosageInstruction[0].additionalInstruction[0].coding[0].code;
+        }
+        else {
+            this.medReqObj.timing = null;
         }
     }
 
