@@ -25,10 +25,13 @@ let getResourceUrl = async function (resourceType, queryParams) {
         case "Medication" :
             url = config.baseUrl + resourceType;
             queryParams = queryParams;
+            queryParams._total = "accurate";
             break;
         case "MedicationRequest" : 
             url = config.baseUrl + resourceType;
             queryParams = queryParams;
+            queryParams.patient = queryParams.patientId;
+            delete queryParams.patientId;
             queryParams._include = "MedicationRequest:encounter:Encounter";
             dataEntryLength = 1;
             break;
@@ -57,6 +60,7 @@ let searchResourceData = async function (req, res, next) {
             res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length, data: result  })
         }
         else {
+            console.info("check the link", )
             let reqUrl = url.parse(req.originalUrl, true)
             let reqQuery = reqUrl.query;
              if(responseData.data.link) {
@@ -65,7 +69,10 @@ let searchResourceData = async function (req, res, next) {
                      let urlPart = url.parse(responseData.data.link[nextIndex].url, true);                   
                     let query = urlPart.query;
                     resStatus = query._offset >= responseData.data.total ? 2 : 1;
-                }                
+                }  
+                else {
+                    resStatus = 2;
+                }           
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {
                 let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, null, 0);
