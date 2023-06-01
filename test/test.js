@@ -175,8 +175,14 @@ describe('GET /api/v1/MedicationRequest', () => {
         expect(response.body.status).to.eql(1);
         expect(response.body.message).to.eql("details fetched successfully");
         expect(response.body.data).to.be.an('array').that.is.not.empty;
-        response.body.data.forEach(medicine => expect(medicine).to.be.jsonSchema(jsonMedication));
-        medicationList = response.body.data;
+        let result = response.body.data;
+        for (let prescription of result) {
+            expect(prescription).to.be.jsonSchema(prescriptionSchemaFormat);
+            for (let med of prescription.prescription) {
+                expect(med.medFhirId)
+                expect(med).to.be.jsonSchema(medReqSchema);
+            }
+        }
     });
     it('calls list of prescriptions of patient id: 21028', async () => {
         const response = await request.get('/api/v1/MedicationRequest?patientId=21028').set({ 'x-access-token': token });
@@ -184,9 +190,17 @@ describe('GET /api/v1/MedicationRequest', () => {
         expect(response.body).to.have.property("status");
         expect(response.body.status).to.eql(1);
         expect(response.body.message).to.eql("details fetched successfully");
+        prescriptionSchemaFormat.prescriptionFhirId = "string";
         expect(response.body.data).to.be.an('array').that.is.not.empty;
         response.body.data.forEach(medicine => expect(medicine).to.be.jsonSchema(jsonMedication));
-        medicationList = response.body.data;
+        let result = response.body.data;
+        for (let prescription of result) {
+            expect(prescription).to.be.jsonSchema(prescriptionSchemaFormat);
+            for (let med of prescription.prescription) {
+                expect(med.medFhirId)
+                expect(med).to.be.jsonSchema(medReqSchema);
+            }
+        }
     });   
 
 });
