@@ -8,7 +8,7 @@
     "dev": "cross-env NODE_ENV=dev node ./bin/www ",
     "test": "cross-env NODE_ENV=test node ./bin/www",
     "local": "cross-env NODE_ENV=local node ./bin/www",
-    "mocha": "cross-env NODE_ENV=dev mocha --timeout 25000 --colors"
+    "mocha": "cross-env NODE_ENV=local mocha --timeout 25000 --colors"
   },
   "author": "",
   "license": "ISC",
@@ -31,6 +31,10 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "express-swagger-generator": "^1.1.17"
+    "chai": "^4.3.7",
+    "chai-json-schema": "^1.5.1",
+    "express-swagger-generator": "^1.1.17",
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3"
   }
 }
