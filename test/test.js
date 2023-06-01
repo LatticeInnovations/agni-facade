@@ -133,7 +133,76 @@ let medReqSchema = {
         "type": ["string", "null"]
     }
 };
+let prescription2 = 
+[{
+    "patientId": "20154",
+    "generatedOn": "2023-06-01T15:15:45+05:30",
+    "prescriptionId": "78e2d936-39e4-42c3-abf4-b96274726c27",
+    "prescription": [
+        {
+            "medFhirId": "21117",
+            "qtyPerDose": 1,
+            "frequency": 1,
+            "doseForm": "Tablet",
+            "timing": "1521000175104",
+            "duration": 7,
+            "qtyPrescribed": 7,
+            "note": "As prescribed by doctor"
+        },
+        {
+            "medFhirId": "21117",
+            "qtyPerDose": 5,
+            "frequency": 2,
+            "doseForm": "Tablet",
+            "timing": "1521000175104",
+            "duration": 7,
+            "qtyPrescribed": 17,
+            "note": null
+        },
+        {
+            "medFhirId": "21122",
+            "qtyPerDose": 7,
+            "frequency": 3,
+            "doseForm": "Oral suspension",
+            "timing": "1521000175104",
+            "duration": 7,
+            "qtyPrescribed": 52,
+            "note": null
+        },
+        {
+            "medFhirId": "21128",
+            "qtyPerDose": 10,
+            "frequency": 4,
+            "doseForm": "Capsule",
+            "timing": null,
+            "duration": 7,
+            "qtyPrescribed": 280,
+            "note": null
+        },
+        {
+            "medFhirId": "21134",
+            "qtyPerDose": 2,
+            "frequency": 5,
+            "doseForm": "Solution for injection",
+            "timing": null,
+            "duration": 7,
+            "qtyPrescribed": 70,
+            "note": null
+        },
+        {
+            "medFhirId": "21129",
+            "qtyPerDose": 6,
+            "frequency": 7,
+            "doseForm": "Capsule",
+            "timing": null,
+            "duration": 7,
+            "qtyPrescribed": 294,
+            "note": null
+        }
 
+    ]
+}
+]
 describe('POST /api/v1/sync/MedicationRequest', () => {
     for (let prescription of inputPrescriptionData) {
         expect(prescription).to.be.jsonSchema(prescriptionSchemaFormat);
@@ -201,6 +270,24 @@ describe('GET /api/v1/MedicationRequest', () => {
                 expect(med).to.be.jsonSchema(medReqSchema);
             }
         }
-    });   
+    }); 
+    
+    describe('POST /api/v1/sync/MedicationRequest', () => {
+        for (let prescription of prescription2) {
+            expect(prescription).to.be.jsonSchema(prescriptionSchemaFormat);
+            for (let med of prescription.prescription) {
+                expect(med.medFhirId)
+                expect(med).to.be.jsonSchema(medReqSchema);
+            }
+        }
+        it('Save prescription data for patient 20154 and her visits', async () => {
+            const response = await request.post('/api/v1/sync/MedicationRequest').set({'x-access-token': token})
+            .send(prescription2);
+            expect(response.status).to.be.oneOf([200, 201]);
+            expect(response.body.status).to.eql(1);
+            expect(response.body.message).to.eql("Data saved successfully.");
+            expect(response.body.data).to.be.an('array').that.is.not.empty;
+        });
+    });
 
 });
