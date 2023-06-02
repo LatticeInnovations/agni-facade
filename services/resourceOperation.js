@@ -39,7 +39,7 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             filtereredData = mergedArray;
         filtereredData.forEach(element => {
             let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length)
-            let id = resType == "Patient" ? fullUrl.split("uuid:")[1] : fullUrl;
+            let id = resType == "Patient" || "MedicationRequest" ? fullUrl.split("uuid:")[1] : fullUrl;
             let data = {
                 status: element.response.status,
                 id: ["patch", "PATCH"].includes(reqMethod) ? null : id,
