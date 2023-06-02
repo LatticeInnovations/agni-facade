@@ -19,13 +19,14 @@ class Medication {
     }
     getDoseForm() {
         if (!checkEmptyData(this.fhirResource.form) && this.fhirResource.form.coding) {
-            if(!this.fhirResource.form.coding[0].code ||!this.fhirResource.form.coding[0].display) {
-                this.medicine_obj.doseForm = this.fhirResource.form.coding[0].display;
-                this.medicine_obj.doseFormCode = this.fhirResource.form.coding[0].code;
-            }
-            else {
+            if(!this.fhirResource.form.coding[0].code || !this.fhirResource.form.coding[0].display) {
                 this.medicine_obj.doseForm = null;
                 this.medicine_obj.doseFormCode = null;
+            }
+            else {
+                this.medicine_obj.doseForm = this.fhirResource.form.coding[0].display;
+                this.medicine_obj.doseFormCode = this.fhirResource.form.coding[0].code;
+
             }
         }
         else {
