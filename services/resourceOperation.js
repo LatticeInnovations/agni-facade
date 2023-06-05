@@ -39,16 +39,13 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             filtereredData = mergedArray;
         filtereredData.forEach(element => {
             let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length)
-            let id = resType == "Patient" ? fullUrl.split("uuid:")[1] : fullUrl;
+            let id = resType == "Patient" || "MedicationRequest" ? fullUrl.split("uuid:")[1] : fullUrl;
             let data = {
                 status: element.response.status,
                 id: ["patch", "PATCH"].includes(reqMethod) ? null : id,
                 err: element.response.status == "200 OK" || element.response.status == "201 Created" ? null : element.response.outcome
             }
             let fhirid = element.response.status == "200 OK" || element.response.status == "201 Created" ? element.response.location.substring(element.response.location.indexOf("/") + 1, element.response.location.indexOf("/_history")) : (reqMethod == "PATCH" ? fullUrl : null)
-            if(resType == "MedicationRequest")
-                data.prescriptionFhirId = fhirid
-            else 
                 data.fhirId = fhirid
             response.push(data);
         });
