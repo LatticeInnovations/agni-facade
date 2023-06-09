@@ -1,5 +1,4 @@
 let response = require("../utils/responseStatus");
-let axios = require("axios");
 let resourceFunc = require("../services/resourceOperation");
 let bundleFun = require("../services/bundleOperation");
 let config = require("../config/nodeConfig");
@@ -8,11 +7,11 @@ let url = require('url');
 let getResourceUrl = async function (resourceType, queryParams) {
     let url = "", dataEntryLength = null;
     switch (resourceType) {
-        case "Patient": queryParams = queryParams;
+        case "Patient": 
              queryParams._total = "accurate"
             url = config.baseUrl + resourceType;
             break;
-        case "RelatedPerson":
+        case "RelatedPerson": {
             let patientIds = queryParams.patientId
             url = config.baseUrl + `Person`;
             queryParams = {
@@ -21,15 +20,15 @@ let getResourceUrl = async function (resourceType, queryParams) {
                 "_total": "accurate"
             };
             dataEntryLength = 1;
+        }
+
             break;
         case "Medication" :
             url = config.baseUrl + resourceType;
-            queryParams = queryParams;
             queryParams._total = "accurate";
             break;
         case "MedicationRequest" : 
             url = config.baseUrl + resourceType;
-            queryParams = queryParams;
             queryParams.patient = queryParams.patientId;
             delete queryParams.patientId;
             queryParams._include = "MedicationRequest:encounter:Encounter";

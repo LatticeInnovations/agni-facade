@@ -38,7 +38,8 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
         else
             filtereredData = mergedArray;
         filtereredData.forEach(element => {
-            let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length)
+            let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length);
+            // need to see the or statment to be removed
             let id = resType == "Patient" || "MedicationRequest" ? fullUrl.split("uuid:")[1] : fullUrl;
             let data = {
                 status: element.response.status,

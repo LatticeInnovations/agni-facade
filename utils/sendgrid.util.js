@@ -1,4 +1,3 @@
-const { response } = require('express');
 let config = require('../config/nodeConfig');
 let sg = require('@sendgrid/mail');
 module.exports.sendEmail = async function(data, res){
@@ -17,8 +16,6 @@ module.exports.sendEmail = async function(data, res){
     }
     catch(err) {
         console.error("err ======>", err)
-        if (err.response) {
-          }
           return Promise.reject(err)
     }
 }

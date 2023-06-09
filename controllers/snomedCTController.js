@@ -1,5 +1,3 @@
-let response = require("../utils/responseStatus");
-const config = require("../config/nodeConfig");
 let medData = require("../utils/medtime.json");
 
 //get presection intake timing

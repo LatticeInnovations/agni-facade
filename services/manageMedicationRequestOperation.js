@@ -34,7 +34,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
 
                     let medRequest = new MedicationRquest(prescription, {});
                     medRequest.getJSONtoFhir();
-                    medReqData = {...medRequest.getFhirResource()};
+                    let medReqData = {...medRequest.getFhirResource()};
                     medReqData.resourceType = "MedicationRequest";
                     medReqData.id = uuidv4();
                     let medReqResource = await bundleFun.setBundlePost(medReqData, prescription.identifier, medReqData.id, "POST");
