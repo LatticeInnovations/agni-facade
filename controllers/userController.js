@@ -1,4 +1,3 @@
-const config = require("../config/nodeConfig");
 const db = require('../models/index');
 const userRole = require("../utils/role.json")
 

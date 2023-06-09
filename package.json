@@ -33,6 +33,7 @@
   "devDependencies": {
     "chai": "^4.3.7",
     "chai-json-schema": "^1.5.1",
+    "eslint": "^8.41.0",
     "express-swagger-generator": "^1.1.17",
     "mocha": "^10.2.0",
     "supertest": "^6.3.3"

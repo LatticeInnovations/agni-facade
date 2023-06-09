@@ -19,7 +19,7 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                     let e = { status: 0, code: "ERR", response: "Patient Id " + inputData.id + " does not exist." }
                     return Promise.reject(e)
                 }
-                resourcePost = await createNewRelation(person1Link, patientArrayById, inputData.id, inputData.relationship);
+                let resourcePost = await createNewRelation(person1Link, patientArrayById, inputData.id, inputData.relationship);
                 //console.log("resourcePost", resourcePost)
                 patientArrayById = resourcePost.patientArrayById;
                 resourceData = resourceData.concat(resourcePost.resourceList);
@@ -113,9 +113,8 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
 
 let createNewRelation = async function (person1Link, patientArrayById, patientId, relationship) {
     try {
-        resourceData = [];
-        person1PatchData = [];
-        allowPost = 0;
+        let resourceData = [];
+        let person1PatchData = [];
         for (let element of relationship) {
             let index = person1Link.data.entry.findIndex(e =>
                 e.resource.resourceType == "RelatedPerson" && e.resource.patient.reference == "Patient/" + element.relativeId);
@@ -152,7 +151,6 @@ let createNewRelation = async function (person1Link, patientArrayById, patientId
 let removeRelation = async function (patientId, removeList, relatedPersonList, person1Data, patientArrayById) {
     try {
         let person1PatchData = [];
-        bundlePatch = [];
         let deleteBundleList = []
         let deleteRelatedPersonID1, person1;
         for (let relation of removeList) {

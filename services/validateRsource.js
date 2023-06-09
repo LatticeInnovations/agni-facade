@@ -1,5 +1,5 @@
 
-let { body, param } = require("express-validator");
+let { body } = require("express-validator");
 
 exports.validate = async(req) => {
     console.log("resourceType is: ", req.params)

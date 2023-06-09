@@ -233,22 +233,22 @@ class Person {
         else {
             let phoneIndex = fetchedData.telecom.findIndex(e => e.system == "phone");
             let emailIndex = fetchedData.telecom.findIndex(e => e.system == "email");
-            if(phoneIndex != -1) {  
+            if(phoneIndex != -1 && this.personObj.mobileNumber) {  
                 let operation = this.personObj.mobileNumber.operation == "remove" ? "replace": this.personObj.mobileNumber.operation;
                 json = {"op": operation, "path": "/telecom/"+phoneIndex+ "/value", value: this.personObj.mobileNumber.operation == "remove" ? null : this.personObj.mobileNumber.value};   
                 this.fhirResource.push(json);
             }
-            else if(phoneIndex == -1) {
+            else if(phoneIndex == -1 && this.personObj.mobileNumber) {
                 json = {"op": "add", "path": "/telecom/"+fetchedData.telecom.length, value: {"system": "phone", "value": this.personObj.mobileNumber.value}}; 
                 this.fhirResource.push(json);
             }
-            if(emailIndex != -1) {
+            if(emailIndex != -1 && this.personObj.email) {
                 let operation = this.personObj.email.operation == "remove" ? "replace": this.personObj.email.operation
                 json = {"op": operation, "path": "/telecom/"+emailIndex+ "/value", value: this.personObj.email.operation == "remove" ? null : this.personObj.email.value};   
                 this.fhirResource.push(json)
             }
-            else if(emailIndex == -1) {
-                this.fhirResource.push({"op": "add", "path": "/telecom"+fetchedData.telecom.length, "value": this.personObj.email.value});
+            else if(emailIndex == -1 && this.personObj.email) {
+                this.fhirResource.push({"op": "add", "path": "/telecom/"+fetchedData.telecom.length, "value": {"system": "email", "value": this.personObj.email.value}});
             }
         }
 
