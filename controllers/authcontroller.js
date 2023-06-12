@@ -72,7 +72,7 @@ let login = async function (req, res, next) {
 }
 
 // authenticate OTP
-let OTPAuthentication = async function (req, res, next) {
+let OTPAuthentication = async function (req, res) {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -220,7 +220,7 @@ async function upsertOTP(otp, userDetail, currentTime, expireTime, loginAttempts
 async function checkAuthAttempts(expire_time, currentTime) {
     let exp_date = new Date(expire_time);
     let diff = (exp_date - currentTime);
-    let diffMinutes = Math.round((diff / 1000) / 60);
+    let diffMinutes = (diff / 1000) / 60;
     return diffMinutes;
 }
 
