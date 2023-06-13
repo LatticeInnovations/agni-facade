@@ -68,8 +68,8 @@ let patchBundle = async function (req, res, next) {
         //res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
         let response = await axios.post(config.baseUrl, bundle);
         if (response.status == 200 || response.status == 201) {
-            // let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
-            res.status(201).json({ status: 1, message: "Data updated successfully.", data: null })
+             let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType)
+            res.status(201).json({ status: 1, message: "Data updated successfully.", data: responseData })
         }
         else {
             return res.status(500).json({
