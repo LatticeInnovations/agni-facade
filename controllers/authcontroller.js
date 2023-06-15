@@ -9,7 +9,7 @@ const config = require("../config/nodeConfig");
 let { validationResult } = require('express-validator');
 
 // login by using email or mobile number to send OTP
-let login = async function (req, res, next) {
+let login = async function (req, res) {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -18,7 +18,7 @@ let login = async function (req, res, next) {
         let isEmail = checkIsEmail(req.body.userContact);
         let contact = isEmail ? 'user_email' : 'mobile_number';
         let userDetail = await getUserDetail(req, contact);
-        let loginAttempts = 0, otp = 0;;
+        let loginAttempts = 0, otp = 0;
         let OTPGenerateAttempt = 1;
         if (userDetail == null || !userDetail.dataValues.is_active)
             return res.status(401).json({ status: 0, message: "Unauthorized user" });

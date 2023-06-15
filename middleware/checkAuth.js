@@ -18,7 +18,7 @@ router.use(function (req, res, next) {
         // verifies secret and checks exp
         jwt.verify(token, secretKey,function (err, decoded) {
             if (err) {
-                    console.log(err, err.name )
+                    console.error(err, err.name )
                     if(err.name == 'TokenExpiredError')
                         return res.status(401).json({ status: 0, message: 'Session expired.' });
                     else
