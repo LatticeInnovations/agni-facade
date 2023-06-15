@@ -40,17 +40,19 @@ let getResourceUrl = async function (resourceType, queryParams) {
     return { link: url, reqQuery: queryParams, dataEntryLength: dataEntryLength }
 }
 
-let searchResourceData = async function (req, res, next) {
+let searchResourceData = async function (req, res) {
     try {
         let resourceType = req.params.resourceType;
         let resouceUrl = await getResourceUrl(resourceType, req.query);
         console.log("resource url", resouceUrl)
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        let reqUrl = url.parse(req.originalUrl, true)
+        let reqQuery = reqUrl.query;
         //console.log(responseData.data.entry)
         let result = [];
         let resStatus = 1;
         if( !responseData.data.entry || responseData.data.total == 0) {
-            resStatus = 2;
+            resStatus = reqUrl.query && reqUrl.query._offset ? 2 : 1;
             return res.status(200).json({ status: resStatus, message: "details fetched successfully", total: 0, data: []  })
         }
         else if (resouceUrl.dataEntryLength == 1) {
@@ -59,9 +61,7 @@ let searchResourceData = async function (req, res, next) {
             res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length, data: result  })
         }
         else {
-            console.info("check the link", )
-            let reqUrl = url.parse(req.originalUrl, true)
-            let reqQuery = reqUrl.query;
+            console.info("check the link", )            
              if(responseData.data.link) {
                 let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
                 if(nextIndex != -1) {
