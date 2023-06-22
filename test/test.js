@@ -3,7 +3,6 @@ const expect = chai.expect;
 chai.use(require('chai-json-schema'));
 const app = require("../app")
 let request = require('supertest')(app);
-const { v4: uuidv4 } = require('uuid');
 let token = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJOYW1lIjoiVHVsaWthIiwiaWF0IjoxNjg1NDE5ODMxLCJleHAiOjE2ODU4NTE4MzF9.YDfW3NAkod3mZ0kIEZ6gYoS04jx4C3_SGk5RvMTlz3Y`;
 let jsonMedication = {
     "title": "Medication data schema",

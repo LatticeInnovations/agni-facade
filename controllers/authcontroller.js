@@ -9,7 +9,7 @@ const config = require("../config/nodeConfig");
 let { validationResult } = require('express-validator');
 
 // login by using email or mobile number to send OTP
-let login = async function (req, res, next) {
+let login = async function (req, res) {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -18,7 +18,7 @@ let login = async function (req, res, next) {
         let isEmail = checkIsEmail(req.body.userContact);
         let contact = isEmail ? 'user_email' : 'mobile_number';
         let userDetail = await getUserDetail(req, contact);
-        let loginAttempts = 0, otp = 0;;
+        let loginAttempts = 0, otp = 0;
         let OTPGenerateAttempt = 1;
         if (userDetail == null || !userDetail.dataValues.is_active)
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
@@ -40,22 +40,23 @@ let login = async function (req, res, next) {
             OTPGenerateAttempt = authentication_detail.dataValues.otp_generate_attempt + 1;
         }
 
-       if(req.body.userContact == 1111111111 || req.body.userContact == "devtest@gmail.com") {            otp = 111111;
-        }else if(req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") {
+        if (req.body.userContact == 1111111111 || req.body.userContact == 9999999999 || req.body.userContact == "devtest@gmail.com" | req.body.userContact == "dev3test@gmail.com") {
+            otp = 111111;
+        } else if (req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") {
             otp = 222222;
             OTPGenerateAttempt = 1;
             loginAttempts = 0;
         }
         else {
-             otp =  generateOTP();
-             console.log("check if otp is generated before sending")
-             try {
-                  await sendOTP(isEmail, userDetail, otp);
-             }
-             catch(e) {
-                    return res.status(500).json({status: 0, message: "Unable to process. Please try again."})
-             }
-        }            
+            otp = generateOTP();
+            console.log("check if otp is generated before sending")
+            try {
+                await sendOTP(isEmail, userDetail, otp);
+            }
+            catch (e) {
+                return res.status(500).json({ status: 0, message: "Unable to process. Please try again." })
+            }
+        }
 
         await upsertOTP(otp, userDetail.dataValues, timeData.currentTime, timeData.expireTime, loginAttempts, OTPGenerateAttempt);
         res.status(200).json({ status: 1, "message": "Authorized user" });
@@ -100,15 +101,15 @@ let OTPAuthentication = async function (req, res) {
             loginAttempts = authentication_detail.dataValues.login_attempts = 0;
             authentication_detail.dataValues.otp_generate_attempt = 0;
         }
-       
+
         // bypass for testing purpose
-        if((req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") && req.body.otp != 222222) {
+        if ((req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") && req.body.otp != 222222) {
             loginAttempts = 1;
             resMessage = { status: 0, message: "Invalid OTP" };
         }
-         // if otp is invalid
+        // if otp is invalid
         else if (req.body.otp != authentication_detail.dataValues.otp) {
-            apiStatus = 401; 
+            apiStatus = 401;
             loginAttempts = authentication_detail.dataValues.login_attempts + 1;
             let e = loginAttempts >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : `Invalid OTP`;
             resMessage = { status: 0, message: e };
@@ -142,7 +143,7 @@ async function calculateTime(authentication_detail) {
     let expireTime = new Date(currentTime);
     expireTime = expireTime.setMinutes(expireTime.getMinutes() + config.OTPExpireMin);
     let expireTimeDiffOTP = authentication_detail != null ? await checkAuthAttempts(authentication_detail.dataValues.expire_time, currentTime) : 0;
-     let lastAttemptTimeDiff = authentication_detail != null ? await checkAuthAttempts(currentTime, authentication_detail.dataValues.createdOn) : 0;
+    let lastAttemptTimeDiff = authentication_detail != null ? await checkAuthAttempts(currentTime, authentication_detail.dataValues.createdOn) : 0;
     let data = { currentTime, expireTime, expireTimeDiffOTP, lastAttemptTimeDiff };
     return data;
 }
@@ -166,7 +167,7 @@ async function sendOTP(isEmail, userDetail, otp) {
             console.log(messageDetail, messageDetail.code)
         }
     }
-    catch(e) {
+    catch (e) {
         console.error(" check if message is sent1111", e);
         return Promise.reject(e);
     }
@@ -204,7 +205,7 @@ function generateOTP() {
 // insert if not present or update generated OTP for the user id
 async function upsertOTP(otp, userDetail, currentTime, expireTime, loginAttempts, OTPGenerateAttempt) {
     try {
-        let upsertJson = { "user_id": userDetail.user_id, "otp": otp, "expire_time": expireTime, "login_attempts": loginAttempts, "createdOn": currentTime, "otp_generate_attempt": OTPGenerateAttempt};
+        let upsertJson = { "user_id": userDetail.user_id, "otp": otp, "expire_time": expireTime, "login_attempts": loginAttempts, "createdOn": currentTime, "otp_generate_attempt": OTPGenerateAttempt };
         console.log(upsertJson)
         let upsertDetail = await db.authentication_detail.upsert(upsertJson, { conflictFields: ["user_id"] });
         return upsertDetail;
