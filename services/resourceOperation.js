@@ -2,6 +2,7 @@ let patient = require("./managePatientOperation");
 let relatedPerson = require("./manageRelatedPersonOperation");
 let medication = require("./manageMedication");
 let medRequest = require("./manageMedicationRequestOperation");
+let organization = require("./manageOrganization");
 let getResource = async function (resType, inputData, FHIRData, reqMethod, fetchedResourceData) {
     try {
         console.log("FHIR data in get resource", resType)
@@ -16,7 +17,8 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
             case "Medication":  bundleData =await medication.setMedicationData(resType, inputData, FHIRData, reqMethod)
             break;
             case "MedicationRequest": bundleData = await medRequest.setMedicationRequestData(resType, inputData, FHIRData, reqMethod);
-            break;            
+            break;
+            case "Organization": bundleData = await organization.setOrganizationData(resType, inputData, FHIRData, reqMethod);  
         }
 
         return bundleData;
@@ -33,14 +35,14 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
         if (["post", "POST", "put", "PUT"].includes(reqMethod) && (resType == "Patient"))
             filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
         else if(["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "MedicationRequest") {
-            filtereredData = mergedArray.filter(e => e.resource.resourceType != "MedicationRequest");
+            filtereredData = mergedArray.filter(e => e.resource.resourceType != resType);
         }
         else
             filtereredData = mergedArray;
         filtereredData.forEach(element => {
             let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length);
             // need to see the or statment to be removed
-            let id = resType == "Patient" || "MedicationRequest" ? fullUrl.split("uuid:")[1] : fullUrl;
+            let id = (fullUrl.includes("uuid:")) ? fullUrl.split("uuid:")[1] : fullUrl;
             let data = {
                 status: element.response.status,
                 id: ["patch", "PATCH"].includes(reqMethod) ? null : id,

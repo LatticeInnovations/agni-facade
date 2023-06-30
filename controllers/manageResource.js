@@ -34,6 +34,16 @@ let getResourceUrl = async function (resourceType, queryParams) {
             queryParams._include = "MedicationRequest:encounter:Encounter";
             dataEntryLength = 1;
             break;
+        case "Organization" : 
+            url = config.baseUrl + resourceType;
+            queryParams.Organization = queryParams.orgId;
+            queryParams = {
+                "_revinclude" : "Location:organization:Organization",
+                "_id" : queryParams.orgId,
+                "_total": "accurate"
+            };
+            dataEntryLength = 1;
+            break;
 
     }
 
@@ -53,12 +63,12 @@ let searchResourceData = async function (req, res) {
         let resStatus = 1;
         if( !responseData.data.entry || responseData.data.total == 0) {
             resStatus = reqUrl.query && reqUrl.query._offset ? 2 : 1;
-            return res.status(200).json({ status: resStatus, message: "details fetched successfully", total: 0, data: []  })
+            return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
         }
         else if (resouceUrl.dataEntryLength == 1) {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
             result = result.concat(res_data);
-            res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length, data: result  })
+            res.status(200).json({ status: resStatus, message: "Data fetched", total: result.length, data: result  })
         }
         else {
             console.info("check the link", )            
@@ -77,7 +87,7 @@ let searchResourceData = async function (req, res) {
                 let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, null, 0);
                 result = result.concat(res_data);
             }
-             res.status(200).json({ status: resStatus, message: "details fetched successfully", total: result.length,"offset": +reqQuery._offset, data: result  })
+             res.status(200).json({ status: resStatus, message: "Data fetched", total: result.length,"offset": +reqQuery._offset, data: result  })
         }
 
     }
