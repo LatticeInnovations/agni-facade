@@ -10,12 +10,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       user_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         allowNull: false,
         unique: true,
         references: {
-          model: 'user_master',
-          key: 'user_id'
+          model: 'hfj_resource',
+          key: 'res_id'
         }
       },
       otp: {

@@ -21,8 +21,8 @@ let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
                 personResource.identifier = patientResource.identifier;
                 personResource.resourceType = "Person";
                 personResource.id = uuidv4();
-                let patientBundle = await bundleFun.setBundlePost(patientResource, patientResource.identifier, patientData.id, "POST");   
-                let personBundle = await bundleFun.setBundlePost(personResource, patientResource.identifier, personResource.id, "POST");  
+                let patientBundle = await bundleFun.setBundlePost(patientResource, patientResource.identifier, patientData.id, "POST", "identifier");   
+                let personBundle = await bundleFun.setBundlePost(personResource, patientResource.identifier, personResource.id, "POST", "identifier");  
                 resource_result.push(patientBundle, personBundle);  
             }
         }

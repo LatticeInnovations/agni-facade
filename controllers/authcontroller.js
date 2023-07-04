@@ -7,7 +7,7 @@ let sendEmail = require("../utils/sendgrid.util").sendEmail
 let jwt = require("jsonwebtoken");
 const config = require("../config/nodeConfig");
 let { validationResult } = require('express-validator');
-
+let bundleOp = require("../services/bundleOperation");
 // login by using email or mobile number to send OTP
 let login = async function (req, res) {
     try {
@@ -16,7 +16,7 @@ let login = async function (req, res) {
             return response.sendInvalidDataError(res, errors);
         }
         let isEmail = checkIsEmail(req.body.userContact);
-        let contact = isEmail ? 'user_email' : 'mobile_number';
+        let contact = isEmail ? 'email' : 'phone';
         let userDetail = await getUserDetail(req, contact);
         let loginAttempts = 0, otp = 0;
         let OTPGenerateAttempt = 1;
@@ -80,7 +80,7 @@ let OTPAuthentication = async function (req, res) {
             return response.sendInvalidDataError(res, errors);
         }
         let isEmail = checkIsEmail(req.body.userContact);
-        let contact = isEmail ? 'user_email' : 'mobile_number';
+        let contact = isEmail ? 'email' : 'phone';
         let userDetail = await getUserDetail(req, contact);
         if (userDetail == null || !userDetail.dataValues.is_active)
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
@@ -176,12 +176,33 @@ async function sendOTP(isEmail, userDetail, otp) {
 // get user and his/her OTP details using sequelize
 async function getUserDetail(req, contact) {
     try {
-        let userDetail = await db.user_master.findOne({
-            include: [{ model: db.authentication_detail, attributes: ['auth_id', 'user_id', 'otp', 'expire_time', 'createdOn', 'login_attempts', 'otp_generate_attempt'], required: false }],
-            attributes: ['user_id', 'user_name', 'role_id', contact, 'is_active'],
-            where: { [contact]: req.body.userContact }
-        });
-        return userDetail;
+        let queryParam ={"_total": "accurate"};
+        queryParam[contact] = contact == "email" ? req.body.userContact.toLowerCase() : req.body.userContact;
+        let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam);
+        if (existingPractioner.data.total != 1) {
+            return null;
+        }
+        else {
+            let user_id = existingPractioner.data.entry[0].resource.id;
+            let user_name = existingPractioner.data.entry[0].resource.name[0].given.join(' ');
+            user_name += " " + existingPractioner.data.entry[0].resource.name[0].family;
+            let email = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "email");
+            let phone = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "phone");
+            let userDetail = {}; userDetail.dataValues = {
+                "user_name": user_name,
+                "user_email" : email[0].value,
+                "mobile_number" : phone[0].value,
+                "is_active":  existingPractioner.data.entry[0].resource.active,
+                "user_id": user_id
+            }
+            let userData = await db.authentication_detail.findOne({
+                attributes:['auth_id', 'user_id', 'otp', 'expire_time', 'createdOn', 'login_attempts', 'otp_generate_attempt'],
+                where: { "user_id": user_id }
+            });
+            userDetail.dataValues.authentication_detail = userData;
+            return userDetail;
+        }
+
     }
     catch (e) {
         return Promise.reject(e);

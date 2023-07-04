@@ -17,7 +17,7 @@ let createBundle = async function (req, res, next) {
         let fhirResource = {};
         bundle = await getBundleJSON(reqInput, resourceType, fhirResource, "POST");
 
-      // res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
+      // res.status(201).json({ status: 1, message: "Data updated", data: bundle })
        let response = await axios.post(config.baseUrl, bundle);
         if (bundle.entry.length > 0) {
             if (response.status == 200) {
@@ -40,7 +40,7 @@ let createBundle = async function (req, res, next) {
         if (e.code && e.code == "ERR") {
             return res.status(500).json({
                 status: 0,
-                message: "Unable to process. Please try again.",
+                message: e.response == null ? "Unable to process. Please try again." : e.response,
                 error: e.response.data != null ? e.response.data : e.response
             })
         }

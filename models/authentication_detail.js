@@ -11,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.user_master, {
+      this.belongsTo(models.hfj_resource, {
         foreignKey: "user_id",
-        targetKey: "user_id"
+        targetKey: "res_id"
       });
     }
   }
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    user_id: DataTypes.INTEGER,
+    user_id: DataTypes.BIGINT,
     otp: DataTypes.INTEGER,
     expire_time: DataTypes.DATE,
     login_attempts: DataTypes.INTEGER,

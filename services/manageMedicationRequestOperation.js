@@ -14,7 +14,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 let encounterResource = {...encounter.getFHIRResource()};
                 encounterResource.resourceType = "Encounter";
                 encounterResource.id = patPres.prescriptionId;
-                let encounterBundle = await bundleFun.setBundlePost(encounterResource, encounterResource.identifier, encounterResource.id, "POST");
+                let encounterBundle = await bundleFun.setBundlePost(encounterResource, encounterResource.identifier, encounterResource.id, "POST", "identifier");
                 resource_result.push(encounterBundle);
                 console.log("encounter data");
                 let medList = patPres.prescription;
@@ -37,7 +37,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                     let medReqData = {...medRequest.getFhirResource()};
                     medReqData.resourceType = "MedicationRequest";
                     medReqData.id = uuidv4();
-                    let medReqResource = await bundleFun.setBundlePost(medReqData, prescription.identifier, medReqData.id, "POST");
+                    let medReqResource = await bundleFun.setBundlePost(medReqData, prescription.identifier, medReqData.id, "POST", "identifier");
                     resource_result.push(medReqResource);                    
                 }
             }

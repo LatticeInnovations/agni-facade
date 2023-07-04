@@ -8,8 +8,10 @@ let getResourceUrl = async function (resourceType, queryParams) {
     let url = "", dataEntryLength = null;
     switch (resourceType) {
         case "Patient": 
+        case "Medication" :
+        case "Practitioner" :
              queryParams._total = "accurate"
-            url = config.baseUrl + resourceType;
+             url = config.baseUrl + resourceType;
             break;
         case "RelatedPerson": {
             let patientIds = queryParams.patientId
@@ -23,10 +25,6 @@ let getResourceUrl = async function (resourceType, queryParams) {
         }
 
             break;
-        case "Medication" :
-            url = config.baseUrl + resourceType;
-            queryParams._total = "accurate";
-            break;
         case "MedicationRequest" : 
             url = config.baseUrl + resourceType;
             queryParams.patient = queryParams.patientId;
@@ -39,9 +37,17 @@ let getResourceUrl = async function (resourceType, queryParams) {
             queryParams.Organization = queryParams.orgId;
             queryParams = {
                 "_revinclude" : "Location:organization:Organization",
-                "_id" : queryParams.orgId,
                 "_total": "accurate"
             };
+            dataEntryLength = 1;
+            break;
+        case "PractitionerRole":
+            url = config.baseUrl + resourceType;
+            queryParams = {
+                "practitioner" : queryParams.practitionerId,
+                "_include": "*",
+                "_total": "accurate"
+            }
             dataEntryLength = 1;
             break;
 
@@ -54,7 +60,6 @@ let searchResourceData = async function (req, res) {
     try {
         let resourceType = req.params.resourceType;
         let resouceUrl = await getResourceUrl(resourceType, req.query);
-        console.log("resource url", resouceUrl)
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
         let reqUrl = url.parse(req.originalUrl, true)
         let reqQuery = reqUrl.query;
@@ -70,8 +75,7 @@ let searchResourceData = async function (req, res) {
             result = result.concat(res_data);
             res.status(200).json({ status: resStatus, message: "Data fetched", total: result.length, data: result  })
         }
-        else {
-            console.info("check the link", )            
+        else {      
              if(responseData.data.link) {
                 let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
                 if(nextIndex != -1) {
@@ -105,5 +109,6 @@ let searchResourceData = async function (req, res) {
 }
 
 module.exports = {
-    searchResourceData
+    searchResourceData,
+    getResourceUrl
 }
