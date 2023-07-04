@@ -121,7 +121,7 @@ let createNewRelation = async function (person1Link, patientArrayById, patientId
             if (index == -1) {
                 let relatedPerson1 = new RelatedPerson({ patientId: element.relativeId, relationCode: element.patientIs }, {});
                 let fhirResource1 = relatedPerson1.getJsonToFhirTranslator();
-                let relatedPerson1Post = await bundleOp.setBundlePost(fhirResource1, null, fhirResource1.id, "POST")
+                let relatedPerson1Post = await bundleOp.setBundlePost(fhirResource1, null, fhirResource1.id, "POST", "identifier")
                 if (person1Link.data.total != 1 ) {
                     let e = { status: 0, code: "ERR", response: "Patient Id " + element.relativeId + " does not exist."}
                    return Promise.reject(e);

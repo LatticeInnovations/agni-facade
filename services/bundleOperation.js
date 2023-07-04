@@ -20,14 +20,14 @@ let setBundlePatch = async function (resource_data, patchUrl) {
 
 }
 
-let setBundlePost = async function (resourceData, identifier, id, reqMethod) {
+let setBundlePost = async function (resourceData, identifier, id, reqMethod, identifierType) {
     try {
     let identifierConcat = "";
     if (identifier || identifier != null) {
         identifierConcat = "";
         identifier.forEach(element => {
            
-            identifierConcat += "identifier=" + element.system + "|" + element.value + "&"
+            identifierConcat += identifierType+"=" + element.system + "|" + element.value + "&"
         })
         identifierConcat = identifierConcat.slice(0, -1);
     }

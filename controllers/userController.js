@@ -1,28 +1,31 @@
-const db = require('../models/index');
-const userRole = require("../utils/role.json")
-
+let manageResource = require("./manageResource");
+let bundleFun = require("../services/bundleOperation");
+let resourceFunc = require("../services/resourceOperation");
 // Get user profile
 let getUserProfile = async function (req, res, next) {
     try {
-        let userDetail = await db.user_master.findOne({
-            attributes: ['user_id', 'user_name', 'role_id', "user_email", "mobile_number", 'is_active'],
-            where: { "user_id": req.decoded.userId }
-        });
-        if(userDetail !== null) {
-            userDetail.role = userRole[userDetail.role_id.toString()];
-            console.log(userRole, userDetail);
-            let data = {
-                "userId" : userDetail.dataValues.user_id,
-                "userName" : userDetail.dataValues.user_name,
-                "userEmail" : userDetail.dataValues.user_email,
-                "mobileNumber" : userDetail.dataValues.mobile_number,
-                "roleId" : userDetail.dataValues.role_id,
-                "role" : userRole[userDetail.dataValues.role_id]
-            }
-            return res.status(200).json({ status: 1, "message": "Data fetched successfully", data: data });
+        let resourceType = "PractitionerRole";
+        req.params.resourceType = resourceType;
+        req.query.practionerId = req.decoded.userId
+        let resouceUrl = await manageResource.getResourceUrl(resourceType, req.query);
+        let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        let result = [];
+        let data = {};
+        if( !responseData.data.entry || responseData.data.total == 0) {
+            return res.status(200).json({ status: 1, message: "Profile detail fetched", total: 0, data: data})
         }
-        else 
-        return res.status(404).json({ status: 1, "message": "Data not found", data: userDetail }); 
+        else {
+            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
+            result = result.concat(res_data);
+            console.info(result[0])
+            data.userId = result[0].practitionerId,
+            data.username = result[0].firstName + " " + (result[0].middleName? result[0].middleName + " " : "") + result[0].lastName;
+            data.mobileNumber = result[0].mobileNumber;
+            data.userEmail = result[0].email;
+            data.address = result[0].address;
+            data.role = result[0].role;
+            res.status(200).json({ status: 1, message: "Profile detail fetched", total: 1, data: data  })
+        }
     }
     catch (e) {
         console.error(e);
