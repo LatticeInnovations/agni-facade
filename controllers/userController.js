@@ -6,7 +6,7 @@ let getUserProfile = async function (req, res, next) {
     try {
         let resourceType = "PractitionerRole";
         req.params.resourceType = resourceType;
-        req.query.practionerId = req.decoded.userId
+        req.query = {practitionerId: req.decoded.userId};
         let resouceUrl = await manageResource.getResourceUrl(resourceType, req.query);
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
         let result = [];
