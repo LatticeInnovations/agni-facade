@@ -19,7 +19,7 @@ let getUserProfile = async function (req, res, next) {
             result = result.concat(res_data);
             console.info(result[0])
             data.userId = result[0].practitionerId,
-            data.username = result[0].firstName + " " + (result[0].middleName? result[0].middleName + " " : "") + result[0].lastName;
+            data.userName = result[0].firstName + " " + (result[0].middleName? result[0].middleName + " " : "") + result[0].lastName;
             data.mobileNumber = result[0].mobileNumber;
             data.userEmail = result[0].email;
             data.address = result[0].address;
