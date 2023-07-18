@@ -1,15 +1,17 @@
 const chai = require('chai');
 const expect = chai.expect;
 chai.use(require('chai-json-schema'));
+chaiHttp = require("chai-http")
+chai.use(chaiHttp)
 const app = require("../app")
 let request = require('supertest')(app);
-let token = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJOYW1lIjoiVHVsaWthIiwiaWF0IjoxNjg1NDE5ODMxLCJleHAiOjE2ODU4NTE4MzF9.YDfW3NAkod3mZ0kIEZ6gYoS04jx4C3_SGk5RvMTlz3Y`;
+let token = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMjU0MiIsInVzZXJOYW1lIjoiVHVsaWthIFAiLCJpYXQiOjE2ODk0MjI4OTIsImV4cCI6MTY4OTg1NDg5Mn0.aUAtgC8zbuEl6qdGMOsdVh-JzKEAtEaqZ3XE-9BAkMc`;
 let jsonMedication = {
     "title": "Medication data schema",
     "type": "object",
     "properties": {
         "medFhirId": {type: "string"},
-        "medCode":  {type: "string"},
+        "medCodes":  {type: "string"},
         "medName":  {type: "string"},
         "doseForm":  {type: "string"},
         "doseFormCode":  {type: "string"},
@@ -24,11 +26,11 @@ let medicationList = [];
 
 describe('GET /api/v1/Medication', () => {
     it('calls list of medicines', async () => {
-        const response = await request.get('/api/v1/Medication?_count=100&_offset=0').set({ 'x-access-token': token });
+        const response = await chai.request(app).get('/api/v1/Medication?_count=100&_offset=0').set({ 'x-access-token': token });
         expect(response.status).to.eql(200);
         expect(response.body).to.have.property("status");
         expect(response.body.status).to.eql(2);
-        expect(response.body.message).to.eql("details fetched successfully");
+        expect(response.body.message).to.eql("Data fetched");
         expect(response.body.data).to.be.an('array').that.is.not.empty;
         response.body.data.forEach(medicine => {console.info(medicine); return expect(chai.tv4.validate(medicine, jsonMedication)).to.be.true });
         medicationList = response.body.data;
@@ -38,7 +40,7 @@ describe('GET /api/v1/Medication', () => {
 
 describe('GET /api/v1/sct/medTime', () => {
     it('calls timing list', async () => {
-        const response = await request.get('/api/v1/sct/medTime').set({ 'x-access-token': token });
+        const response = await chai.request(app).get('/api/v1/sct/medTime').set({ 'x-access-token': token });
         expect(response.status).to.eql(200);
         expect(response.body).to.have.property("status");
         expect(response.body.status).to.eql(1);
@@ -231,7 +233,7 @@ describe('POST /api/v1/sync/MedicationRequest', () => {
         expect(chai.tv4.validate(prescription, prescriptionSchemaFormat)).to.be.true;
     }
     it('Save prescription data for multiple patients and their visits', async () => {
-        const response = await request.post('/api/v1/sync/MedicationRequest').set({'x-access-token': token})
+        const response = await chai.request(app).post('/api/v1/sync/MedicationRequest').set({'x-access-token': token})
         .send(inputPrescriptionData);
         expect(response.status).to.be.oneOf([200, 201]);
         expect(response.body.status).to.eql(1);
@@ -240,7 +242,7 @@ describe('POST /api/v1/sync/MedicationRequest', () => {
     });
 
     it('Get 403 while saving as token is not provided', async () => {
-        const response = await request.put('/api/v1/sync/MedicationRequest')
+        const response = await chai.request(app).put('/api/v1/sync/MedicationRequest')
             .send(inputPrescriptionData);
         expect(response.status).to.eql(403);
     });
@@ -248,7 +250,7 @@ describe('POST /api/v1/sync/MedicationRequest', () => {
 
 describe('GET /api/v1/MedicationRequest', () => {
     it('calls list of prescriptions of patient id: 21028', async () => {
-        const response = await request.get('/api/v1/MedicationRequest?patientId=21028').set({ 'x-access-token': "sdshgd3874uewfhudewhfu4374fehdhsf743" });
+        const response = await chai.request(app).get('/api/v1/MedicationRequest?patientId=21028').set({ 'x-access-token': "sdshgd3874uewfhudewhfu4374fehdhsf743" });
         expect(response.status).to.eql(401);
         expect(response.body).to.have.property("status");
         expect(response.body.status).to.eql(0);
@@ -257,7 +259,7 @@ describe('GET /api/v1/MedicationRequest', () => {
     });
 
     it('calls list of prescriptions of patient id: 19808', async () => {
-        const response = await request.get('/api/v1/MedicationRequest?patientId=19808').set({ 'x-access-token': token });
+        const response = await chai.request(app).get('/api/v1/MedicationRequest?patientId=19808').set({ 'x-access-token': token });
         expect(response.status).to.eql(200);
         expect(response.body).to.have.property("status");
         expect(response.body.status).to.eql(1);
@@ -269,7 +271,7 @@ describe('GET /api/v1/MedicationRequest', () => {
         }
     });
     it('calls list of prescriptions of all patients', async () => {
-        const response = await request.get('/api/v1/MedicationRequest?_count=500').set({ 'x-access-token': token });
+        const response = await chai.request(app).get('/api/v1/MedicationRequest?_count=500').set({ 'x-access-token': token });
         expect(response.status).to.eql(200);
         expect(response.body).to.have.property("status");
         expect(response.body.status).to.eql(1);
@@ -288,7 +290,7 @@ describe('GET /api/v1/MedicationRequest', () => {
             expect(chai.tv4.validate(prescription, prescriptionSchemaFormat)).to.be.true;
         }
         it('Save prescription data for patient 20154 and her visits', async () => {
-            const response = await request.post('/api/v1/sync/MedicationRequest').set({'x-access-token': token})
+            const response = await chai.request(app).post('/api/v1/sync/MedicationRequest').set({'x-access-token': token})
             .send(prescription2);
             expect(response.status).to.be.oneOf([200, 201]);
             expect(response.body.status).to.eql(1);

@@ -19,8 +19,10 @@ let getResourceUrl = async function (resourceType, queryParams) {
             queryParams = {
                 "_include" : "Person:link:RelatedPerson",
                 "patient._id" : patientIds,
-                "_total": "accurate"
+                "_total": "accurate",
+                "_count" : queryParams._count
             };
+            console.log("===============>", queryParams)
             dataEntryLength = 1;
         }
 
@@ -37,7 +39,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
             queryParams.Organization = queryParams.orgId;
             queryParams = {
                 "_revinclude" : "Location:organization:Organization",
-                "_total": "accurate"
+                "_total": "accurate",
             };
             dataEntryLength = 1;
             break;
