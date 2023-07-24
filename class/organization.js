@@ -1,5 +1,5 @@
 let { checkEmptyData } = require("../services/CheckEmpty");
-
+let idFunction = require("../utils/setGetIdentifier")
 class Organization {
     orgObj;
     fhirResource;
@@ -18,14 +18,14 @@ class Organization {
     }
 
     setIdAsIdentifier() {
-        if (this.orgObj.id) {
-            let jsonObj = this.setIdentifierJSON({
-                "identifierType": "https://www.thelattice.in/",
-                "identifierNumber": this.orgObj.id,
-                "code": "MR"
-            })
-            this.fhirResource.identifier.push(jsonObj)
+        if(this.orgObj.identifier) {
+            for (let i=0; i<this.orgObj.identifier.length; i++) {
+                let data = idFunction.setIdAsIdentifier(this.orgObj.identifier[i], "MR");
+                this.fhirResource.identifier.push(data);
+            }
+
         }
+      
     }
 
     setOrgType() {
@@ -128,18 +128,12 @@ class Organization {
     }
 
     getIdentifier() {
-        if (this.fhirResource.identifier && this.fhirResource.identifier.length > 0) {
-            this.orgObj.identifier = [];
-            this.fhirResource.identifier.forEach(element => {
-                this.orgObj.identifier.push({
-                    identifierType: element.system,
-                    identifierNumber: element.value,
-                    code: element.type ? element.type.coding[0].code : null
-                })
-                this.orgObj.id = element.type && element.type.coding[0].code == "MR" ? element.value : this.orgObj.id;
-            });
-
+        if(this.fhirResource.identifier) {
+            let data = idFunction.getIdentifier(this.fhirResource, "MR");
+            this.orgObj.id = data.id;
+            this.orgObj.identifier = data.identifier;
         }
+
     }
 
    

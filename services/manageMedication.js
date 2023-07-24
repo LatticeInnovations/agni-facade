@@ -1,14 +1,12 @@
 let Medication = require("../class/medication");
-let bundleFun = require("./bundleOperation");
-let config = require("../config/nodeConfig");
 
 let setMedicationData = async function (resType, reqInput, FHIRData, reqMethod) {
     try {
-            let resource_result = [];
+            let resourceResult = [], errData = [];
             let medication = new Medication(reqInput, FHIRData);
             medication.getFHIRToUserInput();
-            resource_result.push(medication.getMedicationResource())
-        return resource_result;
+            resourceResult.push(medication.getMedicationResource())
+        return {resourceResult, errData};
     }
     catch (e) {
         return Promise.reject(e);

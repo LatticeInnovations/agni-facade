@@ -5,7 +5,9 @@ let medRequest = require("./manageMedicationRequestOperation");
 let organization = require("./manageOrganization");
 let practitioner = require("./managePractitioner");
 let practitionerRole = require("./managePractitionerRole");
-let getResource = async function (resType, inputData, FHIRData, reqMethod, fetchedResourceData) {
+let schedule= require("./manageSchedule")
+let appointment = require("./manageAppointment");
+let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery) {
     try {
         let bundleData = [];
         switch (resType) {
@@ -13,7 +15,7 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
                 bundleData = await patient.setPatientData(resType, inputData, FHIRData, reqMethod);
                 break;
             case "RelatedPerson":
-                bundleData = await relatedPerson.setRelatedPersonData(inputData, FHIRData, reqMethod, fetchedResourceData);
+                bundleData = await relatedPerson.setRelatedPersonData(inputData, FHIRData, reqMethod);
                 break;
             case "Medication":  bundleData =await medication.setMedicationData(resType, inputData, FHIRData, reqMethod);
             break;
@@ -25,6 +27,10 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, fetch
             break;
             case "PractitionerRole": bundleData = await practitionerRole.setPractitionerRoleData(resType, inputData, FHIRData, reqMethod); 
             break; 
+            case "Schedule" : bundleData = await schedule.setScheduleData(resType, inputData, FHIRData, reqMethod);
+            break;
+            case "Appointment" : bundleData = await appointment.setApptData(resType, inputData, FHIRData, reqMethod, reqQuery);
+             break;
         }
 
         return bundleData;
@@ -38,13 +44,17 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
     try {
         let response = [], filtereredData = [];
         let mergedArray = bundleResponse.map((data, i) => Object.assign({}, data, reqData[i]));
-        if (["post", "POST", "put", "PUT"].includes(reqMethod) && (resType == "Patient"))
+        console.info(mergedArray[0].fullUrl.split("/")[0], reqMethod, resType)
+        if (["post", "POST", "put", "PUT"].includes(reqMethod) && (resType == "Patient"|| resType == "Appointment"))
             filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
         else if(["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "MedicationRequest") {
             filtereredData = mergedArray.filter(e => e.resource.resourceType != resType);
         }
+        else if(["patch", "PATCH"].includes(reqMethod) && resType == "Appointment")
+            filtereredData = mergedArray.filter(e => e.fullUrl.split("/")[0] == resType);
         else
             filtereredData = mergedArray;
+            console.info("filetered Data")
         filtereredData.forEach(element => {
             let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length);
             // need to see the or statment to be removed

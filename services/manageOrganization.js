@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 
 let setOrganizationData = async function (resType, reqInput, FHIRData, reqMethod) {
     try {
-        let resource_result = [];
+        let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
             for (let orgData of reqInput) { 
             }
@@ -24,11 +24,11 @@ let setOrganizationData = async function (resType, reqInput, FHIRData, reqMethod
                 let locationData = location.getLocationResource();
                 organizationData.position = locationData.position;
                 console.info(organizationData);
-                resource_result.push(organizationData)
+                resourceResult.push(organizationData)
             }
 
         }
-        return resource_result;
+        return {resourceResult, errData};
     }
     catch (e) {
         return Promise.reject(e);
