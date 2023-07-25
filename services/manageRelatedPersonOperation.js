@@ -43,7 +43,6 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
             let outputArray = [];
             console.log(FHIRData)
             let personResource = FHIRData.filter(e => e.resource.resourceType == "Person");
-
             for (let i = 0; i < personResource.length; i++) {
                 let linkList = personResource[i].resource.link;
                 let patientIdIndex = linkList.findIndex(e => e.target.reference.includes("Patient"));
@@ -53,20 +52,24 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                     "relationship": []
                 }
                 for (let j = 0; j < linkList.length; j++) {
-                    if (linkList[j].target.reference.includes("RelatedPerson")) {
+                    if (linkList[j].target.reference.includes("RelatedPerson")) {                       
                         let id = linkList[j].target.reference.split('RelatedPerson/')[1];
-                        let relatedPersonindex = FHIRData.findIndex(e => e.resource.resourceType == "RelatedPerson" && id == e.resource.id)
+                        let relatedPersonindex = FHIRData.findIndex(e => e.resource.resourceType == "RelatedPerson" && id == e.resource.id);
                         let patientId = FHIRData[relatedPersonindex].resource.patient.reference.split("/")
                         patientRelation.relationship.push({
                             "relativeId": patientId[1],
                             "patientIs": FHIRData[relatedPersonindex].resource.relationship[0].coding[0].code
                         })
+
+                       
                     }
                 }
+              
                 if(patientRelation.relationship.length > 0)
                     outputArray.push(patientRelation)
+                    resourceResult = outputArray;
             }
-            return outputArray;
+            return {resourceResult, errData};
         }
         else if (["patch", "PATCH"].includes(reqMethod)) {
             let deleteList = [];

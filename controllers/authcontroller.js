@@ -164,7 +164,7 @@ async function sendOTP(isEmail, userDetail, otp) {
             let text = `<#> Use OTP ${otp} to login to agni App\n` + config.OTPHash;
             console.log("check text message", text);
             messageDetail = await sendSms(userDetail.dataValues.mobile_number, text);
-            console.log(messageDetail, messageDetail.code)
+            console.log(messageDetail, messageDetail.code);
         }
     }
     catch (e) {
