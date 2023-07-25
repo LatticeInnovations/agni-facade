@@ -7,7 +7,7 @@ let util = require('util');
 
 const cron = require('node-cron')
 async function appointmentList() {
-        cron.schedule("0 09 17 * * *", triggerAppointment);
+        cron.schedule("0 0 30 * * *", triggerAppointment);
 }
 
 async function triggerAppointment() {
