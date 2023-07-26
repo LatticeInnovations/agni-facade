@@ -64,14 +64,25 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
             return { ...obj1, ...obj2 }; 
           });    
         // booked slots count
+
         let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { _elements: "schedule","_has:Appointment:slot:slot.schedule":  [...scheduleIds].join(","), _count: 5000});
-        let resData = slotList.data.entry.reduce((acc, {resource}) => {
-            let scheduleId = resource.schedule.reference.split("/")[1];
-            if  (scheduleIds.has(scheduleId))
-                acc[scheduleId] = (acc[scheduleId] || 0) + 1;        
-            return acc;
-        }, {});
-        let resourceResult1 = Object.entries(resData).map(([scheduleId, bookedSlots]) => ({scheduleId, bookedSlots}));
+        let resData = []; let resourceResult1 = null;
+        if(slotList.data.total > 0) {
+             resData = slotList.data.entry.reduce((acc, {resource}) => {
+                let scheduleId = resource.schedule.reference.split("/")[1];
+                if  (scheduleIds.has(scheduleId))
+                    acc[scheduleId] = (acc[scheduleId] || 0) + 1;        
+                return acc;
+            }, {});           
+        }
+        else {
+            slotList.data.entry = []
+            for(let i=0; i<scheduleIds.size; i++) {
+                resData[scheduleIds[i]] =  0
+            }
+        }
+
+         resourceResult1 = Object.entries(resData).map(([scheduleId, bookedSlots]) => ({scheduleId, bookedSlots}));
         console.info(resourceResult1, resourceSlotResult)
         resourceResult = resourceSlotResult.map(obj1 => { 
             let obj2 = resourceResult1.find(obj2 => obj2.scheduleId === obj1.scheduleId); 
