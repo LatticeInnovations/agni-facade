@@ -64,6 +64,10 @@ let getResourceUrl = async function (resourceType, queryParams) {
                 queryParams["location.organization"] = queryParams.orgId;
                 delete queryParams.orgId;
              }
+             if(queryParams.patientId) {
+                queryParams["patient"] = queryParams.patientId;
+                delete queryParams.patientId;
+             }
             url = config.baseUrl + resourceType;
             nestedResource = 1;
             break;
