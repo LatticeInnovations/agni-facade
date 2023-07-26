@@ -5,7 +5,7 @@ let config = require("../config/nodeConfig");
 let url = require('url');
 
 let getResourceUrl = async function (resourceType, queryParams) {
-    let url = "", nestedResource = null;
+    let url = "", nestedResource = null, specialOffset = null;
     switch (resourceType) {
         case "Patient": 
         case "Medication" :
@@ -57,6 +57,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
             delete queryParams.orgId;
             url = config.baseUrl + resourceType;
             nestedResource = 1;
+            specialOffset = 1;
             break;
         case "Appointment": 
              queryParams._total = "accurate"
@@ -70,11 +71,12 @@ let getResourceUrl = async function (resourceType, queryParams) {
              }
             url = config.baseUrl + resourceType;
             nestedResource = 1;
+            specialOffset = 1;
             break;
 
     }
 
-    return { link: url, reqQuery: queryParams, nestedResource: nestedResource }
+    return { link: url, reqQuery: queryParams, nestedResource: nestedResource, specialOffset: specialOffset }
 }
 
 let searchResourceData = async function (req, res) {
@@ -84,7 +86,7 @@ let searchResourceData = async function (req, res) {
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
         let reqUrl = url.parse(req.originalUrl, true)
         let reqQuery = reqUrl.query;
-        //console.log(responseData.data.entry)
+        console.info(responseData.data.link)
         let result = [];
         let resStatus = 1;
         if( !responseData.data.entry || responseData.data.total == 0) {
@@ -94,6 +96,17 @@ let searchResourceData = async function (req, res) {
         else if (resouceUrl.nestedResource == 1) {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, reqQuery, 0);
             result = result.concat(res_data.resourceResult);
+            if(resouceUrl.specialOffset) {
+                let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
+                if(nextIndex != -1) {
+                     let urlPart = url.parse(responseData.data.link[nextIndex].url, true);                   
+                    let query = urlPart.query;
+                    resStatus = query._offset >= responseData.data.total ? 2 : 1;
+                }  
+                else {
+                    resStatus = 2;
+                }     
+            }
             res.status(200).json({ status: resStatus, message: "Data fetched", total: result.length, data: result  })
         }
         else {      
