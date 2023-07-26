@@ -23,14 +23,16 @@ let setBundlePatch = async function (resource_data, patchUrl) {
 let setBundlePost = async function (resourceData, identifier, id, reqMethod, identifierType) {
     try {
     let identifierConcat = "";
-    if (identifier || identifier != null) {
-        identifierConcat = "";
-        identifier.forEach(element => {
-           
-            identifierConcat += identifierType+"=" + element.system + "|" + element.value + "&"
-        })
-        identifierConcat = identifierConcat.slice(0, -1);
-    }
+        if(identifier || identifier != null) {
+            identifierConcat = "";
+            identifier.forEach(element => {    
+                if(identifierType != "object")       
+                    identifierConcat += identifierType+"=" + element.system + "|" + element.value + "&"
+                else
+                    identifierConcat += element.key+"="+element.value + "&"
+            })
+            identifierConcat = identifierConcat.slice(0, -1);
+        }
     let bundlePostStructure = {
         "fullUrl": reqMethod == "PUT" ? resourceData.resourceType + "/" + id : "urn:uuid:" + id,
         "resource": resourceData,
@@ -42,8 +44,8 @@ let setBundlePost = async function (resourceData, identifier, id, reqMethod, ide
     }
     return bundlePostStructure;
 } catch (e) {
-    e = { status: 0, code: "ERR", e: e }
-    return Promise.reject(e);
+    let  eData = { status: 0, code: "ERR", e: e, statusCode: 500 }
+    return Promise.reject(eData);
 }
 }
 
@@ -68,7 +70,7 @@ let setBundlePut = async function (resourceData, identifier, id, reqMethod) {
     }
     return bundlePostStructure;
 } catch (e) {
-    e = { status: 0, code: "ERR", e: e }
+    e = { status: 0, code: "ERR", e: e, statusCode: 500 }
     return Promise.reject(e);
 }
 }
@@ -83,8 +85,8 @@ let setBundleDelete = async function (resourceType, id) {
     }
     return bundlePostStructure;
 } catch (e) {
-    e = { status: 0, code: "ERR", e: e }
-    return Promise.reject(e);
+    let  eData = { status: 0, code: "ERR", e: e, statusCode: 500 }
+    return Promise.reject(eData);
 }
 }
 
@@ -93,8 +95,8 @@ let searchData = async function (link, reqQuery) {
         let responseData = await axios.get(link, { params: reqQuery });
         return responseData;
     } catch (e) {
-        e = { status: 0, code: "ERR", e: e }
-        return Promise.reject(e);
+        let  eData = { status: 0, code: "ERR", e: e, statusCode: 500 }
+        return Promise.reject(eData);
     }
 
 }

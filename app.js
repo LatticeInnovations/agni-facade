@@ -5,7 +5,11 @@ const bodyParser =  require('body-parser')
 const expressSwagger = require('express-swagger-generator')(app)
 const cors = require('cors');
 const cookieParser = require("cookie-parser");
+let cronJob= require("./services/cros-jobs/triggerAppointment")
+
+
 require('dotenv').config();
+
 let options = {
     swaggerDefinition: {
         info: {
@@ -70,6 +74,7 @@ app.use(logger(loggerFormat, {
   },
   stream: process.stderr
 }));
+cronJob.appointmentList();
 
 require('./router')(app);
 

@@ -14,7 +14,6 @@ class Location {
     }
 
     getOrganizationReference() {
-        console.log("=====>", this.fhirResource.managingOrganization)
         this.locationObj.organization = this.fhirResource.managingOrganization.reference
     }
 

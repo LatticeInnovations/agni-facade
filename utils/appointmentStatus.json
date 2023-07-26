@@ -1,0 +1,27 @@
+[
+    {
+        "uiStatus": "walkin",
+        "fhirStatus": "arrived",
+        "type": "walkin"
+    },
+    {
+        "uiStatus": "scheduled",
+        "fhirStatus": "proposed",
+        "type": "routine"
+    },
+    {
+        "uiStatus": "arrived",
+        "fhirStatus": "arrived",
+        "type": "routine"
+    },
+    {
+        "uiStatus": "cancelled",
+        "fhirStatus": "cancelled",
+        "type": "routine"
+    },
+    {
+        "uiStatus": "noshow",
+        "fhirStatus": "noshow",
+        "type": "routine"
+    }
+]

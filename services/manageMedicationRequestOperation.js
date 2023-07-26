@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 
 let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqMethod) {
     try {
-        let resource_result = [];
+        let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
             for (let patPres of reqInput) {
                 
@@ -15,8 +15,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 encounterResource.resourceType = "Encounter";
                 encounterResource.id = patPres.prescriptionId;
                 let encounterBundle = await bundleFun.setBundlePost(encounterResource, encounterResource.identifier, encounterResource.id, "POST", "identifier");
-                resource_result.push(encounterBundle);
-                console.log("encounter data");
+                resourceResult.push(encounterBundle);
                 let medList = patPres.prescription;
                 let dateToday = (new Date(patPres.generatedOn)).getTime().toString();
                 let lastDigits = dateToday.slice(9, -1);
@@ -38,7 +37,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                     medReqData.resourceType = "MedicationRequest";
                     medReqData.id = uuidv4();
                     let medReqResource = await bundleFun.setBundlePost(medReqData, prescription.identifier, medReqData.id, "POST", "identifier");
-                    resource_result.push(medReqResource);                    
+                    resourceResult.push(medReqResource);                    
                 }
             }
         }
@@ -57,11 +56,11 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                             medData.qtyPrescribed = medData.qtyPerDose * medData.frequency * medData.duration;
                             encounterData.prescription.push(medData)
                     }
-                resource_result.push(encounterData)
+                resourceResult.push(encounterData)
             }
 
         }
-        return resource_result;
+        return {resourceResult, errData};
     }
     catch (e) {
         return Promise.reject(e);

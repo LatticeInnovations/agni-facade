@@ -4,14 +4,11 @@ let Practitioner = require("../class/practitioner");
 
 let setPractitionerRoleData = async function (relatedPersonList, reqInput, FHIRData, reqMethod) {
     try {
-        let resourceData = [];
+        let resourceResult = [], errData = [];
         if (["post", "POST", "put", "PUT"].includes(reqMethod)) {
-
-            return resourceData;
 
         }
         else if (["GET", "get"].includes(reqMethod)) {
-            let outputArray = [];
             let role = [];
             let practitioner = FHIRData.find(e => e.resource.resourceType == "Practitioner");
             let practitionerData = new Practitioner({}, practitioner.resource);
@@ -41,14 +38,12 @@ let setPractitionerRoleData = async function (relatedPersonList, reqInput, FHIRD
                 "address": practitionerData.address,
                 "role": role
             }
-            outputArray.push(data)
-            return outputArray;
+            resourceResult.push(data);
         }
         else if (["patch", "PATCH"].includes(reqMethod)) {
             let deleteList = [];
-            return resourceData;
         }
-
+        return {resourceResult, errData};
     }
     catch (e) {
         return Promise.reject(e);

@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 
 let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
     try {
-        let resource_result = [];
+        let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
             for (let patientData of reqInput) {
                 let patient = new Person(patientData, FHIRData);
@@ -23,7 +23,7 @@ let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
                 personResource.id = uuidv4();
                 let patientBundle = await bundleFun.setBundlePost(patientResource, patientResource.identifier, patientData.id, "POST", "identifier");   
                 let personBundle = await bundleFun.setBundlePost(personResource, patientResource.identifier, personResource.id, "POST", "identifier");  
-                resource_result.push(patientBundle, personBundle);  
+                resourceResult.push(patientBundle, personBundle);  
             }
         }
         else if (["patch", "PATCH"].includes(reqMethod)) {
@@ -32,22 +32,22 @@ let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
                 let link = config.baseUrl + resType;
                 let resourceSavedData = await bundleFun.searchData(link, { "_id": inputData.id });
                 if (resourceSavedData.data.total != 1) {
-                    let e = { status: 0, code: "ERR", response: "Patient Id " + inputData.id + " does not exist."}
+                    let e = { status: 0, code: "ERR", message: "Patient Id " + inputData.id + " does not exist.", statusCode: 500}
                    return Promise.reject(e);
                 }
                 patient.patchUserInputToFHIR(resourceSavedData.data.entry[0].resource);
                 let resourceData = [...patient.getFHIRResource()];
                 const patchUrl = resType + "/" + inputData.id;
                 let patchResource = await bundleFun.setBundlePatch(resourceData, patchUrl);
-                resource_result.push(patchResource);
+                resourceResult.push(patchResource);
             }
         }
         else {
             let patient = new Person(reqInput, FHIRData);
             patient.getFHIRToUserInput();
-            resource_result.push(patient.getPersonResource())
+            resourceResult.push(patient.getPersonResource())
         }
-        return resource_result;
+        return {resourceResult, errData};
     }
     catch (e) {
         return Promise.reject(e);

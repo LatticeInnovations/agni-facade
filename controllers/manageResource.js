@@ -5,7 +5,7 @@ let config = require("../config/nodeConfig");
 let url = require('url');
 
 let getResourceUrl = async function (resourceType, queryParams) {
-    let url = "", dataEntryLength = null;
+    let url = "", nestedResource = null;
     switch (resourceType) {
         case "Patient": 
         case "Medication" :
@@ -22,8 +22,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
                 "_total": "accurate",
                 "_count" : queryParams._count
             };
-            console.log("===============>", queryParams)
-            dataEntryLength = 1;
+            nestedResource = 1;
         }
 
             break;
@@ -32,7 +31,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
             queryParams.patient = queryParams.patientId;
             delete queryParams.patientId;
             queryParams._include = "MedicationRequest:encounter:Encounter";
-            dataEntryLength = 1;
+            nestedResource = 1;
             break;
         case "Organization" : 
             url = config.baseUrl + resourceType;
@@ -41,7 +40,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
                 "_revinclude" : "Location:organization:Organization",
                 "_total": "accurate",
             };
-            dataEntryLength = 1;
+            nestedResource = 1;
             break;
         case "PractitionerRole":
             url = config.baseUrl + resourceType;
@@ -50,12 +49,32 @@ let getResourceUrl = async function (resourceType, queryParams) {
                 "_include": "*",
                 "_total": "accurate"
             }
-            dataEntryLength = 1;
+            nestedResource = 1;
+            break;
+        case "Schedule":
+            queryParams._total = "accurate"
+            queryParams["actor.organization"] = queryParams.orgId;
+            delete queryParams.orgId;
+            url = config.baseUrl + resourceType;
+            nestedResource = 1;
+            break;
+        case "Appointment": 
+             queryParams._total = "accurate"
+             if(queryParams.orgId) {
+                queryParams["location.organization"] = queryParams.orgId;
+                delete queryParams.orgId;
+             }
+             if(queryParams.patientId) {
+                queryParams["patient"] = queryParams.patientId;
+                delete queryParams.patientId;
+             }
+            url = config.baseUrl + resourceType;
+            nestedResource = 1;
             break;
 
     }
 
-    return { link: url, reqQuery: queryParams, dataEntryLength: dataEntryLength }
+    return { link: url, reqQuery: queryParams, nestedResource: nestedResource }
 }
 
 let searchResourceData = async function (req, res) {
@@ -72,9 +91,9 @@ let searchResourceData = async function (req, res) {
             resStatus = reqUrl.query && reqUrl.query._offset ? 2 : 1;
             return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
         }
-        else if (resouceUrl.dataEntryLength == 1) {
-            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
-            result = result.concat(res_data);
+        else if (resouceUrl.nestedResource == 1) {
+            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, reqQuery, 0);
+            result = result.concat(res_data.resourceResult);
             res.status(200).json({ status: resStatus, message: "Data fetched", total: result.length, data: result  })
         }
         else {      
@@ -90,10 +109,10 @@ let searchResourceData = async function (req, res) {
                 }           
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {
-                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, null, 0);
-                result = result.concat(res_data);
+                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0);
+                result = result.concat(res_data.resourceResult);
             }
-             res.status(200).json({ status: resStatus, message: "Data fetched", total: result.length,"offset": +reqQuery._offset, data: result  })
+             res.status(200).json({ status: resStatus, message: "Data fetched successfully.", total: result.length,"offset": +reqQuery._offset, data: result  })
         }
 
     }
