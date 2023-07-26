@@ -25,7 +25,7 @@ class Appointment {
     getIdentifier() {
         let data = idFunction.getIdentifier(this.fhirResource, "U");
         this.apptObj.uuid = data.uuid;
-        this.apptObj.identifier = data.identifier;
+        //this.apptObj.identifier = data.identifier;
     }
     
     setStatus() {
@@ -110,6 +110,7 @@ class Appointment {
 
     getFHIRToUserInput() {
         this.getId();
+        this.getIdentifier();
         this.getStatus();
         this.getSlot();
         this.getParticipant();

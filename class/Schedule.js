@@ -53,6 +53,7 @@ class Schedule {
 
     getId() {
         this.scheduleObj.scheduleId = this.fhirResource.id;
+        this.scheduleObj.uuid = this.fhirResource.identifier[0].value
     }   
 
     getFHIRToUserInput() {

@@ -7,7 +7,7 @@ let util = require('util');
 
 const cron = require('node-cron')
 async function appointmentList() {
-        cron.schedule("0 0 30 * * *", triggerAppointment);
+        cron.schedule("0 30 0 * * *", triggerAppointment);
 }
 
 // trigger a cron job for sending message to user having appointment after 1 day or 3 days
