@@ -69,8 +69,8 @@ class Appointment {
    }
 
    getParticipant() {
-    this.apptObj.patientId = +this.fhirResource.participant[0].actor.reference.split("/")[1];
-    this.apptObj.locationId = +this.fhirResource.participant[1].actor.reference.split("/")[1];
+    this.apptObj.patientId = this.fhirResource.participant[0].actor.reference.split("/")[1];
+    this.apptObj.locationId = this.fhirResource.participant[1].actor.reference.split("/")[1];
    }
 
     getSlot() {

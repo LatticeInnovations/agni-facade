@@ -10,7 +10,7 @@ function scheduleValidation(userInput) {
       start: Joi.date().required(),
       end: Joi.date().greater(Joi.ref("start")).required()
     }).required(),
-    orgId: Joi.number().min(1).required()
+    orgId: Joi.string().required()
   });
   return JoiSchema.validate(userInput);
 }
@@ -28,16 +28,16 @@ function apptValidation(userInput) {
     }).required(),
     createdOn: Joi.date().required(),
     status: Joi.string().valid('arrived', 'walkin', 'scheduled', 'noshow', 'cancelled').required(),
-    patientId: Joi.number().min(1).required(),
-    scheduleId: Joi.number().min(1).required(),
-    orgId: Joi.number().min(1).required()
+    patientId: Joi.string().required(),
+    scheduleId: Joi.string().required(),
+    orgId: Joi.string().required()
   });
   return JoiSchema.validate(userInput);
 }
 
 function apptPatchValidation(userInput) {
   let JoiSchema = Joi.object({
-    "appointmentId": Joi.number().required(),
+    "appointmentId": Joi.string().required(),
     status: Joi.object({
       "operation": Joi.string().valid('replace').required(),
       "value": Joi.string().valid('arrived', 'scheduled', 'noshow', 'cancelled').required()
@@ -54,7 +54,7 @@ function apptPatchValidation(userInput) {
     }).when('status.value', { is: "scheduled", then: Joi.required(), otherwise: Joi.optional() }),
     scheduleId: Joi.object({
       "operation": Joi.string().valid('replace').required(),
-      "value": Joi.number().min(1).required()
+      "value": Joi.string().required()
     }).when('status.value', { is: "scheduled", then: Joi.required(), otherwise: Joi.optional() })
   });
   return JoiSchema.validate(userInput);
