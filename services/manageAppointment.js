@@ -123,16 +123,16 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 let apptResponse = appointment.getInput();
                 console.info(apptResponse)
                 apptIds.add(apptResponse.appointmentId);
-                locationIds.add(+apptResponse.locationId);
+                locationIds.add(apptResponse.locationId);
                 let slotId = apptData.resource.slot ? apptData.resource.slot[0].reference.split("/")[1] : null;
                 slotIds.add(slotId);
-                apptResponse.slotId = +slotId;
+                apptResponse.slotId = slotId;
                 apptResult.push(apptResponse);
             }
             // get orh=ganization id of an appointment
             let orgResource = await bundleOp.searchData(config.baseUrl + "Location", { _elements: "managingOrganization", _id: [...locationIds].join(","), _count: locationIds.size });
 
-            let locationOrg = orgResource.data.entry.map(e => { return { locationId: +e.resource.id, orgId: +e.resource.managingOrganization.reference.split("/")[1] } });
+            let locationOrg = orgResource.data.entry.map(e => { return { locationId: e.resource.id, orgId: e.resource.managingOrganization.reference.split("/")[1] } });
             console.info(locationOrg)
             apptResult = apptResult.map(obj1 => {
                 let obj2 = locationOrg.find(obj2 => obj2.locationId === obj1.locationId);
@@ -141,7 +141,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
             });
             // get assigned slot and schedule data of an appointment
             let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { "_id": [...slotIds].join(","), _count: 5000 });
-            let slotAppt = slotList.data.entry.map(e => { return { slotId: +e.resource.id, slot: { start: e.resource.start, end: e.resource.end}, scheduleId: +e.resource.schedule.reference.split("/")[1] } });
+            let slotAppt = slotList.data.entry.map(e => { return { slotId: e.resource.id, slot: { start: e.resource.start, end: e.resource.end}, scheduleId: e.resource.schedule.reference.split("/")[1] } });
             resourceResult = apptResult.map(obj1 => {
                 let obj2 = slotAppt.find(obj2 => obj2.slotId === obj1.slotId);
                 if(typeof obj2 == "undefined") {

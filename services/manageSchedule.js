@@ -51,14 +51,14 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                 scheduleIds.add(scheduleResponse.scheduleId);
                 let locationId = scheduleData.resource.actor[0].reference.split("/")[1];
                 locationIds.add(locationId);
-                scheduleResponse.locationId = +locationId;
+                scheduleResponse.locationId = locationId;
                 scheduleResponse.bookedSlots = 0;
                 scheduleResult.push(scheduleResponse);
         } 
         // to get organization id from location of the schedule and join it with schedule data
         let orgResource = await bundleOp.searchData(config.baseUrl + "Location", { _elements: "managingOrganization",_id:  [...locationIds].join(","), _count: locationIds.size});       
 
-         let locationOrg = orgResource.data.entry.map(e=> {return {locationId: +e.resource.id, orgId: +e.resource.managingOrganization.reference.split("/")[1]}});
+         let locationOrg = orgResource.data.entry.map(e=> {return {locationId: e.resource.id, orgId: e.resource.managingOrganization.reference.split("/")[1]}});
          resourceSlotResult = scheduleResult.map(obj1 => { 
             let obj2 = locationOrg.find(obj2 => obj2.locationId === obj1.locationId); 
             return { ...obj1, ...obj2 }; 

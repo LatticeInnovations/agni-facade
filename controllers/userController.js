@@ -17,13 +17,14 @@ let getUserProfile = async function (req, res, next) {
         else {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
             result = result.concat(res_data);
-            console.info(result[0])
+            result = result[0].resourceResult;
             data.userId = result[0].practitionerId,
             data.userName = result[0].firstName + " " + (result[0].middleName? result[0].middleName + " " : "") + result[0].lastName;
             data.mobileNumber = result[0].mobileNumber;
             data.userEmail = result[0].email;
             data.address = result[0].address;
             data.role = result[0].role;
+            console.info(data)
             res.status(200).json({ status: 1, message: "Profile detail fetched", total: 1, data: data  })
         }
     }
