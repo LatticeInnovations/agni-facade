@@ -50,7 +50,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                     let encounterUuid =  uuidv4();
                     // constraint to not allow multiple appoinments creation for same patient  on same Time for same organization
                     let noneExistDataAppt = [
-                        { "key": "date", "value": apptData.slot.start },
+                        { "key": "identifier", "value": apptResource.identifier[0].system +"|" + apptResource.identifier[0].value},
                         { "key": "location", "value": 'Location/' + locationId },
                         { "key": "patient", "value": 'Patient/' + apptData.patientId }
                     ]

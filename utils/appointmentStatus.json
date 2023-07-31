@@ -21,7 +21,7 @@
         "uiStatus": "cancelled",
         "fhirStatus": "cancelled",
         "type": "routine",
-        "encounter": "cancelled"
+        "encounter": "planned"
     },
     {
         "uiStatus": "noshow",
