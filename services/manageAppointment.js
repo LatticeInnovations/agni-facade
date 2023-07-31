@@ -54,7 +54,6 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                         { "key": "location", "value": 'Location/' + locationId },
                         { "key": "patient", "value": 'Patient/' + apptData.patientId }
                     ]
-                   
                     let apptBundle = await bundleFun.setBundlePost(apptResource, noneExistDataAppt, apptData.uuid, "POST", "object");              
                     let encounterBundle = await bundleFun.setBundlePost(encounterResource, encounterResource.identifier, encounterUuid, "POST", "identifier");
                     resourceResult.push(apptBundle, encounterBundle);
