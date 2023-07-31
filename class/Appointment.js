@@ -78,8 +78,7 @@ class Appointment {
     }
 
     patchSlot() {
-        if (this.apptObj.status && this.apptObj.status.value == "cancelled") {
-            this.apptObj.slot = {"operation": "remove", "path": "/slot"}
+        if (this.apptObj.status && this.apptObj.status.value == "scheduled") {
             this.fhirResource.push({ "op": this.apptObj.slot.operation, "path": "/slot", value: this.apptObj.slot.value });  
         }
 
@@ -101,7 +100,7 @@ class Appointment {
     }
 
     setStart() {
-        this.fhirResource.start = this.apptObj.slot.start;
+         this.fhirResource.start = this.apptObj.slot.start;
     }
 
     getId() {

@@ -27,7 +27,7 @@ function apptValidation(userInput) {
       end: Joi.date().greater(Joi.ref("start")).required()
     }).required(),
     createdOn: Joi.date().required(),
-    status: Joi.string().valid('arrived', 'walkin', 'scheduled', 'noshow', 'cancelled').required(),
+    status: Joi.string().valid('arrived', 'walkin', 'scheduled', 'noshow', 'cancelled', 'in-progress', 'completed').required(),
     patientId: Joi.string().required(),
     scheduleId: Joi.string().required(),
     orgId: Joi.string().required()

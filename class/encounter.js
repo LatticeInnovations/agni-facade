@@ -1,5 +1,4 @@
-let { checkEmptyData } = require("../services/CheckEmpty");
-
+let apptStatus = require("../utils/appointmentStatus.json");
 class Encounter {
     prescriptionObj;
     fhirResource;
@@ -12,9 +11,13 @@ class Encounter {
     setuuid() {
         this.fhirResource.identifier.push({
                "system": "http://hl7.org/fhir/sid/sn",
-               "value": this.prescriptionObj.prescriptionId
-        })
-        this.fhirResource.status = "finished";
+               "value": this.prescriptionObj.uuid
+        });
+    }
+
+    setStatus() {
+        let statusData = apptStatus.find(e => e.uiStatus == this.prescriptionObj.status);
+        this.fhirResource.status = statusData.encounter;
     }
     
     getId() {
@@ -29,6 +32,10 @@ class Encounter {
 
     getPatientReference() {
         this.prescriptionObj.patientId = this.fhirResource.subject.reference.split("/")[1];
+    }
+
+    setAppointmentReference() {
+        this.fhirResource.appointment.reference = "urn:uuid:" + this.prescriptionObj.uuid;
     }
 
     setEncounterTime() {
@@ -46,7 +53,9 @@ class Encounter {
         this.setBasicStructure();
         this.setuuid();
         this.setPatientReference();
+        this.setAppointmentReference();
         this.setEncounterTime();
+        this.setStatus();
     }
 
     getFhirToJson() {
@@ -66,6 +75,7 @@ class Encounter {
     setBasicStructure() {
         this.fhirResource.identifier = [];
         this.fhirResource.subject = {};
+        this.fhirResource.appointment = {};
     }
 
 }

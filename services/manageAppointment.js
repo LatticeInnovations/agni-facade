@@ -1,5 +1,6 @@
 let Appointment = require("../class/Appointment");
 let Slot = require("../class/Slot");
+const Encounter = require("../class/encounter")
 let bundleFun = require("./bundleOperation");
 let bundleOp = require("./bundleOperation");
 let config = require("../config/nodeConfig");
@@ -25,28 +26,35 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 if (locationResource.data.total && locationResource.data.total == 1) {
                     let locationId = locationResource.data.entry[0].resource.id;
                     apptData.locationId = locationId;
-                    let slotData = apptData.slot;
-                    // generate slot of  the given schedule
-                    slotData.scheduleId = apptData.scheduleId;
-                    slotData.uuid = uuidv4();
-                    let slot = new Slot(slotData, {})
-                    slot.getJsonToFhirTranslator();
-                    let slotResource = slot.getResource();
-                    apptData.slotUuid = slotData.uuid;
+                        let slotData = apptData.slot;
+                        // generate slot of  the given schedule
+                        slotData.scheduleId = apptData.scheduleId;
+                        slotData.uuid = uuidv4();
+                        let slot = new Slot(slotData, {})
+                        slot.getJsonToFhirTranslator();
+                        let slotResource = slot.getResource();
+                        let slotBundle = await bundleFun.setBundlePost(slotResource, null, slotData.uuid, "POST", "object");
+                        apptData.slotUuid = slotData.uuid;
+                        resourceResult.push(slotBundle);
                     let appt = new Appointment(apptData, FHIRData);
                     appt.getJsonToFhirTranslator();
                     let apptResource = {};
                     apptResource = { ...appt.getResource() };
                     apptResource.resourceType = resType;
+                    let encounter = new Encounter(apptData, {});
+                    encounter.getUserInputToFhir();
+                    let encounterResource = {...encounter.getFHIRResource()};
+                    encounterResource.resourceType = "Encounter";
+                    let encounterUuid =  uuidv4();
                     // constraint to not allow multiple appoinments creation for same patient  on same Time for same organization
                     let noneExistDataAppt = [
-                        { "key": "date", "value": apptData.slot.start },
+                        { "key": "identifier", "value": apptResource.identifier[0].system +"|" + apptResource.identifier[0].value},
                         { "key": "location", "value": 'Location/' + locationId },
                         { "key": "patient", "value": 'Patient/' + apptData.patientId }
                     ]
-                    let slotBundle = await bundleFun.setBundlePost(slotResource, null, slotData.uuid, "POST", "object");
-                    let apptBundle = await bundleFun.setBundlePost(apptResource, noneExistDataAppt, apptData.uuid, "POST", "object");
-                    resourceResult.push(slotBundle, apptBundle);
+                    let apptBundle = await bundleFun.setBundlePost(apptResource, noneExistDataAppt, apptData.uuid, "POST", "object");              
+                    let encounterBundle = await bundleFun.setBundlePost(encounterResource, encounterResource.identifier, encounterUuid, "POST", "identifier");
+                    resourceResult.push(apptBundle, encounterBundle);
                 }
                 else {
                     // if location data is not gound that means either location or organization details are incorrect
@@ -89,25 +97,18 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 }
                 else {
                     // update appointment details 
-                    let slotPatch = null;                    
+                    let slotPatch = null;
                     let appointment = new Appointment(inputData, []);
                     appointment.patchUserInputToFHIR(resourceSavedData.data.entry[0].resource);
                     let resourceData = [...appointment.getResource()];
                     const patchUrl = resType + "/" + inputData.appointmentId;
-                    let slotId = resourceSavedData.data.entry[0].resource.slot[0].reference.split("/")[1]; 
+                    let slotId = resourceSavedData.data.entry[0].resource.slot[0].reference.split("/")[1];
                     let patchResource = await bundleFun.setBundlePatch(resourceData, patchUrl);
-                    // if an appointment is cancelled delete the linked slot
-                    if(inputData.status.value == "cancelled") {  
-                        slotPatch = await bundleOp.setBundleDelete("Slot", slotId);
-          
-                    }
-                    else {
-                        let slot = new Slot(inputData, []);
-                        slot.patchUserInputToFHIR();
-                        let slotPatchResource = [...slot.getResource()];
-                        const slotPatchUrl = "Slot/" + slotId;
-                         slotPatch = await bundleFun.setBundlePatch(slotPatchResource, slotPatchUrl);
-                    }
+                    let slot = new Slot(inputData, []);
+                    slot.patchUserInputToFHIR();
+                    let slotPatchResource = [...slot.getResource()];
+                    const slotPatchUrl = "Slot/" + slotId;
+                    slotPatch = await bundleFun.setBundlePatch(slotPatchResource, slotPatchUrl);
                     resourceResult.push(patchResource, slotPatch);
                 }
 

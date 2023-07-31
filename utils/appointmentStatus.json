@@ -2,26 +2,43 @@
     {
         "uiStatus": "walkin",
         "fhirStatus": "arrived",
-        "type": "walkin"
+        "type": "walkin",
+        "encounter": "planned"
     },
     {
         "uiStatus": "scheduled",
         "fhirStatus": "proposed",
-        "type": "routine"
+        "type": "routine",
+        "encounter": "planned"
     },
     {
         "uiStatus": "arrived",
         "fhirStatus": "arrived",
-        "type": "routine"
+        "type": "routine",
+        "encounter": "planned"
     },
     {
         "uiStatus": "cancelled",
         "fhirStatus": "cancelled",
-        "type": "routine"
+        "type": "routine",
+        "encounter": "planned"
     },
     {
         "uiStatus": "noshow",
         "fhirStatus": "noshow",
-        "type": "routine"
+        "type": "routine",
+        "encounter": "planned"
+    },
+    {
+        "uiStatus": "in-progress",
+        "fhirStatus": "arrived",
+        "type": "routine",
+        "encounter": "in-progress"
+    },
+    {
+        "uiStatus": "completed",
+        "fhirStatus": "arrived",
+        "type": "routine",
+        "encounter": "finished"
     }
 ]
