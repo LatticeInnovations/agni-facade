@@ -53,9 +53,11 @@ class Appointment {
     }
 
     setSlot() {
+        if(this.apptObj.status !== "cancelled") {
         this.fhirResource.slot.push({
             "reference": "urn:uuid:" + this.apptObj.slotUuid
         })
+    }
     }
 
    setParticipant() {
