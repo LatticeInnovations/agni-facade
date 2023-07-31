@@ -25,11 +25,11 @@ function apptValidation(userInput) {
     slot: Joi.object({
       start: Joi.date().required(),
       end: Joi.date().greater(Joi.ref("start")).required()
-    }),
+    }).required(),
     createdOn: Joi.date().required(),
     status: Joi.string().valid('arrived', 'walkin', 'scheduled', 'noshow', 'cancelled', 'in-progress', 'completed').required(),
     patientId: Joi.string().required(),
-    scheduleId: Joi.string(),
+    scheduleId: Joi.string().required(),
     orgId: Joi.string().required()
   });
   return JoiSchema.validate(userInput);

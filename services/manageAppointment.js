@@ -26,7 +26,6 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 if (locationResource.data.total && locationResource.data.total == 1) {
                     let locationId = locationResource.data.entry[0].resource.id;
                     apptData.locationId = locationId;
-                    if(apptData.status !== "cancelled") {
                         let slotData = apptData.slot;
                         // generate slot of  the given schedule
                         slotData.scheduleId = apptData.scheduleId;
@@ -37,7 +36,6 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                         let slotBundle = await bundleFun.setBundlePost(slotResource, null, slotData.uuid, "POST", "object");
                         apptData.slotUuid = slotData.uuid;
                         resourceResult.push(slotBundle);
-                    }
                     let appt = new Appointment(apptData, FHIRData);
                     appt.getJsonToFhirTranslator();
                     let apptResource = {};
@@ -99,25 +97,18 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 }
                 else {
                     // update appointment details 
-                    let slotPatch = null;                    
+                    let slotPatch = null;
                     let appointment = new Appointment(inputData, []);
                     appointment.patchUserInputToFHIR(resourceSavedData.data.entry[0].resource);
                     let resourceData = [...appointment.getResource()];
                     const patchUrl = resType + "/" + inputData.appointmentId;
-                    let slotId = resourceSavedData.data.entry[0].resource.slot[0].reference.split("/")[1]; 
+                    let slotId = resourceSavedData.data.entry[0].resource.slot[0].reference.split("/")[1];
                     let patchResource = await bundleFun.setBundlePatch(resourceData, patchUrl);
-                    // if an appointment is cancelled delete the linked slot
-                    if(inputData.status.value == "cancelled") {  
-                        slotPatch = await bundleOp.setBundleDelete("Slot", slotId);
-          
-                    }
-                    else {
-                        let slot = new Slot(inputData, []);
-                        slot.patchUserInputToFHIR();
-                        let slotPatchResource = [...slot.getResource()];
-                        const slotPatchUrl = "Slot/" + slotId;
-                         slotPatch = await bundleFun.setBundlePatch(slotPatchResource, slotPatchUrl);
-                    }
+                    let slot = new Slot(inputData, []);
+                    slot.patchUserInputToFHIR();
+                    let slotPatchResource = [...slot.getResource()];
+                    const slotPatchUrl = "Slot/" + slotId;
+                    slotPatch = await bundleFun.setBundlePatch(slotPatchResource, slotPatchUrl);
                     resourceResult.push(patchResource, slotPatch);
                 }
 

@@ -65,7 +65,7 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
           });    
         // booked slots count
 
-        let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { _elements: "schedule","_has:Appointment:slot:slot.schedule":  [...scheduleIds].join(","), _count: 5000});
+        let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { _elements: "schedule","_has:Appointment:slot:slot.schedule":  [...scheduleIds].join(","), _count: 5000, "_has:Appointment:slot:status":"proposed,arrived,noshow"});
         let resData = []; let resourceResult1 = null;
         if(slotList.data.total > 0) {
              resData = slotList.data.entry.reduce((acc, {resource}) => {
