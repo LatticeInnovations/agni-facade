@@ -103,7 +103,8 @@ class Appointment {
     }
 
     setStart() {
-        this.fhirResource.start = this.apptObj.slot.start;
+        if(this.apptObj.status !== "cancelled")
+         this.fhirResource.start = this.apptObj.slot.start;
     }
 
     getId() {
