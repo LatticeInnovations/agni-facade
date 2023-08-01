@@ -35,7 +35,7 @@ class Encounter {
     }
 
     setAppointmentReference() {
-        this.fhirResource.appointment.reference = "Appointment/" + this.prescriptionObj.appointmentId;
+        this.fhirResource.appointment.reference = "urn:uuid:" + this.prescriptionObj.uuid;
     }
 
     getAppointmentReference() {

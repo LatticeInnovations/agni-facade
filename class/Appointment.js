@@ -79,7 +79,7 @@ class Appointment {
 
     patchSlot() {
         if (this.apptObj.status && this.apptObj.status.value == "scheduled") {
-            this.fhirResource.push({ "op": this.apptObj.slot.operation, "path": "/slot", value: this.apptObj.slot.value });  
+            this.fhirResource.push({ "op": this.apptObj.slot.operation, "path": "/slot/"+0, value: this.apptObj.slot.value });  
         }
 
 
@@ -129,7 +129,7 @@ class Appointment {
     patchUserInputToFHIR() {
         this.patchStatus();
         this.patchCreatedOn();   
-        this.patchSlot();    
+      //  this.patchSlot();    
 
     }
 

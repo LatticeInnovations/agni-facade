@@ -87,12 +87,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                         "fhirId": inputData.appointmentId
                     })
                 }
-                else if((inputData.status.value == "completed" || inputData.status.value == "in-progress") && encounterSavedData.data.entry) {
-                    encounterSavedData.data.entry[0].resource.status = "finished";
-                    let encounterBundle = await bundleFun.setBundlePost(encounterSavedData.data.entry[0].resource, encounterSavedData.data.entry[0].resource.identifier, encounterSavedData.data.entry[0].resource.id, "PUT", "identifier");                   
-                    resourceResult.push(encounterBundle);
-                }
-                else if(resourceSavedData.data.entry[0].resource.status == "cancelled" || resourceSavedData.data.entry[0].resource.status == "noshow" || resourceSavedData.data.entry[0].resource.status == "arrived") {
+                else if(resourceSavedData.data.entry[0].resource.status == "cancelled" || resourceSavedData.data.entry[0].resource.status == "noshow") {
                     // once appointment status is no-show and cancelled it cannot be changed.
                     errData.push({
                         "status": "500",
@@ -103,6 +98,15 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 }
                 else {
                     // update appointment details 
+                    if((inputData.status.value == "completed" || inputData.status.value == "in-progress") && encounterSavedData.data.entry) {
+                        encounterSavedData.data.entry[0].resource.status = "finished";
+                        let encounterBundle = await bundleFun.setBundlePost(encounterSavedData.data.entry[0].resource, encounterSavedData.data.entry[0].resource.identifier, encounterSavedData.data.entry[0].resource.id, "PUT", "identifier");                   
+                        resourceResult.push(encounterBundle);
+                        inputData.createdOn = {
+                            "operation": "replace",
+                            "value": resourceSavedData.data.entry[0].resource.created
+                        }
+                    }
                     let slotPatch = null;
                     let appointment = new Appointment(inputData, []);
                     appointment.patchUserInputToFHIR(resourceSavedData.data.entry[0].resource);
@@ -155,6 +159,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 let obj2 = slotAppt.find(obj2 => obj2.slotId === obj1.slotId);
                 let obj3 = apptEncounter.find(obj3 => obj3.appointmentId == obj1.appointmentId);
                  let statusData = apptStatus.find(e => e.fhirStatus == obj1.apptStatus && e.encounter == obj3.encStatus && e.type == obj1.apptType);
+                 console.info(obj1.appointmentId, obj1.apptStatus, obj1.apptType, obj3.encStatus)
                  obj1.status = statusData.uiStatus;
                 if(typeof obj2 == "undefined") {
                     obj2 = {slot: null, slotId: null};

@@ -40,5 +40,23 @@
         "fhirStatus": "arrived",
         "type": "routine",
         "encounter": "finished"
+    },
+    {
+        "uiStatus": "completed",
+        "fhirStatus": "arrived",
+        "type": "walkin",
+        "encounter": "finished"
+    },
+    {
+        "uiStatus": "in-progress",
+        "fhirStatus": "arrived",
+        "type": "walkin",
+        "encounter": "in-progress"
+    },
+    {
+        "uiStatus": "cancelled",
+        "fhirStatus": "cancelled",
+        "type": "walkin",
+        "encounter": "planned"
     }
 ]

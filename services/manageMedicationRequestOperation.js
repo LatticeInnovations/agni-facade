@@ -11,8 +11,10 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
             for (let patPres of reqInput) {
                 let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": patPres.appointmentId, _count: 5000 });
-                patPres.encounterId = encounterData.data.entry[0].resource.id
-                if((new Date(patPres.generatedOn).toLocaleDateString('en-US') < new Date().toLocaleDateString('en-US')) && encounterData.data.entry[0].resource.status != "finished")
+                patPres.encounterId = encounterData.data.entry[0].resource.id;
+                let todayDate = new Date();
+                console.info(new Date(patPres.generatedOn).toLocaleDateString('en-US'), new Date(todayDate).toLocaleDateString('en-US'), encounterData.data.entry[0].resource.status)
+                if((new Date(patPres.generatedOn).toLocaleDateString('en-US') >= new Date().toLocaleDateString('en-US')) && encounterData.data.entry[0].resource.status != "finished")
                     encounterData.data.entry[0].resource.status = "in-progress";
                 else 
                     encounterData.data.entry[0].resource.status = "finished";
