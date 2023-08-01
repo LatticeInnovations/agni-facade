@@ -41,8 +41,8 @@ class Appointment {
     }
     
     getStatus() {
-        let statusData = apptStatus.find(e => e.type == this.fhirResource.appointmentType.coding[0].code && e.fhirStatus == this.fhirResource.status);
-        this.apptObj.status =  statusData.uiStatus;
+        this.apptObj.apptType =  this.fhirResource.appointmentType.coding[0].code;
+        this.apptObj.apptStatus =  this.fhirResource.status
     }
 
     patchStatus() {
@@ -79,7 +79,7 @@ class Appointment {
 
     patchSlot() {
         if (this.apptObj.status && this.apptObj.status.value == "scheduled") {
-            this.fhirResource.push({ "op": this.apptObj.slot.operation, "path": "/slot", value: this.apptObj.slot.value });  
+            this.fhirResource.push({ "op": this.apptObj.slot.operation, "path": "/slot/"+0, value: this.apptObj.slot.value });  
         }
 
 
@@ -129,7 +129,7 @@ class Appointment {
     patchUserInputToFHIR() {
         this.patchStatus();
         this.patchCreatedOn();   
-        this.patchSlot();    
+      //  this.patchSlot();    
 
     }
 

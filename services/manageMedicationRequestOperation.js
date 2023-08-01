@@ -2,19 +2,23 @@ let bundleFun = require("./bundleOperation");
 const MedicationRquest = require("../class/MedicationRequest");
 const Encounter = require("../class/encounter")
 const { v4: uuidv4 } = require('uuid');
+let config = require("../config/nodeConfig");
+let bundleOp = require("./bundleOperation");
 
 let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
             for (let patPres of reqInput) {
-                
-                let encounter = new Encounter(patPres, {});
-                encounter.getUserInputToFhir();
-                let encounterResource = {...encounter.getFHIRResource()};
-                encounterResource.resourceType = "Encounter";
-                encounterResource.id = patPres.prescriptionId;
-                let encounterBundle = await bundleFun.setBundlePost(encounterResource, encounterResource.identifier, encounterResource.id, "POST", "identifier");
+                let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": patPres.appointmentId, _count: 5000 });
+                patPres.encounterId = encounterData.data.entry[0].resource.id;
+                let todayDate = new Date();
+                console.info(new Date(patPres.generatedOn).toLocaleDateString('en-US'), new Date(todayDate).toLocaleDateString('en-US'), encounterData.data.entry[0].resource.status)
+                if((new Date(patPres.generatedOn).toLocaleDateString('en-US') >= new Date().toLocaleDateString('en-US')) && encounterData.data.entry[0].resource.status != "finished")
+                    encounterData.data.entry[0].resource.status = "in-progress";
+                else 
+                    encounterData.data.entry[0].resource.status = "finished";
+                let encounterBundle = await bundleFun.setBundlePost(encounterData.data.entry[0].resource, encounterData.data.entry[0].resource.identifier, encounterData.data.entry[0].resource.id, "PUT", "identifier"); 
                 resourceResult.push(encounterBundle);
                 let medList = patPres.prescription;
                 let dateToday = (new Date(patPres.generatedOn)).getTime().toString();
@@ -24,8 +28,9 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                     prescription.patientId = patPres.patientId;
                     prescription.generatedOn = patPres.generatedOn;
                     prescription.prescriptionId = patPres.prescriptionId;
+                    prescription.encounterId = encounterData.data.entry[0].resource.id
                     prescription.grpIdentify = grpIdentify;
-                    prescription.identifier = [...encounterResource.identifier];
+                    prescription.identifier = [... encounterData.data.entry[0].resource.identifier];
                     prescription.identifier.push({
                         "system":"http://snomed.info/sct",
                         "value": prescription.medFhirId
@@ -47,7 +52,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 let encounter = new Encounter({}, encData);
                 encounter.getFhirToJson();
                 let encounterData = encounter.getEncounterResource();
-            let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);
+            let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);            
              encounterData.prescription = [];
                     for(let medReq of medReqList) {                     
                             let medReqData = new MedicationRquest({}, medReq);
@@ -56,7 +61,8 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                             medData.qtyPrescribed = medData.qtyPerDose * medData.frequency * medData.duration;
                             encounterData.prescription.push(medData)
                     }
-                resourceResult.push(encounterData)
+                if(encounterData.prescription.length > 0)
+                    resourceResult.push(encounterData)
             }
 
         }

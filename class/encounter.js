@@ -38,6 +38,11 @@ class Encounter {
         this.fhirResource.appointment.reference = "urn:uuid:" + this.prescriptionObj.uuid;
     }
 
+    getAppointmentReference() {
+        console.info(this.fhirResource)
+        this.prescriptionObj.appointmentId = this.fhirResource.appointment[0].reference.split("/")[1];
+    }
+
     setEncounterTime() {
         this.fhirResource.period = {
             "start": this.prescriptionObj.generatedOn,
@@ -60,7 +65,7 @@ class Encounter {
 
     getFhirToJson() {
         this.getId();
-        this.getEncounterTime();
+        this.getAppointmentReference();
         this.getPatientReference();
     }
 
