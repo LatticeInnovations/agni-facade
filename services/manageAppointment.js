@@ -7,7 +7,7 @@ let config = require("../config/nodeConfig");
 const { v4: uuidv4 } = require('uuid');
 let apptValid = require("../utils/Validator/scheduleAppointment").apptValidation;
 let apptPatchValidation = require("../utils/Validator/scheduleAppointment").apptPatchValidation;
-
+let apptStatus = require("../utils/appointmentStatus.json");
 
 // postMessage, update and get app data handling function
 let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
@@ -78,6 +78,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 }
                 let link = config.baseUrl + resType;
                 let resourceSavedData = await bundleFun.searchData(link, { "_id": inputData.appointmentId });
+                let encounterSavedData =  await bundleFun.searchData(config.baseUrl + "Encounter", { "appointment": inputData.appointmentId });
                 if (resourceSavedData.data.total != 1) {
                     errData.push({
                         "status": "500",
@@ -85,6 +86,11 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                         "err": "Appointment does not exist",
                         "fhirId": inputData.appointmentId
                     })
+                }
+                else if((inputData.status.value == "completed" || inputData.status.value == "in-progress") && encounterSavedData.data.entry) {
+                    encounterSavedData.data.entry[0].resource.status = "finished";
+                    let encounterBundle = await bundleFun.setBundlePost(encounterSavedData.data.entry[0].resource, encounterSavedData.data.entry[0].resource.identifier, encounterSavedData.data.entry[0].resource.id, "PUT", "identifier");                   
+                    resourceResult.push(encounterBundle);
                 }
                 else if(resourceSavedData.data.entry[0].resource.status == "cancelled" || resourceSavedData.data.entry[0].resource.status == "noshow" || resourceSavedData.data.entry[0].resource.status == "arrived") {
                     // once appointment status is no-show and cancelled it cannot be changed.
@@ -130,11 +136,10 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 apptResponse.slotId = slotId;
                 apptResult.push(apptResponse);
             }
-            // get orh=ganization id of an appointment
+            // get organization id of an appointment
             let orgResource = await bundleOp.searchData(config.baseUrl + "Location", { _elements: "managingOrganization", _id: [...locationIds].join(","), _count: locationIds.size });
 
             let locationOrg = orgResource.data.entry.map(e => { return { locationId: e.resource.id, orgId: e.resource.managingOrganization.reference.split("/")[1] } });
-            console.info(locationOrg)
             apptResult = apptResult.map(obj1 => {
                 let obj2 = locationOrg.find(obj2 => obj2.locationId === obj1.locationId);
               
@@ -143,13 +148,22 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
             // get assigned slot and schedule data of an appointment
             let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { "_id": [...slotIds].join(","), _count: 5000 });
             let slotAppt = slotList.data.entry.map(e => { return { slotId: e.resource.id, slot: { start: e.resource.start, end: e.resource.end}, scheduleId: e.resource.schedule.reference.split("/")[1] } });
+            let encounterList = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": [...apptIds].join(","), _count: 5000 });
+            let apptEncounter = encounterList.data.entry.map(e => { return { encStatus: e.resource.status, appointmentId: e.resource.appointment[0].reference.split("/")[1] } });
+            //combine appointmnet with slot and encounter stataus
             resourceResult = apptResult.map(obj1 => {
                 let obj2 = slotAppt.find(obj2 => obj2.slotId === obj1.slotId);
+                let obj3 = apptEncounter.find(obj3 => obj3.appointmentId == obj1.appointmentId);
+                 let statusData = apptStatus.find(e => e.fhirStatus == obj1.apptStatus && e.encounter == obj3.encStatus && e.type == obj1.apptType);
+                 obj1.status = statusData.uiStatus;
                 if(typeof obj2 == "undefined") {
                     obj2 = {slot: null, slotId: null};
                     obj1.scheduleId = null;
                 }
-                return { ...obj1, ...obj2 };
+                delete obj1.apptType;
+                delete obj1.apptStatus;
+                delete obj3.encStatus;
+                return { ...obj1, ...obj2, ...obj3 };
             });
         }
 

@@ -41,8 +41,8 @@ class Appointment {
     }
     
     getStatus() {
-        let statusData = apptStatus.find(e => e.type == this.fhirResource.appointmentType.coding[0].code && e.fhirStatus == this.fhirResource.status);
-        this.apptObj.status =  statusData.uiStatus;
+        this.apptObj.apptType =  this.fhirResource.appointmentType.coding[0].code;
+        this.apptObj.apptStatus =  this.fhirResource.status
     }
 
     patchStatus() {

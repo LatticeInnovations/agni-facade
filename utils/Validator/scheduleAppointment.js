@@ -40,7 +40,7 @@ function apptPatchValidation(userInput) {
     "appointmentId": Joi.string().required(),
     status: Joi.object({
       "operation": Joi.string().valid('replace').required(),
-      "value": Joi.string().valid('arrived', 'scheduled', 'noshow', 'cancelled').required()
+      "value": Joi.string().valid('arrived', 'scheduled', 'noshow', 'cancelled', 'in-progress', 'completed').required()
     }).required() ,
     slot: Joi.object({
       "operation": Joi.string().valid('replace').required(),

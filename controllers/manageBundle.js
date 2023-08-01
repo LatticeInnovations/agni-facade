@@ -11,7 +11,7 @@ let createBundle = async function (req, res) {
         let resourceData = await getBundleJSON(reqInput, resourceType, fhirResource, "POST");
             bundle = resourceData.bundle;
             console.info("===========>", resourceData)
-     // return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
+      //return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
         if (bundle.entry.length > 0) {
             let response = await axios.post(config.baseUrl, bundle);
             if (response.status == 200) {

@@ -47,7 +47,7 @@ class MedicationRquest {
     }
 
     setEncounter() {
-        this.fhirResource.encounter.reference = "urn:uuid:" +this.medReqObj.prescriptionId;
+        this.fhirResource.encounter.reference = "Encounter/" +this.medReqObj.encounterId;
     }
 
     setNote() {
