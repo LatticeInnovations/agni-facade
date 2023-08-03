@@ -1,4 +1,3 @@
-// let { checkEmptyData } = require("../services/CheckEmpty");
 const roleJson = require("../utils/role.json");
 class PractitionerRole {
     roleObj;
@@ -15,7 +14,7 @@ class PractitionerRole {
 
     getOrganizationRole() {
         let result = roleJson.find(a => a.code === this.fhirResource.code[0].coding[0].code);
-            this.roleObj.roleId =  this.fhirResource.code[0].coding[0].code,
+            this.roleObj.roleId =  this.fhirResource.code[0].coding[0].code;
             this.roleObj.role = result.display
     }
     setPractitionerReference() {

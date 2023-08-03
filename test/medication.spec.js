@@ -1,10 +1,9 @@
 const chai = require('chai');
 const expect = chai.expect;
 chai.use(require('chai-json-schema'));
-chaiHttp = require("chai-http")
+const chaiHttp = require("chai-http")
 chai.use(chaiHttp)
 const app = require("../app")
-let request = require('supertest')(app);
 let token = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMjU0MiIsInVzZXJOYW1lIjoiVHVsaWthIFAiLCJpYXQiOjE2ODk0MjI4OTIsImV4cCI6MTY4OTg1NDg5Mn0.aUAtgC8zbuEl6qdGMOsdVh-JzKEAtEaqZ3XE-9BAkMc`;
 let jsonMedication = {
     "title": "Medication data schema",

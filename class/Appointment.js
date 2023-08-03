@@ -25,7 +25,6 @@ class Appointment {
     getIdentifier() {
         let data = idFunction.getIdentifier(this.fhirResource, "U");
         this.apptObj.uuid = data.uuid;
-        //this.apptObj.identifier = data.identifier;
     }
     
     setStatus() {
@@ -128,8 +127,7 @@ class Appointment {
 
     patchUserInputToFHIR() {
         this.patchStatus();
-        this.patchCreatedOn();   
-      //  this.patchSlot();    
+        this.patchCreatedOn();    
 
     }
 

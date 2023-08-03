@@ -61,7 +61,6 @@ class Schedule {
         this.getPlanningHorizon();
         this.getActor();     
         this.getStatus();  
-      //  this.getIdentifier();
     }
 
     getJsonToFhirTranslator() {

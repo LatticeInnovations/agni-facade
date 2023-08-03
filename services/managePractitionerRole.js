@@ -6,7 +6,7 @@ let setPractitionerRoleData = async function (relatedPersonList, reqInput, FHIRD
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "put", "PUT"].includes(reqMethod)) {
-
+            console.log(reqInput)
         }
         else if (["GET", "get"].includes(reqMethod)) {
             let role = [];
@@ -23,7 +23,7 @@ let setPractitionerRoleData = async function (relatedPersonList, reqInput, FHIRD
                 let orgData = new Organization({},orgResource.resource);
                 orgData.getFHIRToUserInput();
                 orgData = orgData.getOrgResource();
-                roleObj.orgId = orgData.orgId,
+                roleObj.orgId = orgData.orgId;
                 roleObj.orgName = orgData.orgName,
                 roleObj.orgType = orgData.orgType;
                 role.push(roleObj);
@@ -41,7 +41,7 @@ let setPractitionerRoleData = async function (relatedPersonList, reqInput, FHIRD
             resourceResult.push(data);
         }
         else if (["patch", "PATCH"].includes(reqMethod)) {
-            let deleteList = [];
+            console.log(reqMethod)
         }
         return {resourceResult, errData};
     }

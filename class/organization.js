@@ -19,8 +19,8 @@ class Organization {
 
     setIdAsIdentifier() {
         if(this.orgObj.identifier) {
-            for (let i=0; i<this.orgObj.identifier.length; i++) {
-                let data = idFunction.setIdAsIdentifier(this.orgObj.identifier[i], "MR");
+            for (let identifier of this.orgObj.identifier) {
+                let data = idFunction.setIdAsIdentifier(identifier, "MR");
                 this.fhirResource.identifier.push(data);
             }
 
