@@ -15,7 +15,8 @@ let config = function () {
             OTPGenAttempt: 5,
             OTPHash: process.env.OTPHash,
             schemaList: process.env.schemaList,
-            domainsList: process.env.domainsList
+            domainsList: process.env.domainsList,
+            whitelist: process.env.whitelist
 
         };
 };
