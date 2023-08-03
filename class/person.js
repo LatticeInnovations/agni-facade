@@ -1,4 +1,5 @@
 let { checkEmptyData } = require("../services/CheckEmpty");
+const config = require("../config/nodeConfig");
 
 class Person {
     personObj;
@@ -104,7 +105,7 @@ class Person {
             jsonObj = {
                 type: {
                     "coding": [{
-                        system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        system: config.fhirCodeUrl,
                         code: element.code
                     }]
                 },

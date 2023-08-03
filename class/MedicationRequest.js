@@ -1,6 +1,7 @@
 let { checkEmptyData } = require("../services/CheckEmpty");
 let timing = require("../utils/medtime.json");
 const doseFormList = require("../utils/dosForm.json")
+const config = require("../config/nodeConfig");
 class MedicationRquest {
     medReqObj;
     fhirResource;
@@ -32,7 +33,7 @@ class MedicationRquest {
 
     setGroupIdentifier() {      
         this.fhirResource.groupIdentifier = {
-            "system": "http://hospital.smarthealthit.org/prescriptions",
+            "system": config.prescriptionUrl,
             "value": this.medReqObj.grpIdentify
         }
     }
@@ -96,7 +97,7 @@ class MedicationRquest {
                 "repeat": {
                     "boundsDuration" : {
                            "unit":"days",
-                           "system":"http://unitsofmeasure.org",
+                           "system":config.measureUrl,
                            "code":"d"
 
                     },
@@ -110,7 +111,7 @@ class MedicationRquest {
                     "doseQuantity":{
                         "value":this.medReqObj.qtyPerDose,
                         "unit":this.medReqObj.doseForm,
-                        "system":"http://snomed.info/sct",
+                        "system":config.sctCodeUr,
                         "code": doseFormList[this.medReqObj.doseForm]
                      }
 
@@ -122,7 +123,7 @@ class MedicationRquest {
             {
                 "coding": [
                     {
-                        "system":"http://snomed.info/sct",
+                        "system":config.sctCodeUr,
                         "code":this.medReqObj.timing,
                         "display": timing.filter(e => e.medinstructionCode == this.medReqObj.timing).map(e => e.medinstructionVal)[0]
                     }

@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 let config = function () {
              return {
             port: '3000',
@@ -16,8 +16,14 @@ let config = function () {
             OTPHash: process.env.OTPHash,
             schemaList: process.env.schemaList,
             domainsList: process.env.domainsList,
-            whitelist: process.env.whitelist
-
+            whitelist: process.env.whitelist,
+            sctCodeUrl: process.env.sctCodeUrl,
+            prescriptionUrl: process.env.prescriptionUrl,
+            measureUrl: process.env.measureUrl,
+            snUrl : process.env.snUrl,
+            orgType : process.env.orgType,
+            fhirCodeUrl : process.env.fhirCodeUrl,
+            roleCodeUrl : process.env.roleCodeUrl,
         };
 };
 module.exports = new config();

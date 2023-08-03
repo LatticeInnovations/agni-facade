@@ -1,5 +1,7 @@
 let { checkEmptyData } = require("../services/CheckEmpty");
-let idFunction = require("../utils/setGetIdentifier")
+let idFunction = require("../utils/setGetIdentifier");
+const config = require("../config/nodeConfig");
+
 class Organization {
     orgObj;
     fhirResource;
@@ -34,7 +36,7 @@ class Organization {
             this.fhirResource.type.push({
                 coding: [
                     {
-                        "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+                        "system": config.orgType,
                         "code": orgType,
                     }
                 ]
@@ -87,7 +89,7 @@ class Organization {
             jsonObj = {
                 type: {
                     "coding": [{
-                        system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        system: config.fhirCodeUrl,
                         code: element.code
                     }]
                 },

@@ -1,5 +1,6 @@
 let idFunction = require("../utils/setGetIdentifier");
 let apptStatus = require("../utils/appointmentStatus.json");
+const config = require("../config/nodeConfig");
 class Appointment {
     apptObj;
     fhirResource;
@@ -33,7 +34,7 @@ class Appointment {
         this.fhirResource.status = statusData.fhirStatus;
         this.fhirResource.appointmentType.coding = [
             {
-                "system":"http://snomed.info/sct",
+                "system": config.sctCodeUrl,
                 "code": statusData.type    
             }
         ]
