@@ -78,11 +78,6 @@ let patchBundle = async function (req, res) {
                 })
             }
         }
-        else if(bundlePatchJSON.errData.length > 0) {
-            return res.status(500).json({
-                status: 0, message: "Unable to process. Please try again.", error: {response: {data: bundlePatchJSON.errData}}
-            })
-        }
         else {
             return res.status(500).json({
                 status: 0, message: "Unable to process. Please try again.", error: {response: {data: bundlePatchJSON.errData}}

@@ -32,7 +32,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
             delete queryParams.patientId;
             queryParams._count= 3000;
             queryParams._revinclude = "MedicationRequest:encounter:Encounter";
-            queryParams["appointment.status"] = "arrived,proposed,fulfilled,cancelled,noshow",
+            queryParams["appointment.status"] = "arrived,proposed,fulfilled,cancelled,noshow";
             nestedResource = 1;
             break;
         case "Organization" : 

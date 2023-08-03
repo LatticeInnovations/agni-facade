@@ -67,7 +67,7 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
               
                 if(patientRelation.relationship.length > 0)
                     outputArray.push(patientRelation)
-                    resourceResult = outputArray;
+                resourceResult = outputArray;
             }
             return {resourceResult, errData};
         }

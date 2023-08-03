@@ -40,7 +40,7 @@ let login = async function (req, res) {
             OTPGenerateAttempt = authentication_detail.dataValues.otp_generate_attempt + 1;
         }
 
-        if (req.body.userContact == 1111111111 || req.body.userContact == 9999999999 || req.body.userContact == "devtest@gmail.com" | req.body.userContact == "dev3test@gmail.com") {
+        if (req.body.userContact == 1111111111 || req.body.userContact == 9999999999 || req.body.userContact == "devtest@gmail.com" || req.body.userContact == "dev3test@gmail.com") {
             otp = 111111;
         } else if (req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") {
             otp = 222222;
@@ -150,7 +150,6 @@ async function calculateTime(authentication_detail) {
 
 async function sendOTP(isEmail, userDetail, otp) {
     try {
-        let messageDetail;
         if (isEmail) {
             let mailData = {
                 to: [{ email: userDetail.dataValues.user_email }],
@@ -158,13 +157,12 @@ async function sendOTP(isEmail, userDetail, otp) {
                 content: util.format(`${(emailContent.find(e => e.notification_type_id == 1).content)}`, userDetail.dataValues.user_name, otp.toString())
             }
             console.info("check mail data")
-            messageDetail = await sendEmail(mailData);
+            await sendEmail(mailData);
         }
         else {
             let text = `<#> Use OTP ${otp} to login to agni App\n` + config.OTPHash;
             console.log("check text message", text);
-            messageDetail = await sendSms(userDetail.dataValues.mobile_number, text);
-            console.log(messageDetail, messageDetail.code);
+            await sendSms(userDetail.dataValues.mobile_number, text);
         }
     }
     catch (e) {
@@ -218,8 +216,8 @@ function checkIsEmail(userContact) {
 
 // generate 6 digits OTP
 function generateOTP() {
-    var minm = 100000;
-    var maxm = 999999;
+    let minm = 100000;
+    let maxm = 999999;
     return Math.floor(Math.random() * (maxm - minm + 1)) + minm;
 }
 

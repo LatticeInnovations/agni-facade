@@ -74,15 +74,13 @@ class Slot {
 
     getFHIRToUserInput() {
         this.getId();
-      //  this.getIdentifier();
         this.getStatus();
         this.getSchedule();
         this.getStartEnd();
     }
 
     getJsonToFhirTranslator() {
-        this.setBasicStructure()
-       // this.setIdentifier();
+        this.setBasicStructure();
         this.setStatus();
         this.setSchedule();
         this.setStartEnd();

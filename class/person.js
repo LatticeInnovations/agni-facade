@@ -223,7 +223,6 @@ class Person {
         let json = {}
         if(!fetchedData.telecom){
             let telecomValue = [];
-                json = {"op": "add", "path": "/telecom", value: [{}]}
             if(this.personObj.mobileNumber)
                 telecomValue.push({"system": "phone", "value": this.personObj.mobileNumber.value});
             if(this.personObj.email)

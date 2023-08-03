@@ -20,7 +20,7 @@ let setPractitionerData = async function (resType, reqInput, FHIRData, reqMethod
                  let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam);
                  if (+existingPractioner.data.total != 0) {
                      let e = { status: 0, code: "ERR", message: "Practitioner data already exists." , statusCode: 500}
-                     return Promise.reject(e)
+                     return Promise.reject(e);
                  }
                  else {
                     let practitioner = new Practitioner(practitionerData, FHIRData);

@@ -1,5 +1,3 @@
-// let { checkEmptyData } = require("../services/CheckEmpty");
-
 class Location {
     locationObj;
     fhirResource;

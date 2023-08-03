@@ -144,7 +144,6 @@ class MedicationRquest {
         this.setEncounter();
         this.setNote();
         this.setDosageInstruction();
-       // this.setEffectiveDosePeriod();
     }
 
     getFhirToJson() {
