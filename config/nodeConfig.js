@@ -13,7 +13,9 @@ let config = function () {
             lockTimeInMin: 5,
             OTPExpireMin: 2,
             OTPGenAttempt: 5,
-            OTPHash: process.env.OTPHash
+            OTPHash: process.env.OTPHash,
+            schemaList: process.env.schemaList,
+            domainsList: process.env.domainsList
 
         };
 };

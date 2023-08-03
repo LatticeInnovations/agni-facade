@@ -1,13 +1,20 @@
 let axios = require("axios");
 let resourceFun = require("../services/resourceOperation");
 let config = require("../config/nodeConfig");
-
+let resourceValid = require("../utils/Validator/validateRsource").resourceValidation;
 let createBundle = async function (req, res) {
     try {
+        let response = resourceValid(req.params);
+        if (response.error) {
+            console.error(response.error.details)
+            let errData = { status: 0, response: { data: response.error.details }, message: "Invalid input" }
+            return res.status(422).json(errData);
+        }
         const resourceType = req.params.resourceType;
         const reqInput = req.body;
         let bundle;
         let fhirResource = {};
+
         let resourceData = await getBundleJSON(reqInput, resourceType, fhirResource, "POST");
             bundle = resourceData.bundle;
       //return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
@@ -58,6 +65,12 @@ let createBundle = async function (req, res) {
 
 let patchBundle = async function (req, res) {
     try {
+        let response = resourceValid(req.params);
+        if (response.error) {
+            console.error(response.error.details)
+            let errData = { status: 0, response: { data: response.error.details }, message: "Invalid input" }
+            return res.status(422).json(errData);
+        }
         const resourceType = req.params.resourceType;
         const reqInput = req.body;
         let bundle;
