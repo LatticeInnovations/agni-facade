@@ -96,7 +96,7 @@ let searchData = async function (link, reqQuery) {
     const url = (new URL(link));
     if (schemaList.includes(url.protocol) && domainsList.includes(url.hostname)) {
         try {
-            let responseData = await axios.get(link, { params: reqQuery });
+            let responseData = await axios.get(url, { params: reqQuery });
             return responseData;
         } catch (e) {
             let eData = { status: 0, code: "ERR", e: e, statusCode: 500 }
