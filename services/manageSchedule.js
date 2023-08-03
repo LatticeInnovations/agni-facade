@@ -15,7 +15,16 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                     return Promise.reject(errData);
                 }
                 let locationResource = await bundleOp.searchData(config.baseUrl + "Location", { organization: "Organization/" + scheduleData.orgId, _elements: "id", _total: "accurate" });
-                if (locationResource.data.total && locationResource.data.total == 1) {
+                let scheduleResource = await bundleOp.searchData(config.baseUrl + `Schedule?date=ge${scheduleData.planningHorizon.start}&date=le${scheduleData.planningHorizon.end}&_total=accurate`);
+                if(scheduleResource.data.total > 0) {
+                    errData.push({
+                        "status": "409",
+                        "id": scheduleData.uuid,
+                        "err": "Schedule already exists",
+                        "fhirId": scheduleResource.data.entry[0].resource.id
+                    })
+                }
+                else if (locationResource.data.total && locationResource.data.total == 1) {
                     let locationId = locationResource.data.entry[0].resource.id;
                     scheduleData.locationId = locationId;
                     let schedule = new Schedule(scheduleData, FHIRData);
@@ -33,7 +42,7 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                 }
                 else {
                     errData.push({
-                        "status": "500",
+                        "status": "400",
                         "id": scheduleData.uuid,
                         "err": "Organization or it's location missing",
                         "fhirId": null
