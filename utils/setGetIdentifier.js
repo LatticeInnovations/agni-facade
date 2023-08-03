@@ -1,4 +1,6 @@
 let { checkEmptyData } = require("../services/CheckEmpty");
+const config = require("../config/nodeConfig");
+
 function setIdAsIdentifier(obj, code) {
     let jsonObj = {};
     if(!obj.identifierType) {
@@ -22,7 +24,7 @@ function setIdentifierJSON(element) {
         jsonObj = {
             type: {
                 "coding": [{
-                    system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    system: config.fhirCodeUrl,
                     code: element.code
                 }]
             }

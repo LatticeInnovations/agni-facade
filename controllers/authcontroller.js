@@ -8,6 +8,7 @@ let jwt = require("jsonwebtoken");
 const config = require("../config/nodeConfig");
 let { validationResult } = require('express-validator');
 let bundleOp = require("../services/bundleOperation");
+const crypto = require('crypto');
 // login by using email or mobile number to send OTP
 let login = async function (req, res) {
     try {
@@ -216,9 +217,17 @@ function checkIsEmail(userContact) {
 
 // generate 6 digits OTP
 function generateOTP() {
-    let minm = 100000;
-    let maxm = 999999;
-    return Math.floor(Math.random() * (maxm - minm + 1)) + minm;
+    try {
+        let minm = 100000;
+        let maxm = 999999;
+        let value =  crypto.randomInt(minm, maxm);
+        let otp = value.toString().padStart(6, "1");
+        return otp;
+    }
+    catch(e) {
+        Promise.reject(e);
+    }
+
 }
 
 // insert if not present or update generated OTP for the user id

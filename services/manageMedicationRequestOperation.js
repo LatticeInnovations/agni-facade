@@ -18,6 +18,10 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                     encounterData.data.entry[0].resource.status = "in-progress";
                 else 
                     encounterData.data.entry[0].resource.status = "finished";
+                encounterData.data.entry[0].resource.period = {
+                        "start": patPres.generatedOn,
+                        "end": patPres.generatedOn
+                    }
                 let encounterBundle = await bundleFun.setBundlePost(encounterData.data.entry[0].resource, encounterData.data.entry[0].resource.identifier, encounterData.data.entry[0].resource.id, "PUT", "identifier"); 
                 resourceResult.push(encounterBundle);
                 let medList = patPres.prescription;
@@ -32,7 +36,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                     prescription.grpIdentify = grpIdentify;
                     prescription.identifier = [... encounterData.data.entry[0].resource.identifier];
                     prescription.identifier.push({
-                        "system":"http://snomed.info/sct",
+                        "system":config.sctCodeUrl,
                         "value": prescription.medFhirId
                     })
 

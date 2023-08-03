@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
-let { checkEmptyData } = require("../services/CheckEmpty");
+const config = require("../config/nodeConfig");
+
 class RelatedPerson {
 
     relationObject; fhirResource;
@@ -26,7 +27,7 @@ class RelatedPerson {
     setRelationship() {
         this.fhirResource.relationship.push({
             "coding": [{
-                "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                "system": config.roleCodeUrl,
                 "code": this.relationObject.relationCode
             }]
         })

@@ -6,7 +6,7 @@ const expressSwagger = require('express-swagger-generator')(app)
 const cors = require('cors');
 const cookieParser = require("cookie-parser");
 let cronJob= require("./services/cros-jobs/triggerAppointment")
-
+const config = require("./config/nodeConfig");
 
 require('dotenv').config();
 
@@ -52,7 +52,18 @@ let loggerFormat = 'Logger --  :id [:date[web]] ":method :url" :status :response
 
 app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
  
-app.use(cors());
+let whitelist = config.whitelist;
+let corsOptions = {
+  origin: (origin, callback) => {
+    console.info(origin)
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }, credentials: true
+}
+app.use(cors(corsOptions));
 
 console.log= function(){}
 
@@ -101,7 +112,7 @@ const { exec } = require('child_process');
     await new Promise((resolve, reject) => {
         const migrate = exec(
             'sequelize db:migrate',
-            { env: process.env },
+            { env: process.env, shell: false },
             err => (err ? reject(err) : resolve())
         );
 

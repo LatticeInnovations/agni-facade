@@ -1,4 +1,5 @@
 let apptStatus = require("../utils/appointmentStatus.json");
+const config = require("../config/nodeConfig")
 class Encounter {
     prescriptionObj;
     fhirResource;
@@ -10,7 +11,7 @@ class Encounter {
 
     setuuid() {
         this.fhirResource.identifier.push({
-               "system": "http://hl7.org/fhir/sid/sn",
+               "system": config.snUrl,
                "value": this.prescriptionObj.uuid
         });
     }
@@ -44,13 +45,17 @@ class Encounter {
     }
 
     setEncounterTime() {
-        this.fhirResource.period = {
-            "start": this.prescriptionObj.generatedOn,
-            "end": this.prescriptionObj.generatedOn
+        if(this.prescriptionObj.generatedOn) {
+            this.fhirResource.period = {
+                "start": this.prescriptionObj.generatedOn,
+                "end": this.prescriptionObj.generatedOn
+            }
         }
+
     }
 
     getEncounterTime() {
+        if(this.fhirResource.period)
         this.prescriptionObj.generatedOn = this.fhirResource.period.start;
     }
 
@@ -67,6 +72,7 @@ class Encounter {
         this.getId();
         this.getAppointmentReference();
         this.getPatientReference();
+        this.getEncounterTime();
     }
 
     getEncounterResource() {
