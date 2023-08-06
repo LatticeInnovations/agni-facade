@@ -15,18 +15,13 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                     return Promise.reject(errData);
                 }
                 let locationResource = await bundleOp.searchData(config.baseUrl + "Location", { organization: "Organization/" + scheduleData.orgId, _elements: "id", _total: "accurate" });
-                let scheduleResource = await bundleOp.searchData(config.baseUrl + `Schedule?date=ge${scheduleData.planningHorizon.start}&date=le${scheduleData.planningHorizon.end}&_total=accurate`);
-                if(scheduleResource.data.total > 0) {
-                    errData.push({
-                        "status": "409",
-                        "id": scheduleData.uuid,
-                        "err": "Schedule already exists",
-                        "fhirId": scheduleResource.data.entry[0].resource.id
-                    })
-                }
-                else if (locationResource.data.total && locationResource.data.total == 1) {
-                    let locationId = locationResource.data.entry[0].resource.id;
-                    scheduleData.locationId = locationId;
+                let locationId = locationResource.data.entry[0].resource.id;
+                scheduleData.locationId = locationId;
+                let scheduleResourceData = await bundleOp.searchData(config.baseUrl + `Schedule?date=ge${scheduleData.planningHorizon.start}&date=le${scheduleData.planningHorizon.end}&_total=accurate&actor=${locationId}`);
+                let existingResource = scheduleResourceData.data.entry ? scheduleResourceData.data.entry.filter(e => e.resource.planningHorizon.start == scheduleData.planningHorizon.start) : [];
+               console.info("===>", scheduleResourceData)
+                if (existingResource.length == 0) {
+                    console.info("this is a check for data")
                     let schedule = new Schedule(scheduleData, FHIRData);
                     schedule.getJsonToFhirTranslator();
                     let scheduleResource = {};
@@ -36,26 +31,27 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                         { "key": "date", "value": "ge" + scheduleData.planningHorizon.start },
                         { "key": "date", "value": "le" + scheduleData.planningHorizon.end },
                         { "key": "actor", "value": 'Location/' + locationId }
-                    ]
+                    ];
                     let scheduleBundle = await bundleFun.setBundlePost(scheduleResource, noneExistData, scheduleData.uuid, "POST", "object");
                     resourceResult.push(scheduleBundle);
                 }
                 else {
                     errData.push({
-                        "status": "400",
+                        "status": "409",
                         "id": scheduleData.uuid,
-                        "err": "Organization or it's location missing",
-                        "fhirId": null
+                        "err": "Schedule already exists",
+                        "fhirId": existingResource[0].resource.id
                     })
                 }
+                scheduleResourceData = null;
             }
+            console.info("=============>", resourceResult, errData, "<=========================")
         }
-
         else {
             let locationIds = new Set(), scheduleIds = new Set(); let scheduleResult = [], resourceSlotResult = [];
-            for(let scheduleData of FHIRData) {                     
+            for (let scheduleData of FHIRData) {
                 let schedule = new Schedule({}, scheduleData.resource);
-                schedule.getFHIRToUserInput(); 
+                schedule.getFHIRToUserInput();
                 let scheduleResponse = schedule.getInput();
                 scheduleIds.add(scheduleResponse.scheduleId);
                 let locationId = scheduleData.resource.actor[0].reference.split("/")[1];
@@ -63,41 +59,40 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                 scheduleResponse.locationId = locationId;
                 scheduleResponse.bookedSlots = 0;
                 scheduleResult.push(scheduleResponse);
-        } 
-        // to get organization id from location of the schedule and join it with schedule data
-        let orgResource = await bundleOp.searchData(config.baseUrl + "Location", { _elements: "managingOrganization",_id:  [...locationIds].join(","), _count: locationIds.size});       
-
-         let locationOrg = orgResource.data.entry.map(e=> {return {locationId: e.resource.id, orgId: e.resource.managingOrganization.reference.split("/")[1]}});
-         resourceSlotResult = scheduleResult.map(obj1 => { 
-            let obj2 = locationOrg.find(obj2 => obj2.locationId === obj1.locationId); 
-            return { ...obj1, ...obj2 }; 
-          });    
-        // booked slots count
-
-        let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { _elements: "schedule","_has:Appointment:slot:slot.schedule":  [...scheduleIds].join(","), _count: 5000, "_has:Appointment:slot:status":"proposed,arrived,noshow"});
-        let resData = []; let resourceResult1 = null;
-        if(slotList.data.total > 0) {
-             resData = slotList.data.entry.reduce((acc, {resource}) => {
-                let scheduleId = resource.schedule.reference.split("/")[1];
-                if  (scheduleIds.has(scheduleId))
-                    acc[scheduleId] = (acc[scheduleId] || 0) + 1;        
-                return acc;
-            }, {});           
-        }
-        else {
-            slotList.data.entry = []
-            for(let i=0; i<scheduleIds.size; i++) {
-                resData[scheduleIds[i]] =  0
             }
-        }
+            // to get organization id from location of the schedule and join it with schedule data
+            let orgResource = await bundleOp.searchData(config.baseUrl + "Location", { _elements: "managingOrganization", _id: [...locationIds].join(","), _count: locationIds.size });
 
-         resourceResult1 = Object.entries(resData).map(([scheduleId, bookedSlots]) => ({scheduleId, bookedSlots}));
-        console.info(resourceResult1, resourceSlotResult)
-        resourceResult = resourceSlotResult.map(obj1 => { 
-            let obj2 = resourceResult1.find(obj2 => obj2.scheduleId === obj1.scheduleId); 
-            return { ...obj1, ...obj2 }; 
-          }); 
-    }
+            let locationOrg = orgResource.data.entry.map(e => { return { locationId: e.resource.id, orgId: e.resource.managingOrganization.reference.split("/")[1] } });
+            resourceSlotResult = scheduleResult.map(obj1 => {
+                let obj2 = locationOrg.find(obj2 => obj2.locationId === obj1.locationId);
+                return { ...obj1, ...obj2 };
+            });
+            // booked slots count
+
+            let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { _elements: "schedule", "_has:Appointment:slot:slot.schedule": [...scheduleIds].join(","), _count: 5000, "_has:Appointment:slot:status": "proposed,arrived,noshow" });
+            let resData = []; let resourceResult1 = null;
+            if (slotList.data.total > 0) {
+                resData = slotList.data.entry.reduce((acc, { resource }) => {
+                    let scheduleId = resource.schedule.reference.split("/")[1];
+                    if (scheduleIds.has(scheduleId))
+                        acc[scheduleId] = (acc[scheduleId] || 0) + 1;
+                    return acc;
+                }, {});
+            }
+            else {
+                slotList.data.entry = []
+                for (let i = 0; i < scheduleIds.size; i++) {
+                    resData[scheduleIds[i]] = 0
+                }
+            }
+
+            resourceResult1 = Object.entries(resData).map(([scheduleId, bookedSlots]) => ({ scheduleId, bookedSlots }));
+            resourceResult = resourceSlotResult.map(obj1 => {
+                let obj2 = resourceResult1.find(obj2 => obj2.scheduleId === obj1.scheduleId);
+                return { ...obj1, ...obj2 };
+            });
+        }
         return { resourceResult, errData };
     }
 
