@@ -32,9 +32,7 @@ let createBundle = async function (req, res) {
             }
         }
         else if(resourceData.errData.length > 0) {
-            return res.status(500).json({
-                status: 0, message: "Unable to process. Please try again.", error: {response: {data: resourceData.errData}}
-            })
+            return res.status(201).json({ status: 1, message: "Data saved successfully.", data: resourceData.errData })
         }
         else {
             return res.status(409).json({ status: 0, message: "Data already exists." })
@@ -42,7 +40,7 @@ let createBundle = async function (req, res) {
 
     }
     catch (e) {
-        console.error("the error is here:", e)
+        console.error("the error is here:", e);
         if (e.code && e.code == "ERR") {
             return res.status(e.statusCode).json({
                 status: 0,
@@ -83,13 +81,16 @@ let patchBundle = async function (req, res) {
             if (response.status == 200 || response.status == 201) {            
                 let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType);
                 responseData = [...responseData, ...bundlePatchJSON.errData]
-                res.status(201).json({ status: 1, message: "Data updated successfully.", data: responseData })
+                return res.status(201).json({ status: 1, message: "Data updated successfully.", data: responseData })
             }
             else {
                 return res.status(500).json({
                     status: 0, message: "Unable to process. Please try again.", error: response
                 })
             }
+        }
+        else if(bundlePatchJSON.errData.length > 0) {
+            res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundlePatchJSON.errData })
         }
         else {
             return res.status(500).json({
