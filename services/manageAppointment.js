@@ -18,12 +18,11 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 let response = apptValid(apptData);
                 if (response.error) {
                     console.error(response.error.details)
-                    let errData = { code: "ERR", statusCode: 422, response: { data: response.error.details }, message: "Invalid input" }
+                    let errData = { code: "ERR", statusCode: 422, response: { data: response.error.details[0] }, message: "Invalid input" }
                     return Promise.reject(errData);
                 }
                 // get location id of the organization sent by app and map it to the appointments
                 let locationResource = await bundleOp.searchData(config.baseUrl + "Location", { organization: "Organization/" + apptData.orgId, _elements: "id", _total: "accurate" });
-                if (locationResource.data.total && locationResource.data.total == 1) {
                     let locationId = locationResource.data.entry[0].resource.id;
                     apptData.locationId = locationId;
                         let slotData = apptData.slot;
@@ -55,16 +54,6 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                     let apptBundle = await bundleFun.setBundlePost(apptResource, noneExistDataAppt, apptData.uuid, "POST", "object");              
                     let encounterBundle = await bundleFun.setBundlePost(encounterResource, encounterResource.identifier, encounterUuid, "POST", "identifier");
                     resourceResult.push(apptBundle, encounterBundle);
-                }
-                else {
-                    // if location data is not gound that means either location or organization details are incorrect
-                    errData.push({
-                        "status": "500",
-                        "id": apptData.uuid,
-                        "err": "Organization or it's location missing",
-                        "fhirId": null
-                    })
-                }
             }
         }    
         else if (["patch", "PATCH"].includes(reqMethod)) {
@@ -73,24 +62,20 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 let response = apptPatchValidation(inputData);
                 if (response.error) {
                     console.error(response.error.details)
-                    let errData = { code: "ERR", statusCode: 422, response: { data: response.error.details }, message: "Invalid input" }
+                    let errData = { code: "ERR", statusCode: 422, response: { data: response.error.details[0] }, message: "Invalid input" }
                     return Promise.reject(errData);
                 }
                 let link = config.baseUrl + resType;
                 let resourceSavedData = await bundleFun.searchData(link, { "_id": inputData.appointmentId });
                 let encounterSavedData =  await bundleFun.searchData(config.baseUrl + "Encounter", { "appointment": inputData.appointmentId });
                 if (resourceSavedData.data.total != 1) {
-                    errData.push({
-                        "status": "500",
-                        "id": null,
-                        "err": "Appointment does not exist",
-                        "fhirId": inputData.appointmentId
-                    })
+                    let e = { status: 0, code: "ERR", message: "Appointment Id " + inputData.appointmentId + " does not exist.", statusCode: 422}
+                   return Promise.reject(e);
                 }
                 else if(resourceSavedData.data.entry[0].resource.status == "cancelled" || resourceSavedData.data.entry[0].resource.status == "noshow") {
                     // once appointment status is no-show and cancelled it cannot be changed.
                     errData.push({
-                        "status": "500",
+                        "status": "422",
                         "id": null,
                         "err": "Appointment data not changed as status is " + resourceSavedData.data.entry[0].resource.status,
                         "fhirId": inputData.appointmentId
@@ -159,7 +144,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 let obj2 = slotAppt.find(obj2 => obj2.slotId === obj1.slotId);
                 let obj3 = apptEncounter.find(obj3 => obj3.appointmentId == obj1.appointmentId);
                  let statusData = apptStatus.find(e => e.fhirStatus == obj1.apptStatus && e.encounter == obj3.encStatus && e.type == obj1.apptType);
-                 console.info(obj1.appointmentId, obj1.apptStatus, obj1.apptType, obj3.encStatus)
+                 console.info(obj1.appointmentId, obj1.apptStatus, obj1.apptType, obj3.encStatus, statusData)
                  obj1.status = statusData.uiStatus;
                 if(typeof obj2 == "undefined") {
                     obj2 = {slot: null, slotId: null};

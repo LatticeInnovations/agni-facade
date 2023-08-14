@@ -11,16 +11,12 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                 let response = scheduleValid(scheduleData);
                 if (response.error) {
                     console.error(response.error.details)
-                    let errData = { code: "ERR", statusCode: 422, response: { data: response.error.details }, message: "Invalid input" }
+                    let errData = { code: "ERR", statusCode: 422, response: { data: response.error.details[0] }, message: "Invalid input" }
                     return Promise.reject(errData);
                 }
                 let locationResource = await bundleOp.searchData(config.baseUrl + "Location", { organization: "Organization/" + scheduleData.orgId, _elements: "id", _total: "accurate" });
                 let locationId = locationResource.data.entry[0].resource.id;
                 scheduleData.locationId = locationId;
-                let scheduleResourceData = await bundleOp.searchData(config.baseUrl + `Schedule?date=ge${scheduleData.planningHorizon.start}&date=le${scheduleData.planningHorizon.end}&_total=accurate&actor=${locationId}`);
-                let existingResource = scheduleResourceData.data.entry ? scheduleResourceData.data.entry.filter(e => e.resource.planningHorizon.start == scheduleData.planningHorizon.start) : [];
-               console.info("===>", scheduleResourceData)
-                if (existingResource.length == 0) {
                     console.info("this is a check for data")
                     let schedule = new Schedule(scheduleData, FHIRData);
                     schedule.getJsonToFhirTranslator();
@@ -34,16 +30,6 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                     ];
                     let scheduleBundle = await bundleFun.setBundlePost(scheduleResource, noneExistData, scheduleData.uuid, "POST", "object");
                     resourceResult.push(scheduleBundle);
-                }
-                else {
-                    errData.push({
-                        "status": "409",
-                        "id": scheduleData.uuid,
-                        "err": "Schedule already exists",
-                        "fhirId": existingResource[0].resource.id
-                    })
-                }
-                scheduleResourceData = null;
             }
             console.info("=============>", resourceResult, errData, "<=========================")
         }
