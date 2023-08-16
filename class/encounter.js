@@ -22,8 +22,8 @@ class Encounter {
     }
     
     getId() {
-        console.log(this.fhirResource)
-        this.prescriptionObj.prescriptionId = this.fhirResource.identifier[0].value;
+        console.info(this.fhirResource.id)
+        this.prescriptionObj.prescriptionId = this.fhirResource.identifier.length > 1 ? this.fhirResource.identifier[1].value : this.fhirResource.identifier[1].value;
         this.prescriptionObj.prescriptionFhirId = this.fhirResource.id;
     }
 
@@ -40,7 +40,6 @@ class Encounter {
     }
 
     getAppointmentReference() {
-        console.info(this.fhirResource)
         this.prescriptionObj.appointmentId = this.fhirResource.appointment[0].reference.split("/")[1];
     }
 
