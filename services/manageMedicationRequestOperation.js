@@ -22,6 +22,11 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                         "start": patPres.generatedOn,
                         "end": patPres.generatedOn
                     }
+                console.info(patPres)
+                    encounterData.data.entry[0].resource.identifier.push(
+                    {   "system": config.snUrl,
+                        "value": patPres.prescriptionId
+                })
                 let encounterBundle = await bundleFun.setBundlePost(encounterData.data.entry[0].resource, encounterData.data.entry[0].resource.identifier, encounterData.data.entry[0].resource.id, "PUT", "identifier"); 
                 resourceResult.push(encounterBundle);
                 let medList = patPres.prescription;
@@ -51,7 +56,8 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
             }
         }
         else {
-            let encounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource);
+            let encounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter" && (e.resource.status == "in-progress" || e.resource.status == "finished")).map(e => e.resource);
+            console.info("check encounter length: ", encounterList.length)
             for(let encData of encounterList) {
                 let encounter = new Encounter({}, encData);
                 encounter.getFhirToJson();
