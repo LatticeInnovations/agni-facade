@@ -56,9 +56,14 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             filtereredData = mergedArray;
             console.info("filetered Data")
         filtereredData.forEach(element => {
+
             let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length);
-            // need to see the or statment to be removed
             let id = (fullUrl.includes("uuid:")) ? fullUrl.split("uuid:")[1] : fullUrl;
+            if(resType == "MedicationRequest") {
+                id = element.resource.identifier[1].value;
+            }
+            // need to see the or statment to be removed
+            
             let data = {
                 status: element.response.status,
                 id: ["patch", "PATCH"].includes(reqMethod) ? null : id,
