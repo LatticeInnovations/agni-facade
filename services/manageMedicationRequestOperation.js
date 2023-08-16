@@ -27,6 +27,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                     {   "system": config.snUrl,
                         "value": patPres.prescriptionId
                 })
+                patPres.id = patPres.prescriptionId;
                 let encounterBundle = await bundleFun.setBundlePost(encounterData.data.entry[0].resource, encounterData.data.entry[0].resource.identifier, encounterData.data.entry[0].resource.id, "PUT", "identifier"); 
                 resourceResult.push(encounterBundle);
                 let medList = patPres.prescription;
