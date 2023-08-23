@@ -10,7 +10,8 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
             for (let patPres of reqInput) {
-                let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": patPres.appointmentId, _count: 5000 });
+                let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": patPres.appointmentId, _count: 5000 , "_include": "Encounter:appointment"});
+                let apptData = encounterData.data.entry[1].resource
                 patPres.encounterId = encounterData.data.entry[0].resource.id;
                 let todayDate = new Date();
                 console.info(new Date(patPres.generatedOn).toLocaleDateString('en-US'), new Date(todayDate).toLocaleDateString('en-US'), encounterData.data.entry[0].resource.status)
@@ -29,7 +30,9 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 })
                 patPres.id = patPres.prescriptionId;
                 let encounterBundle = await bundleFun.setBundlePost(encounterData.data.entry[0].resource, encounterData.data.entry[0].resource.identifier, encounterData.data.entry[0].resource.id, "PUT", "identifier"); 
-                resourceResult.push(encounterBundle);
+                apptData.end = new Date().toISOString();
+                let apptBundle = await bundleFun.setBundlePost(apptData, apptData.identifier, apptData.id, "PUT", "identifier"); 
+                resourceResult.push(encounterBundle, apptBundle);
                 let medList = patPres.prescription;
                 let dateToday = (new Date(patPres.generatedOn)).getTime().toString();
                 let lastDigits = dateToday.slice(9, -1);

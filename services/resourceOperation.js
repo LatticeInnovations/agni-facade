@@ -48,7 +48,7 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
         if (["post", "POST", "put", "PUT"].includes(reqMethod) && (resType == "Patient"|| resType == "Appointment"))
             filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
         else if(["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "MedicationRequest") {
-            filtereredData = mergedArray.filter(e => e.resource.resourceType != resType);
+            filtereredData = mergedArray.filter(e => e.resource.resourceType != resType && e.resource.resourceType != "Appointment");
         }
         else if(["patch", "PATCH"].includes(reqMethod) && resType == "Appointment")
             filtereredData = mergedArray.filter(e => e.fullUrl.split("/")[0] == resType);
@@ -56,7 +56,6 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             filtereredData = mergedArray;
             console.info("filetered Data")
         filtereredData.forEach(element => {
-
             let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length);
             let id = (fullUrl.includes("uuid:")) ? fullUrl.split("uuid:")[1] : fullUrl;
             if(resType == "MedicationRequest") {
