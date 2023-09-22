@@ -24,7 +24,7 @@ class Encounter {
     getId() {
         console.info(this.fhirResource.id);
         this.prescriptionObj.appointmentUuid = this.fhirResource.identifier[0].value;
-        this.prescriptionObj.prescriptionId = this.fhirResource.identifier.length > 1 ? this.fhirResource.identifier[1].value : this.fhirResource.identifier[1].value;
+        this.prescriptionObj.prescriptionId =  this.fhirResource.identifier[1].value;
         this.prescriptionObj.prescriptionFhirId = this.fhirResource.id;
     }
 
