@@ -58,5 +58,83 @@
         "fhirStatus": "cancelled",
         "type": "walkin",
         "encounter": "planned"
-    }
+    },
+    {
+        "uiStatus": "cancelled",
+        "fhirStatus": "in-progress",
+        "type": "walkin",
+        "encounter": "cancelled"
+    },
+    {
+        "uiStatus": "cancelled",
+        "fhirStatus": "cancelled",
+        "type": "routine",
+        "encounter": "in-progress"
+    },
+    {
+        "uiStatus": "noshow",
+        "fhirStatus": "noshow",
+        "type": "routine",
+        "encounter": "in-progress"
+    },
+    {
+        "uiStatus": "noshow",
+        "fhirStatus": "noshow",
+        "type": "walkin",
+        "encounter": "in-progress"
+    },
+    {
+        "uiStatus": "cancelled",
+        "fhirStatus": "cancelled",
+        "type": "walkin",
+        "encounter": "in-progress"
+    },
+    {
+        "uiStatus": "cancelled",
+        "fhirStatus": "cancelled",
+        "type": "routine",
+        "encounter": "in-progress"
+    },
+    {
+        "uiStatus": "noshow",
+        "fhirStatus": "noshow",
+        "type": "routine",
+        "encounter": "in-progress"
+    },
+    {
+        "uiStatus": "noshow",
+        "fhirStatus": "noshow",
+        "type": "walkin",
+        "encounter": "in-progress"
+    },
+   {
+         "uiStatus": "cancelled",
+        "fhirStatus": "cancelled",
+        "type": "walkin",
+        "encounter": "finished"
+
+   },
+{
+         "uiStatus": "cancelled",
+        "fhirStatus": "cancelled",
+        "type": "routine",
+        "encounter": "finished"
+
+   },
+{
+         "uiStatus": "noshow",
+        "fhirStatus": "noshow",
+        "type": "walkin",
+        "encounter": "finished"
+
+   },
+{
+         "uiStatus": "noshow",
+        "fhirStatus": "noshow",
+        "type": "routine",
+        "encounter": "finished"
+
+   }
+
+
 ]
