@@ -10,7 +10,7 @@ let apptPatchValidation = require("../utils/Validator/scheduleAppointment").appt
 let apptStatus = require("../utils/appointmentStatus.json");
 
 // postMessage, update and get app data handling function
-let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
+let setApptData = async function (token, resType, reqInput, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
@@ -22,7 +22,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                     return Promise.reject(errData);
                 }
                 // get location id of the organization sent by app and map it to the appointments
-                let locationResource = await bundleOp.searchData(config.baseUrl + "Location", { organization: "Organization/" + apptData.orgId, _elements: "id", _total: "accurate" });
+                let locationResource = await bundleOp.searchData(token, config.baseUrl + "Location", { organization: "Organization/" + apptData.orgId, _elements: "id", _total: "accurate" });
                     let locationId = locationResource.data.entry[0].resource.id;
                     apptData.locationId = locationId;
                         let slotData = apptData.slot;
@@ -66,8 +66,8 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                     return Promise.reject(errData);
                 }
                 let link = config.baseUrl + resType;
-                let resourceSavedData = await bundleFun.searchData(link, { "_id": inputData.appointmentId });
-                let encounterSavedData =  await bundleFun.searchData(config.baseUrl + "Encounter", { "appointment": inputData.appointmentId });
+                let resourceSavedData = await bundleFun.searchData(token, link, { "_id": inputData.appointmentId });
+                let encounterSavedData =  await bundleFun.searchData(token, config.baseUrl + "Encounter", { "appointment": inputData.appointmentId });
                 if (resourceSavedData.data.total != 1) {
                     let e = { status: 0, code: "ERR", message: "Appointment Id " + inputData.appointmentId + " does not exist.", statusCode: 422}
                    return Promise.reject(e);
@@ -126,7 +126,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 apptResult.push(apptResponse);
             }
             // get organization id of an appointment
-            let orgResource = await bundleOp.searchData(config.baseUrl + "Location", { _elements: "managingOrganization", _id: [...locationIds].join(","), _count: locationIds.size });
+            let orgResource = await bundleOp.searchData(token, config.baseUrl + "Location", { _elements: "managingOrganization", _id: [...locationIds].join(","), _count: locationIds.size });
 
             let locationOrg = orgResource.data.entry.map(e => { return { locationId: e.resource.id, orgId: e.resource.managingOrganization.reference.split("/")[1] } });
             apptResult = apptResult.map(obj1 => {
@@ -135,9 +135,9 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 return { ...obj1, ...obj2 };
             });
             // get assigned slot and schedule data of an appointment
-            let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { "_id": [...slotIds].join(","), _count: 5000 });
+            let slotList = await bundleOp.searchData(token, config.baseUrl + "Slot", { "_id": [...slotIds].join(","), _count: 5000 });
             let slotAppt = slotList.data.entry.map(e => { return { slotId: e.resource.id, slot: { start: e.resource.start, end: e.resource.end}, scheduleId: e.resource.schedule.reference.split("/")[1] } });
-            let encounterList = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": [...apptIds].join(","), _count: 5000 });
+            let encounterList = await bundleOp.searchData(token, config.baseUrl + "Encounter", { "appointment": [...apptIds].join(","), _count: 5000 });
             let apptEncounter = encounterList.data.entry.map(e => { return { encStatus: e.resource.status, appointmentId: e.resource.appointment[0].reference.split("/")[1] } });
             //combine appointmnet with slot and encounter stataus
             resourceResult = apptResult.map(obj1 => {

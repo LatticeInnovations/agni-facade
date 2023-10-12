@@ -3,7 +3,7 @@ let RelatedPerson = require("../class/relatedPerson");
 let bundleOp = require("./bundleOperation");
 let config = require("../config/nodeConfig");
 
-let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMethod) {
+let setRelatedPersonData = async function (token, relatedPersonList, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
         let patientArrayById = {};
@@ -14,7 +14,7 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                     patientArrayById[inputData.id] = { "personId": null, relation: [] };
                 }
 
-                let person1Link = await bundleOp.searchData(config.baseUrl + "Person", { link: "Patient/" + inputData.id, _include: "Person:link:RelatedPerson" });
+                let person1Link = await bundleOp.searchData(token, config.baseUrl + "Person", { link: "Patient/" + inputData.id, _include: "Person:link:RelatedPerson" });
                 if (person1Link.data.total != 1) {
                     let e = { status: 0, code: "ERR", message: "Patient Id " + inputData.id + " does not exist.", statusCode: 500 }
                     return Promise.reject(e)
@@ -81,7 +81,7 @@ let setRelatedPersonData = async function (relatedPersonList, FHIRData, reqMetho
                 let removeList = inputData.relationship.filter(e => e.operation == "remove");
                 let addList = inputData.relationship.filter(e => e.operation == "add").map(e => { return e.value });
                 // patient's person and related person data                  
-                let person1Link = await bundleOp.searchData(config.baseUrl + "Person", { link: "Patient/" + inputData.id, _include: "Person:link:RelatedPerson" });
+                let person1Link = await bundleOp.searchData(token, config.baseUrl + "Person", { link: "Patient/" + inputData.id, _include: "Person:link:RelatedPerson" });
                 if (person1Link.data.total != 1) {
                     let e = { status: 0, code: "ERR", message: "Patient Id " + inputData.id + " does not exist.", statusCode: 500 }
                     return Promise.reject(e)

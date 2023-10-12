@@ -15,11 +15,11 @@ let createBundle = async function (req, res) {
         let bundle;
         let fhirResource = {};
 
-        let resourceData = await getBundleJSON(reqInput, resourceType, fhirResource, "POST");
+        let resourceData = await getBundleJSON(req.token, reqInput, resourceType, fhirResource, "POST");
             bundle = resourceData.bundle;
-      //return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
+     // return res.status(201).json({ status: 1, message: "Data updated", data: bundle })     
         if (bundle.entry.length > 0) {
-            let response = await axios.post(config.baseUrl, bundle);
+            let response = await axios.post(config.baseUrl, {headers: {"Authorization": ` ${req.token}`}}, bundle);
             if (response.status == 200) {
                 let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType);
                 responseData = [...responseData, ...resourceData.errData];
@@ -73,11 +73,11 @@ let patchBundle = async function (req, res) {
         const reqInput = req.body;
         let bundle;
         let fhirResource = [];
-        let bundlePatchJSON = await getBundleJSON(reqInput, resourceType, fhirResource, "PATCH");
+        let bundlePatchJSON = await getBundleJSON(req.token, reqInput, resourceType, fhirResource, "PATCH");
         bundle = bundlePatchJSON.bundle;
         //res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
         if (bundle.entry.length > 0) {
-        let response = await axios.post(config.baseUrl, bundle);
+        let response = await axios.post(config.baseUrl, {headers: {"Authorization": `${req.token}`}}, bundle);
             if (response.status == 200 || response.status == 201) {            
                 let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType);
                 responseData = [...responseData, ...bundlePatchJSON.errData]
@@ -120,19 +120,18 @@ let patchBundle = async function (req, res) {
 
 }
 
-let getBundleJSON = async function (reqInput, resourceType, fhirResource, reqMethod) {
+let getBundleJSON = async function (token ,reqInput, resourceType, fhirResource, reqMethod) {
     let bundle = {
         "resourceType": "Bundle",
         "type": "transaction",
         "entry": []
     };
     let errData = [] ;
-    let resourceData = await resourceFun.getResource(resourceType, reqInput, fhirResource, reqMethod, null);
-    console.info(resourceData)
+    let resourceData = await resourceFun.getResource(token, resourceType, reqInput, fhirResource, reqMethod, null);
         bundle.entry = resourceData.resourceResult
         errData = resourceData.errData
     return {bundle, errData};
 }
 
 
-module.exports = { createBundle, patchBundle }
+module.exports = { createBundle, patchBundle, getBundleJSON }

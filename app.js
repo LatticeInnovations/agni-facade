@@ -28,7 +28,7 @@ let options = {
             JWT: {
                 type: 'apiKey',
                 in: 'header',
-                name: 'x-access-token',
+                name: 'Authorization',
                 description: "",
             }
         }
@@ -55,7 +55,6 @@ app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Blu
 let whitelist = config.whitelist;
 let corsOptions = {
   origin: (origin, callback) => {
-    console.info(origin)
     if (!origin || whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
@@ -65,7 +64,7 @@ let corsOptions = {
 }
 app.use(cors(corsOptions));
 
-console.log= function(){}
+//console.log= function(){}
 
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json());

@@ -19,7 +19,7 @@ async function triggerAppointment() {
         let nextDateFormat = formatDate(nextDate);
         let thirdDate = new Date().setDate(todayDate.getDate()+3);
         let thirdDateFormat = formatDate(thirdDate)
-       // let orgResource = await bundleOp.searchData(config.baseUrl + `Appointment?_include=Appointment:patient:Patient&_include=Appointment:slot:Slot&status=proposed&_include=Appointment:location:Location&_count=200`);
+       // let orgResource = await bundleOp.searchData(token, config.baseUrl + `Appointment?_include=Appointment:patient:Patient&_include=Appointment:slot:Slot&status=proposed&_include=Appointment:location:Location&_count=200`);
         let orgResource = await bundleOp.searchData(config.baseUrl + `Appointment?_include=Appointment:patient:Patient&_include=Appointment:slot:Slot&slot.start=${nextDateFormat},${thirdDateFormat}&status=proposed&_include=Appointment:location:Location&_count=200`);
        console.info("cron job for checking total data", orgResource.data.entry.length)
         if(orgResource.data.entry.length > 0) {

@@ -25,10 +25,16 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     user_id: DataTypes.BIGINT,
-    otp: DataTypes.INTEGER,
-    expire_time: DataTypes.DATE,
+    password: DataTypes.STRING,
+    salt: DataTypes.STRING,
+    is_active: DataTypes.BOOLEAN,
+    first_login: DataTypes.BOOLEAN,
     login_attempts: DataTypes.INTEGER,
+    attempt_timestamp: DataTypes.DATE,
+    otp: DataTypes.STRING,
+    otp_check_attempts: DataTypes.INTEGER,
     otp_generate_attempt: DataTypes.INTEGER,
+    otp_gen_time: DataTypes.DATE,
     createdOn: DataTypes.DATE
   }, {
     sequelize,

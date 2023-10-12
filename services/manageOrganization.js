@@ -1,7 +1,7 @@
 let Organization = require("../class/organization");
 let Location = require("../class/location");
 
-let setOrganizationData = async function (resType, reqInput, FHIRData, reqMethod) {
+let setOrganizationData = async function (token, resType, reqInput, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {

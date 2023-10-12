@@ -18,15 +18,38 @@ module.exports = {
           key: 'res_id'
         }
       },
-      otp: {
-        type: Sequelize.INTEGER,
-        allowNull: true
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
-      expire_time: {
+      is_active: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      },
+      first_login: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      salt: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      attempt_timestamp: {
         type: Sequelize.DATE,
         allowNull: true
       },
       login_attempts: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      },
+      otp: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      otp_check_attempts: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0
@@ -36,14 +59,15 @@ module.exports = {
         allowNull: false,
         defaultValue: 0
       },
+      otp_gen_time: {
+        allowNull: true,
+        type: Sequelize.DATE
+      },
       createdOn: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       }
     });
-  },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('authentication_details');
   }
 };

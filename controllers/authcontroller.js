@@ -7,60 +7,51 @@ let sendEmail = require("../utils/sendgrid.util").sendEmail
 let jwt = require("jsonwebtoken");
 const config = require("../config/nodeConfig");
 let { validationResult } = require('express-validator');
-let bundleOp = require("../services/bundleOperation");
 const crypto = require('crypto');
+const bcryptjs = require("bcryptjs");
+const sequelize = require("sequelize");
+
 // login by using email or mobile number to send OTP
-let login = async function (req, res) {
+const login = async function (req, res) {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return response.sendInvalidDataError(res, errors);
         }
-        let isEmail = checkIsEmail(req.body.userContact);
-        let contact = isEmail ? 'email' : 'phone';
-        let userDetail = await getUserDetail(req, contact);
-        let loginAttempts = 0, otp = 0;
-        let OTPGenerateAttempt = 1;
-        if (userDetail == null || !userDetail.dataValues.is_active)
+        let userDetail = await getUserDetail(req, req.body.userContact);
+        if (userDetail == null || !userDetail.profile.is_active)
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
-        let authentication_detail = userDetail.dataValues.authentication_detail;
-        let timeData = await calculateTime(authentication_detail);
-        // if user comes back after >= 5 mins reset every value 
-        if (timeData.lastAttemptTimeDiff > config.lockTimeInMin) {
-            loginAttempts = 0;
-            OTPGenerateAttempt = 1;
+        let { authData, currentTime, otpCheckAttempt, otpGenAttempt, loginAttempts } = setData(userDetail);
+        let diffMins = getMinutes(authData.attempt_timestamp);
+        console.log(loginAttempts, otpGenAttempt, otpCheckAttempt)
+        if ((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins < config.lockTimeInMin)
+            return res.status(401).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
+        else if ((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins >= config.lockTimeInMin) {
+            loginAttempts = 0; otpCheckAttempt = 0; otpGenAttempt = 0;
         }
-        // if otp validation falied attempt (login attempts) >= 5 and <= 5min or otp generations >= 5 and time elapsed <= 5 mins give error
-        else if (authentication_detail != null && timeData.lastAttemptTimeDiff <= config.lockTimeInMin && (authentication_detail.dataValues.login_attempts >= config.totalLoginAttempts || authentication_detail.dataValues.otp_generate_attempt >= config.OTPGenAttempt)) {
-            let e = { status: 0, message: "Too many attempts. Please try after 5 mins" }
-            return res.status(401).json(e)
+        if (authData.login_attempts == config.totalLoginAttempts - 1) {
+            currentTime = Date.now();
         }
-        // else increment otp generation counter ans set lock time if it is last attempt
-        else if (authentication_detail != null) {
-            loginAttempts = authentication_detail.dataValues.login_attempts;
-            OTPGenerateAttempt = authentication_detail.dataValues.otp_generate_attempt + 1;
-        }
+        loginAttempts += 1;
 
-        if (req.body.userContact == 1111111111 || req.body.userContact == 9999999999 || req.body.userContact == "devtest@gmail.com" || req.body.userContact == "dev3test@gmail.com") {
-            otp = 111111;
-        } else if (req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") {
-            otp = 222222;
-            OTPGenerateAttempt = 1;
+        // verify password
+        let response = {}, status = 200;
+        if (bcryptjs.hashSync(req.body.password, authData.salt) == authData.password) {
             loginAttempts = 0;
+            otpCheckAttempt = 0;
+            otpGenAttempt = 0;
+            currentTime = null;
+            const token = jwt.sign(userDetail.profile, config.jwtSecretKey, { expiresIn: '5d' });
+            response = { status: 1, "message": "Authorized user", data: { isFirstLogin: !authData.first_login, token: token } }
         }
         else {
-            otp = generateOTP();
-            console.log("check if otp is generated before sending")
-            try {
-                await sendOTP(isEmail, userDetail, otp);
-            }
-            catch (e) {
-                return res.status(500).json({ status: 0, message: "Unable to process. Please try again." })
-            }
+            const message = loginAttempts >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : "Unauthorized user";
+            status = 401;
+            response = { status: 0, "message": message }
         }
-
-        await upsertOTP(otp, userDetail.dataValues, timeData.currentTime, timeData.expireTime, loginAttempts, OTPGenerateAttempt);
-        res.status(200).json({ status: 1, "message": "Authorized user" });
+        const upsertJson = { "login_attempts": loginAttempts, "attempt_timestamp": currentTime, "first_login": true, "otp_check_attempts": otpCheckAttempt, "otp_generate_attempt": otpGenAttempt };
+        await updateLoginAttempt(upsertJson, userDetail.profile.user_id);
+        return res.status(status).json(response);
     }
     catch (e) {
         console.error(e);
@@ -73,63 +64,54 @@ let login = async function (req, res) {
 
 }
 
-// authenticate OTP
-let OTPAuthentication = async function (req, res) {
+// forgot password or regenerate OTP
+const forgotPassword = async function (req, res) {
     try {
+        // check for validation error
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return response.sendInvalidDataError(res, errors);
         }
         let isEmail = checkIsEmail(req.body.userContact);
-        let contact = isEmail ? 'email' : 'phone';
-        let userDetail = await getUserDetail(req, contact);
-        if (userDetail == null || !userDetail.dataValues.is_active)
+        let userDetail = await getUserDetail(req, req.body.userContact);
+        if (userDetail == null || !userDetail.profile.is_active)
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
-        let loginAttempts = 0, apiStatus = 200;
-        let resMessage = {};
-        let authentication_detail = userDetail.dataValues.authentication_detail;
-        let timeData = await calculateTime(authentication_detail);
-        console.log(timeData)
-        if (userDetail != null && userDetail.dataValues.authentication_detail.dataValues.otp == null) {
-            console.log("check here")
-            return res.status(401).json({ status: 0, message: "OTP expired" });
-        }
-        else if (timeData.lastAttemptTimeDiff <= config.lockTimeInMin && (authentication_detail.dataValues.login_attempts >= config.totalLoginAttempts || authentication_detail.dataValues.otp_generate_attempt >= config.OTPGenAttempt)) {
-            return res.status(401).json({ status: 0, message: "Too many attempts. Please try after 5 mins" })
-        }
-        // if user comes back after >= 5 mins reset values
-        if (timeData.lastAttemptTimeDiff > config.lockTimeInMin) {
-            loginAttempts = authentication_detail.dataValues.login_attempts = 0;
-            authentication_detail.dataValues.otp_generate_attempt = 0;
-        }
-
-        // bypass for testing purpose
-        if ((req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") && req.body.otp != 222222) {
-            loginAttempts = 1;
-            resMessage = { status: 0, message: "Invalid OTP" };
-        }
-        // if otp is invalid
-        else if (req.body.otp != authentication_detail.dataValues.otp) {
-            apiStatus = 401;
-            loginAttempts = authentication_detail.dataValues.login_attempts + 1;
-            let e = loginAttempts >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : `Invalid OTP`;
-            resMessage = { status: 0, message: e };
-            await upsertOTP(authentication_detail.dataValues.otp, userDetail.dataValues, timeData.currentTime, authentication_detail.dataValues.expire_time, loginAttempts, authentication_detail.dataValues.otp_generate_attempt);
-        }
         else {
-            // if otp is valid check espire time of otp  
-            if (timeData.expireTimeDiffOTP <= 0) {
-                return res.status(401).json({ status: 0, message: `OTP expired` });
+            const authData = userDetail.dataValues.authentication_detail.dataValues;
+            let diffMins = 100000;
+            let currentTime = null;
+            let otpCheckAttempt = authData.otp_check_attempts
+            let otpGenAttempt = authData.otp_generate_attempt;
+            let loginAttempts = authData.login_attempts;
+            const today = Date.now();
+            if (authData.attempt_timestamp) {
+                diffMins = getMinutes(authData.attempt_timestamp);
             }
-            let userProfile = {
-                "userId": userDetail.dataValues.user_id, "userName": userDetail.dataValues.user_name
+            // check if account locked 
+            if ((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins < config.lockTimeInMin) {
+                console.log("check data")
+                return res.status(401).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
             }
-            let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '5d' });
-            upsertOTP(null, userDetail.dataValues, timeData.currentTime, null, 0, authentication_detail.dataValues.otp_generate_attempt);
-            resMessage = { status: 1, message: "Logged in successfully", data: { "token": `Bearer ${token}` } }
+            // check if lock time has passed reset the counter to 0
+            else if ((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins >= config.lockTimeInMin) {
+                loginAttempts = 0;
+                otpCheckAttempt = 0;
+                otpGenAttempt = 0;
+            }
+            else if (authData.otp_generate_attempt == config.totalLoginAttempts - 1) {
+                currentTime = Date.now();
+            }
+            otpGenAttempt += 1;
+            const otp = generateOTP();
+            await sendOTP(isEmail, userDetail, otp);
+            const upsertJson = { "login_attempts": loginAttempts, "attempt_timestamp": currentTime, "first_login": true, "otp_check_attempts": otpCheckAttempt, "otp_generate_attempt": otpGenAttempt, "otp": otp, "otp_gen_time": today };
+            console.log(upsertJson)
+            await updateLoginAttempt(upsertJson, userDetail.profile.user_id);
+
+            return res.status(200).json({ status: 1, message: "OTP sent to your registered contact detail" });
         }
-        return res.status(apiStatus).json(resMessage);
-    } catch (e) {
+    }
+    catch (e) {
         console.error(e);
         return res.status(500).json({
             status: 0,
@@ -139,29 +121,19 @@ let OTPAuthentication = async function (req, res) {
     }
 }
 
-async function calculateTime(authentication_detail) {
-    let currentTime = new Date();
-    let expireTime = new Date(currentTime);
-    expireTime = expireTime.setMinutes(expireTime.getMinutes() + config.OTPExpireMin);
-    let expireTimeDiffOTP = authentication_detail != null ? await checkAuthAttempts(authentication_detail.dataValues.expire_time, currentTime) : 0;
-    let lastAttemptTimeDiff = authentication_detail != null ? await checkAuthAttempts(currentTime, authentication_detail.dataValues.createdOn) : 0;
-    let data = { currentTime, expireTime, expireTimeDiffOTP, lastAttemptTimeDiff };
-    return data;
-}
-
+// send otp via email or sms
 async function sendOTP(isEmail, userDetail, otp) {
     try {
-        if (isEmail) {
+        if (isEmail) {            
             let mailData = {
-                to: [{ email: userDetail.dataValues.user_email }],
-                subject: util.format(`${(emailContent.find(e => e.notification_type_id == 1).subject)}`,),
-                content: util.format(`${(emailContent.find(e => e.notification_type_id == 1).content)}`, userDetail.dataValues.user_name, otp.toString())
+                to: [{ email: "tulika@thelattice.in" }],
+                subject: util.format(`${(emailContent.find(e => e.notification_type_id == 4).subject)}`,),
+                content: util.format(`${(emailContent.find(e => e.notification_type_id == 4).content)}`, "Tulika", otp, "url defined later")
             }
-            console.info("check mail data")
-            await sendEmail(mailData);
+             await sendEmail(mailData);
         }
         else {
-            let text = `<#> Use OTP ${otp} to login to agni App\n` + config.OTPHash;
+            let text = `<#> Use OTP ${otp} to set pin in  MDR App\n` + config.OTPHash;
             console.log("check text message", text);
             await sendSms(userDetail.dataValues.mobile_number, text);
         }
@@ -172,30 +144,131 @@ async function sendOTP(isEmail, userDetail, otp) {
     }
 
 }
+
+// set Password
+let setPassword = async function (req, res) {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return response.sendInvalidDataError(res, errors);
+        }
+        let userDetail = await getUserDetail(req, req.body.userContact);
+        if (userDetail == null || !userDetail.profile.is_active)
+            return res.status(401).json({ status: 0, message: "Unauthorized user" });
+        else {
+            let { authData, currentTime, otpCheckAttempt, otpGenAttempt, loginAttempts } = setData(userDetail)
+            let apiStatus, resMessage, upsertJson = {};
+            let diffMins = getMinutes(authData.attempt_timestamp);
+            if ((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins < config.lockTimeInMin)
+                return res.status(401).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
+            else if ((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins >= config.lockTimeInMin) {
+                loginAttempts = 0;  otpCheckAttempt = 0;  otpGenAttempt = 0;
+            }
+            else if (authData.otp_gcheck_attempt == config.totalLoginAttempts - 1) {
+                currentTime = Date.now();
+            }
+            otpCheckAttempt += 1;
+            upsertJson = { "login_attempts": loginAttempts, "attempt_timestamp": currentTime, "first_login": true, "otp_check_attempts": otpCheckAttempt, "otp_generate_attempt": otpGenAttempt};
+            if (req.body.otp != authData.otp) {
+                apiStatus = 401;
+                let e = otpCheckAttempt >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : `Invalid OTP`;
+                resMessage = { status: 0, message: e };
+            }
+            else {
+                // if otp is valid check espire time of otp 
+                let otpExpTime = getMinutes(authData.otp_gen_time)
+                if (otpExpTime >= 2) {
+                    return res.status(401).json({ status: 0, message: `OTP expired` });
+                }
+                loginAttempts = 0;
+                otpCheckAttempt = 0;
+                otpGenAttempt = 0;
+                apiStatus = 200; resMessage = {status: 1, message: "Password changed."}
+                upsertJson = { "login_attempts": loginAttempts, "attempt_timestamp": currentTime, "first_login": true, "otp_check_attempts": otpCheckAttempt, "otp_generate_attempt": otpGenAttempt, "otp": null, "otp_gen_time": null};
+                if(req.body.newPassword) {
+                    const salt = bcryptjs.genSaltSync(10);
+                    const hashedPassword = bcryptjs.hashSync(req.body.newPassword, salt);
+                    upsertJson.password = hashedPassword;
+                    upsertJson.salt = salt;
+                }                 
+            }
+            await updateLoginAttempt(upsertJson, userDetail.profile.user_id);
+        return res.status(apiStatus).json(resMessage);
+        }
+    }
+    catch (e) {
+        console.error(e);
+        return res.status(500).json({
+            status: 0,
+            message: "Unable to process. Please try again.",
+            error: e
+        })
+    }
+}
+
+
+
+function setData(userDetail) {
+    const authData = userDetail.dataValues.authentication_detail.dataValues;
+    let currentTime = null;
+    let otpCheckAttempt = authData.otp_check_attempts
+    let otpGenAttempt = authData.otp_generate_attempt;
+    let loginAttempts = authData.login_attempts;
+    return { authData, currentTime, otpCheckAttempt, otpGenAttempt, loginAttempts }
+}
+
+const changePassword = async function (req, res) {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return response.sendInvalidDataError(res, errors);
+        }
+        console.log(req.decoded)
+        const salt = bcryptjs.genSaltSync(10);
+        const hashedPassword = bcryptjs.hashSync(req.body.newPassword, salt);
+        let upsertJson = { "user_id": req.decoded.user_id, "password": hashedPassword, "salt": salt };
+        let upsertDetail = await db.authentication_detail.update(upsertJson, { conflictFields: ["user_id"], where: { user_id: req.decoded.user_id } });
+        console.log(upsertDetail)
+        return res.status(200).json({ status: 1, message: "Password changed." })
+    }
+    catch (e) {
+        console.error(e);
+        return res.status(500).json({
+            status: 0,
+            message: "Unable to process. Please try again.",
+            error: e
+        })
+    }
+}
+
 // get user and his/her OTP details using sequelize
 async function getUserDetail(req, contact) {
     try {
-        let queryParam ={"_total": "accurate"};
-        queryParam[contact] = contact == "email" ? req.body.userContact.toLowerCase() : req.body.userContact;
-        let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam);
-        if (existingPractioner.data.total != 1) {
+        let existingPractioner = await getUserData(contact)
+        if (existingPractioner.length < 1) {
             return null;
         }
         else {
-            let user_id = existingPractioner.data.entry[0].resource.id;
-            let user_name = existingPractioner.data.entry[0].resource.name[0].given.join(' ');
-            user_name += " " + existingPractioner.data.entry[0].resource.name[0].family;
-            let email = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "email");
-            let phone = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "phone");
-            let userDetail = {}; userDetail.dataValues = {
-                "user_name": user_name,
-                "user_email" : email[0].value,
-                "mobile_number" : phone[0].value,
-                "is_active":  existingPractioner.data.entry[0].resource.active,
-                "user_id": user_id
-            }
+            let user_id = existingPractioner[0].res_id;
+            const practitonerData = JSON.parse(existingPractioner[0].res_text_vc);
+            console.log(practitonerData)
+            let user_name = practitonerData.name[0].given.join(' ');
+            user_name += " " + practitonerData.name[0].family;
+            let email = practitonerData.telecom.filter(e => e.system == "email");
+            let phone = practitonerData.telecom.filter(e => e.system == "phone");
+            let roleList = JSON.parse(existingPractioner[1].res_text_vc).code[0].coding.map(element => element.code);
+            let userDetail = {
+                profile: {
+                    "user_name": user_name,
+                    "user_email": email[0].value,
+                    "mobile_number": phone[0].value,
+                    "is_active": practitonerData.active,
+                    "user_id": user_id,
+                    roles: roleList
+                }, dataValues: {}
+            };
             let userData = await db.authentication_detail.findOne({
-                attributes:['auth_id', 'user_id', 'otp', 'expire_time', 'createdOn', 'login_attempts', 'otp_generate_attempt'],
+                attributes: ['auth_id', 'user_id', 'password', 'salt', 'createdOn', 'login_attempts', 'first_login', 'attempt_timestamp', 'is_active', "otp", "otp_check_attempts", "otp_generate_attempt", "otp_gen_time"],
                 where: { "user_id": user_id }
             });
             userDetail.dataValues.authentication_detail = userData;
@@ -208,6 +281,22 @@ async function getUserDetail(req, contact) {
     }
 }
 
+
+async function getUserData(userContact) {
+    console.log(userContact)
+    const practitionerResource = await db.sequelize.query(`SELECT res_id, res_type, res_text_vc FROM hfj_res_ver where res_id = (SELECT distinct res_id FROM hfj_spidx_token where res_type = 'Practitioner' and (sp_value = '${userContact}' and sp_name='email') or (sp_value='${userContact}' and sp_name='phone')) and res_type='Practitioner' order by res_ver desc limit 1;`,{type: sequelize.QueryTypes.SELECT});
+    console.log(" ====>" ,practitionerResource)
+    if(practitionerResource.length != 1) {
+        return [];
+    }    
+    const roleResource = await db.sequelize.query(`select res_id, res_type, res_text_vc FROM hfj_res_ver where res_type = 'PractitionerRole' and res_id = 
+    (SELECT src_resource_id FROM public.hfj_res_link where source_resource_type = 'PractitionerRole' and target_resource_id=${practitionerResource[0].res_id})  order by res_ver desc limit 1;`,{type: sequelize.QueryTypes.SELECT});
+
+    
+    return [practitionerResource[0], roleResource[0]];
+    
+}
+
 /// check if provided contact is an email or not
 function checkIsEmail(userContact) {
     const regexExp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
@@ -215,27 +304,22 @@ function checkIsEmail(userContact) {
     return isEmail;
 }
 
-// generate 6 digits OTP
-function generateOTP() {
-    try {
-        let minm = 100000;
-        let maxm = 999999;
-        let value =  crypto.randomInt(minm, maxm);
-        let otp = value.toString().padStart(6, "1");
-        return otp;
+function getMinutes(prevDate) {
+    let diffMins = 100000;
+    if (prevDate) {
+        const today = Date.now();
+        const dateLastLogin = new Date(prevDate);
+        let diffMs = (today - dateLastLogin);
+        diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000);
     }
-    catch(e) {
-        Promise.reject(e);
-    }
-
+    console.log("diff Mins: ", diffMins)
+    return diffMins
 }
 
 // insert if not present or update generated OTP for the user id
-async function upsertOTP(otp, userDetail, currentTime, expireTime, loginAttempts, OTPGenerateAttempt) {
+async function updateLoginAttempt(upsertJson, user_id) {
     try {
-        let upsertJson = { "user_id": userDetail.user_id, "otp": otp, "expire_time": expireTime, "login_attempts": loginAttempts, "createdOn": currentTime, "otp_generate_attempt": OTPGenerateAttempt };
-        console.log(upsertJson)
-        let upsertDetail = await db.authentication_detail.upsert(upsertJson, { conflictFields: ["user_id"] });
+        let upsertDetail = await db.authentication_detail.update(upsertJson, { where: { user_id: user_id } });
         return upsertDetail;
     }
     catch (e) {
@@ -245,14 +329,21 @@ async function upsertOTP(otp, userDetail, currentTime, expireTime, loginAttempts
 
 }
 
-// check if the number of attempts is 5 and 5 mins have not lapsed, then give an error
-async function checkAuthAttempts(expire_time, currentTime) {
-    let exp_date = new Date(expire_time);
-    let diff = (exp_date - currentTime);
-    let diffMinutes = (diff / 1000) / 60;
-    return diffMinutes;
+// generate 6 digits OTP
+function generateOTP() {
+    try {
+        let minm = 100000;
+        let maxm = 999999;
+        let value = crypto.randomInt(minm, maxm);
+        let otp = value.toString().padStart(6, "1");
+        return otp;
+    }
+    catch (e) {
+        Promise.reject(e);
+    }
+
 }
 
 module.exports = {
-    login, OTPAuthentication
+    login, setPassword, forgotPassword, changePassword
 }

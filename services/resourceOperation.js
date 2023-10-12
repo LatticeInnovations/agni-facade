@@ -7,29 +7,29 @@ let practitioner = require("./managePractitioner");
 let practitionerRole = require("./managePractitionerRole");
 let schedule= require("./manageSchedule")
 let appointment = require("./manageAppointment");
-let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery) {
+let getResource = async function (token, resType, inputData, FHIRData, reqMethod, reqQuery) {
     try {
         let bundleData = [];
         switch (resType) {
             case "Patient":
-                bundleData = await patient.setPatientData(resType, inputData, FHIRData, reqMethod);
+                bundleData = await patient.setPatientData(token, resType, inputData, FHIRData, reqMethod);
                 break;
             case "RelatedPerson":
-                bundleData = await relatedPerson.setRelatedPersonData(inputData, FHIRData, reqMethod);
+                bundleData = await relatedPerson.setRelatedPersonData(token, inputData, FHIRData, reqMethod);
                 break;
-            case "Medication":  bundleData =await medication.setMedicationData(resType, inputData, FHIRData, reqMethod);
+            case "Medication":  bundleData =await medication.setMedicationData(token, resType, inputData, FHIRData, reqMethod);
             break;
-            case "MedicationRequest": bundleData = await medRequest.setMedicationRequestData(resType, inputData, FHIRData, reqMethod);
+            case "MedicationRequest": bundleData = await medRequest.setMedicationRequestData(token, resType, inputData, FHIRData, reqMethod);
             break;
-            case "Organization": bundleData = await organization.setOrganizationData(resType, inputData, FHIRData, reqMethod);  
+            case "Organization": bundleData = await organization.setOrganizationData(token, resType, inputData, FHIRData, reqMethod);  
             break;
-            case "Practitioner" : bundleData = await practitioner.setPractitionerData(resType, inputData, FHIRData, reqMethod);  
+            case "Practitioner" : bundleData = await practitioner.setPractitionerData(token, resType, inputData, FHIRData, reqMethod);  
             break;
-            case "PractitionerRole": bundleData = await practitionerRole.setPractitionerRoleData(resType, inputData, FHIRData, reqMethod); 
+            case "PractitionerRole": bundleData = await practitionerRole.setPractitionerRoleData(token, resType, inputData, FHIRData, reqMethod); 
             break; 
-            case "Schedule" : bundleData = await schedule.setScheduleData(resType, inputData, FHIRData, reqMethod);
+            case "Schedule" : bundleData = await schedule.setScheduleData(token, resType, inputData, FHIRData, reqMethod);
             break;
-            case "Appointment" : bundleData = await appointment.setApptData(resType, inputData, FHIRData, reqMethod, reqQuery);
+            case "Appointment" : bundleData = await appointment.setApptData(token, resType, inputData, FHIRData, reqMethod, reqQuery);
              break;
         }
 

@@ -2,7 +2,7 @@ let PractitionerRole = require("../class/practitionerRole");
 let Organization = require("../class/organization");
 let Practitioner = require("../class/practitioner");
 
-let setPractitionerRoleData = async function (relatedPersonList, reqInput, FHIRData, reqMethod) {
+let setPractitionerRoleData = async function (token, relatedPersonList, reqInput, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "put", "PUT"].includes(reqMethod)) {

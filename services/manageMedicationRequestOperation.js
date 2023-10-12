@@ -5,12 +5,12 @@ const { v4: uuidv4 } = require('uuid');
 let config = require("../config/nodeConfig");
 let bundleOp = require("./bundleOperation");
 
-let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqMethod) {
+let setMedicationRequestData = async function (token, resType, reqInput, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
             for (let patPres of reqInput) {
-                let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": patPres.appointmentId, _count: 5000 , "_include": "Encounter:appointment"});
+                let encounterData = await bundleOp.searchData(token, config.baseUrl + "Encounter", { "appointment": patPres.appointmentId, _count: 5000 , "_include": "Encounter:appointment"});
                 let apptData = encounterData.data.entry[1].resource
                 patPres.encounterId = encounterData.data.entry[0].resource.id;
                 let todayDate = new Date();

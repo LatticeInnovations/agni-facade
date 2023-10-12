@@ -2,20 +2,20 @@ let manageResource = require("./manageResource");
 let bundleFun = require("../services/bundleOperation");
 let resourceFunc = require("../services/resourceOperation");
 // Get user profile
-let getUserProfile = async function (req, res, next) {
+let getUserProfile = async function (req, res) {
     try {
         let resourceType = "PractitionerRole";
         req.params.resourceType = resourceType;
         req.query = {practitionerId: req.decoded.userId};
         let resouceUrl = await manageResource.getResourceUrl(resourceType, req.query);
-        let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        let responseData = await bundleFun.searchData(req.token,resouceUrl.link, resouceUrl.reqQuery);
         let result = [];
         let data = {};
         if( !responseData.data.entry || responseData.data.total == 0) {
             return res.status(200).json({ status: 1, message: "Profile detail fetched", total: 0, data: data})
         }
         else {
-            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
+            let res_data = await resourceFunc.getResource(req.token ,resourceType, {}, responseData.data.entry, req.method, null, 0);
             result = result.concat(res_data);
             result = result[0].resourceResult;
             data.userId = result[0].practitionerId,

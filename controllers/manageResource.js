@@ -91,7 +91,7 @@ let searchResourceData = async function (req, res) {
         }
         const resourceType = req.params.resourceType;
         let resouceUrl = await getResourceUrl(resourceType, req.query);
-        let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        let responseData = await bundleFun.searchData(req.token,resouceUrl.link, resouceUrl.reqQuery);
         let reqUrl = url.parse(req.originalUrl, true)
         let reqQuery = reqUrl.query;
         console.info(responseData.data.link)
@@ -102,7 +102,7 @@ let searchResourceData = async function (req, res) {
             return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
         }
         else if (resouceUrl.nestedResource == 1) {
-            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, reqQuery, 0);
+            let res_data = await resourceFunc.getResource(req.token, resourceType, {}, responseData.data.entry, req.method, reqQuery, 0);
             result = result.concat(res_data.resourceResult);
             if(resouceUrl.specialOffset) {
                 let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
@@ -130,7 +130,7 @@ let searchResourceData = async function (req, res) {
                 }           
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {
-                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0);
+                let res_data = await resourceFunc.getResource(req.token, resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0);
                 result = result.concat(res_data.resourceResult);
             }
              res.status(200).json({ status: resStatus, message: "Data fetched successfully.", total: result.length,"offset": +reqQuery._offset, data: result  })
