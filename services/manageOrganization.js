@@ -4,15 +4,7 @@ let Location = require("../class/location");
 let setOrganizationData = async function (token, resType, reqInput, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
-        if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
-            for (let orgData of reqInput) { 
-                console.log(orgData)
-            }
-        }
-        else if (["patch", "PATCH"].includes(reqMethod)) {
-            console.log(reqMethod)
-        }
-        else {
+         if (["GET"].includes(reqMethod)) {
             let orgList = FHIRData.filter(e => e.resource.resourceType == "Organization").map(e => e.resource);
             for (let orgData of orgList) { 
                 let locationResource = FHIRData.filter(e => e.resource.resourceType == "Location" && e.resource.managingOrganization.reference == "Organization/" + orgData.id).map(e => e.resource)[0];

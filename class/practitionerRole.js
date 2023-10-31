@@ -27,7 +27,6 @@ class PractitionerRole {
 
     setRole() {
         let result = roleJson.find(a => a.code === this.roleObj.roleId);
-        console.log("check fhhir resource: ", this.fhirResource)
         this.fhirResource.code.push({
             coding: [
                 {

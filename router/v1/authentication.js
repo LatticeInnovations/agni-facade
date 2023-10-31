@@ -11,7 +11,7 @@ const auth = require("../../middleware/checkAuth");
  */
 
 /**
- * Login 
+ * Web Login 
  * @route POST /v1/auth/login
  * @group Authentication
  * @param {passwordLogin.model} login.body.required
@@ -22,9 +22,31 @@ const auth = require("../../middleware/checkAuth");
  * @returns {Error} 504 - Database connection error
  */
 
+
 router.post("/login", [oneOf([
-    check("userContact").notEmpty().isEmail().isLength({max: 70}), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})
+    check("userContact").notEmpty().isEmail().trim().isLength({max: 70}), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})
 ]), check("password").notEmpty().isLength({min: 8, max: 16})], authController.login);
+
+/**
+ * @typedef AppLogin
+ * @property {string} userContact.required User mobile number or email address - eg: tulika@thelattice.in
+ */
+
+/**
+ * App Contact verify 
+ * @route POST /v1/auth/verifyUser
+ * @group Authentication
+ * @param {AppLogin.model} appLogin.body.required
+ * @returns {object} 201 - User data created successfully.
+ * @returns {object} 200 - User data not found.
+ * @returns {Error} 401 - You are unauthorized to perform this operation.
+ * @returns {Error} 500 - Unable to process
+ * @returns {Error} 504 - Database connection error
+ */
+
+router.post("/verifyUser", [oneOf([
+    check("userContact").notEmpty().isEmail().isLength({max: 70}).trim(), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10}).trim()
+])], authController.forgotPassword);
 
 /**
  * @typedef forgotPassword
@@ -44,7 +66,7 @@ router.post("/login", [oneOf([
  */
 
 router.post("/forgot", [oneOf([
-    check("userContact").notEmpty().isEmail().isLength({max: 70}), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})
+    check("userContact").notEmpty().isEmail().isLength({max: 70}).normalizeEmail(), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10}).trim().escape()
 ])], authController.forgotPassword);
 
 
@@ -68,7 +90,7 @@ router.post("/forgot", [oneOf([
  */
 
 router.post("/setPassword", [oneOf([
-    check("userContact").notEmpty().isEmail().isLength({max: 70}), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})
+    check("userContact").notEmpty().isEmail().isLength({max: 70}).trim().normalizeEmail(), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10}).trim()
 ]), check("newPassword").notEmpty().isLength({min: 8, max: 16}), check("otp").notEmpty().isLength({min: 6, max: 6})], authController.setPassword);
 
 
@@ -76,6 +98,7 @@ router.post("/setPassword", [oneOf([
 * @typedef SetOTP
 * @property {string} userContact.required User mobile number or email address - eg: tulika@thelattice.in
 * @property {string} otp.required 6 digits OTP received via sms or email - eg: 111111
+* @property {boolean} isMobile.required If the user is verifying using mobile or app - eg: true
 */
 
 /**
@@ -92,12 +115,13 @@ router.post("/setPassword", [oneOf([
 
 
 router.post("/otp", [oneOf([
-    check("userContact").notEmpty().isEmail().isLength({max: 70}), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})
+    check("userContact").notEmpty().isEmail().isLength({max: 70}).trim().isEmail(), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})
 ]), check("otp").notEmpty().isLength({min: 6, max: 6})], authController.setPassword);
 
 
 /**
 * @typedef ChangePassword
+* @property {string} oldPassword.required 6 digits OTP received via sms or email - eg; 000000
 * @property {string} newPassword.required 6 digits OTP received via sms or email - eg; 000000
 */
 

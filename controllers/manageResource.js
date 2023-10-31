@@ -8,32 +8,9 @@ let getResourceUrl = async function (resourceType, queryParams) {
     let url = "", nestedResource = null, specialOffset = null;
     switch (resourceType) {
         case "Patient": 
-        case "Medication" :
         case "Practitioner" :
              queryParams._total = "accurate"
              url = config.baseUrl + resourceType;
-            break;
-        case "RelatedPerson": {
-            let patientIds = queryParams.patientId
-            url = config.baseUrl + `Person`;
-            queryParams = {
-                "_include" : "Person:link:RelatedPerson",
-                "patient._id" : patientIds,
-                "_total": "accurate",
-                "_count" : queryParams._count
-            };
-            nestedResource = 1;
-        }
-
-            break;
-        case "MedicationRequest" : 
-            url = config.baseUrl + "Encounter";
-            queryParams.patient = queryParams.patientId;
-            delete queryParams.patientId;
-            queryParams._count= 3000;
-            queryParams._revinclude = "MedicationRequest:encounter:Encounter";
-            queryParams["appointment.status"] = "arrived,proposed,fulfilled,cancelled,noshow";
-            nestedResource = 1;
             break;
         case "Organization" : 
             url = config.baseUrl + resourceType;
@@ -52,29 +29,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
                 "_total": "accurate"
             }
             nestedResource = 1;
-            break;
-        case "Schedule":
-            queryParams._total = "accurate"
-            queryParams["actor.organization"] = queryParams.orgId;
-            delete queryParams.orgId;
-            url = config.baseUrl + resourceType;
-            nestedResource = 1;
-            specialOffset = 1;
-            break;
-        case "Appointment": 
-             queryParams._total = "accurate"
-             if(queryParams.orgId) {
-                queryParams["location.organization"] = queryParams.orgId;
-                delete queryParams.orgId;
-             }
-             if(queryParams.patientId) {
-                queryParams["patient"] = queryParams.patientId;
-                delete queryParams.patientId;
-             }
-            url = config.baseUrl + resourceType;
-            nestedResource = 1;
-            specialOffset = 1;
-            break;
+            break;        
 
     }
 

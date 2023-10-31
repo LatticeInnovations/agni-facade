@@ -10,7 +10,6 @@ let secretKey = require('../config/nodeConfig').jwtSecretKey;
 //middleware to verify the
 router.use(function (req, res, next) {
     // check header or url parameters or post parameters for token
-    console.log(req.headers)
     let tokenData = req.headers['authorization'];
 
     // decode token
@@ -28,8 +27,7 @@ router.use(function (req, res, next) {
                 // if everything is good, save to request for use in other routes
               
                 req.decoded = decoded;
-                req.token = config.authToken
-                console.log("token check:============>",  req.token);
+                req.token = config.authToken;
                 next();
             }
         });

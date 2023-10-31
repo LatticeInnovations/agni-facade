@@ -1,7 +1,7 @@
 let express = require("express");
 let router = express.Router();
 let practitionerController = require("../../controllers/practitionerController");
-let { check, oneOf } = require('express-validator');
+let { check } = require('express-validator');
 
 /**
  * @typedef Address
@@ -73,5 +73,20 @@ router.post("/",
         check("role.*.orgId").notEmpty().isNumeric()
 ],  
 practitionerController.createPractitioner);
+
+
+/**
+ * Get Practitioner detail
+ * @route GET /v1/Practitioner/{id}
+ * @group Practitioner
+ * @security JWT
+ * @returns {object} 200 - resource data fetched successfully.
+ * @returns {object} 200 - resource data not found.
+ * @returns {Error} 401 - You are unauthorized to perform this operation.
+ * @returns {Error} 500 - Unable to process
+ * @returns {Error} 504 - Database connection error
+ */
+
+router.get("/:id", practitionerController.getUserProfile); 
 
 module.exports = router

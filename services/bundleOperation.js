@@ -3,8 +3,10 @@ let axios = require("axios");
 let config = require("../config/nodeConfig");
 const schemaList = config.schemaList;
 const domainsList = config.domainsList;
+
 let setBundlePatch = async function (resource_data, patchUrl) {
     let objJsonStr = JSON.stringify(resource_data);
+    // eslint-disable-next-line no-undef
     let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
     let bundlePatchStructure = {
         "fullUrl": patchUrl,
@@ -51,15 +53,13 @@ let setBundlePost = async function (resourceData, identifier, id, reqMethod, ide
 }
 }
 
-let setBundlePut = async function (resourceData, identifier, id, reqMethod) {
+let setBundlePut = async function (resourceData, identifier, id) {
     try {
     let identifierConcat = "";
     if (identifier || identifier != null) {
-        identifierConcat = "?";
         identifier.forEach(element => {
             identifierConcat += "identifier=" + element.identifierType + "|" + element.identifierNumber + "&"
         })
-        identifierConcat = identifierConcat.slice(0, -1);
     }
 
     let bundlePostStructure = {
@@ -112,4 +112,4 @@ let searchData = async function (token, link, reqQuery) {
 
 }
 
-module.exports = {setBundlePatch, setBundlePost, setBundleDelete, searchData};
+module.exports = {setBundlePatch, setBundlePost, setBundlePut, setBundleDelete, searchData};

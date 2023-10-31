@@ -5,16 +5,15 @@ const bodyParser =  require('body-parser')
 const expressSwagger = require('express-swagger-generator')(app)
 const cors = require('cors');
 const cookieParser = require("cookie-parser");
-let cronJob= require("./services/cros-jobs/triggerAppointment")
 const config = require("./config/nodeConfig");
-
+const router = require('./router/index');
 require('dotenv').config();
 
 let options = {
     swaggerDefinition: {
         info: {
             description: 'This is a sample server',
-            title: 'FHIR DEMO',
+            title: 'MDR DEV',
             version: '1.0.0',
         },
         host: process.env.swaggerHost ,
@@ -84,19 +83,18 @@ app.use(logger(loggerFormat, {
   },
   stream: process.stderr
 }));
-cronJob.appointmentList();
 
-require('./router')(app);
+app.use(router);
 
 app.use((req, res, next) => {
-  console.log("check 404")
+  console.error("check 404")
   const error = new Error('Not found');
   error.status = 404;
   next(error)
 })
 
 app.use((error, req, res) => {
-  console.log("check 500", error)
+  console.error("check 500", error)
   res.status(error.status || 500)
   res.json({
     error: {

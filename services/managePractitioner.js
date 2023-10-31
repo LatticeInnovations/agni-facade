@@ -9,7 +9,6 @@ let setPractitionerData = async function (token, resType, reqInput, FHIRData, re
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
-            console.log("check if create practitioner")
            resourceResult =  await createPractitioner(token, resType, reqInput, FHIRData);
         }
         else if (["patch", "PATCH"].includes(reqMethod)) {
@@ -74,13 +73,11 @@ async function createPractitioner(token, resType, reqInput, FHIRData) {
                 roleResource.id = uuidv4();
                 roleResource.resourceType = "PractitionerRole";
                let roleBundle = await bundleFun.setBundlePost(roleResource, null, roleResource.id, "POST", "identifier");
-               console.log("check role resource: ", roleBundle)
                resourceResult.push(roleBundle);
            }
          
         }
    }
-   console.log("resourceResult: ", resourceResult)
    return resourceResult;
 }
 
