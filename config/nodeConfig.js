@@ -5,6 +5,8 @@ let config = function () {
             timeout: 120000,
             version: process.env.version,
             baseUrl: process.env.FHIRServerBaseURL,
+            twilioAccountSid: process.env.twilioAccountSid,
+            twilioAuthToken: process.env.twilioAuthToken,
             twilioNumber: process.env.twilioNumber,
             sendgridKey: process.env.sendgridKey,
             mailFrom: "dev@thelattice.in",
@@ -24,6 +26,7 @@ let config = function () {
             orgType : process.env.orgType,
             fhirCodeUrl : process.env.fhirCodeUrl,
             roleCodeUrl : process.env.roleCodeUrl,
+            authToken: process.env.authToken
         };
 };
 module.exports = new config();

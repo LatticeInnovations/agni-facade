@@ -1,7 +1,6 @@
-require('dotenv').config();
-const accountid = process.env.accountSid;
-const authToken = process.env.authToken;
-const config = require('../config/nodeConfig')
+const config = require("../config/nodeConfig")
+const accountid = config.twilioAccountSid;
+const authToken = config.twilioAuthToken;
 const client = require('twilio')(accountid, authToken);
 let sendSms = async function (phoneNumber, text) {
   try {
@@ -9,13 +8,13 @@ let sendSms = async function (phoneNumber, text) {
     const message = await client.messages.create({
         body: text,
         from: config.twilioNumber,
-        to: "+91" + phoneNumber
+        to: phoneNumber
       })
       console.info("sms response", message);
       return message;
   }
   catch (error) {
-      console.log("error is: ", error)
+      console.error("error is: ", error)
         return Promise.reject(error)
   }
 }

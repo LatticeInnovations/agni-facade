@@ -21,21 +21,27 @@ class PractitionerRole {
         this.fhirResource.practitioner.reference = "Practitioner/"+this.roleObj.orgId;
     }
 
+    setPractitionerReferenceUUid() {
+        this.fhirResource.practitioner.reference = "urn:uuid:"+this.roleObj.practitionerUUid;
+    }
+
     setRole() {
         let result = roleJson.find(a => a.code === this.roleObj.roleId);
-        this.fhirResource.code[0].coding = [
-            {
-                "system" : result.system,
-                "code": result.code,
-            }
-        ]
+        this.fhirResource.code.push({
+            coding: [
+                {
+                    "system" : result.system,
+                    "code": result.code,
+                }
+            ]
+        })
     }
 
 
     getUserInputToFhir() {
         this.setBasicStructure();
         this.setOrganizationReference();
-        this.setPractitionerReference();
+        this.setPractitionerReferenceUUid();
         this.setRole();
     }
 
