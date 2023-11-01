@@ -12,7 +12,7 @@ let config = function () {
             mailFrom: "dev@thelattice.in",
             jwtSecretKey: process.env.jwtSecretKey,
             totalLoginAttempts: 5,
-            lockTimeInMin: 0,
+            lockTimeInMin: 5,
             OTPExpireMin: 2,
             OTPGenAttempt: 5,
             OTPHash: process.env.OTPHash,

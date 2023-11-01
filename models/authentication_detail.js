@@ -28,14 +28,18 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     salt: DataTypes.STRING,
     is_active: DataTypes.BOOLEAN,
-    first_login: DataTypes.BOOLEAN,
+    forceSetPassword: DataTypes.BOOLEAN,
     login_attempts: DataTypes.INTEGER,
     attempt_timestamp: DataTypes.DATE,
     otp: DataTypes.STRING,
     otp_check_attempts: DataTypes.INTEGER,
     otp_generate_attempt: DataTypes.INTEGER,
     otp_gen_time: DataTypes.DATE,
-    createdOn: DataTypes.DATE
+    sessionId:  DataTypes.STRING,
+    sessionCount: DataTypes.INTEGER,
+    setPasswordOn: DataTypes.DATE,
+    updatedOn: DataTypes.DATE,
+    otpVerified: DataTypes.BOOLEAN
   }, {
     sequelize,
     timestamps: false,

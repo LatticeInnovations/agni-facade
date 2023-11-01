@@ -3,10 +3,6 @@ let resourceFun = require("../services/resourceOperation");
 let config = require("../config/nodeConfig");
 let bundleController = require("./manageBundle");
 const db = require('../models/index');
-let emailContent = require("../utils/emailContent");
-let util = require('util');
-let sendEmail = require("../utils/sendgrid.util").sendEmail;
-let bcryptjs = require("bcryptjs");
 let { validationResult } = require('express-validator');
 let response = require("../utils/responseStatus");
 let manageResource = require("./manageResource");
@@ -35,11 +31,9 @@ let createPractitioner = async function (req, res) {
             if (response.status == 200) {
                 let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "POST", resourceType);
                 responseData = [...responseData, ...resourceData.errData];
-                const password = generate_random_password();
-                const result = await insertAuthData(responseData[0].fhirId, password);
+                const result = await insertAuthData(responseData[0].fhirId);
                 if (result.length > 0) {
-                    await sendNotification(reqInput[0].email, password);
-                    return res.status(201).json({ status: 1, message: "Data saved successfully.", data: responseData })
+                    return res.status(201).json({ status: 1, message: "Data saved.", data: responseData })
                 }
             }
             else {
@@ -66,28 +60,12 @@ let createPractitioner = async function (req, res) {
 
 }
 
-async function sendNotification(email, password) {
-    try {
-        let mailData = {
-            to: [{ email: "tulika@thelattice.in" }],
-            subject: util.format(`${(emailContent.find(e => e.notification_type_id == 3).subject)}`,),
-            content: util.format(`${(emailContent.find(e => e.notification_type_id == 3).content)}`, email, password)
-        }
-        await sendEmail(mailData);
-    }
-    catch (e) {
-        console.error(" check if message is sent1111", e);
-        return Promise.reject(e);
-    }
 
-}
 
 // insert if not present or update generated OTP for the user id
-async function insertAuthData(user_id, password) {
+async function insertAuthData(user_id) {
     try {
-        const salt = bcryptjs.genSaltSync(10);
-        const hashedPassword = bcryptjs.hashSync(password, salt);
-        let upsertJson = { "user_id": user_id, "password": hashedPassword, "salt": salt };
+        let upsertJson = { "user_id": user_id };
         let upsertDetail = await db.authentication_detail.upsert(upsertJson, { conflictFields: ["user_id"] });
         return upsertDetail;
     }
@@ -96,27 +74,8 @@ async function insertAuthData(user_id, password) {
     }
 }
 
-// generate random password having 2 uppercase, 4 random digits, 4 lowercase chanracters and 1 special character
-function generate_random_password() {
-    let specials = '@$!%*?&#_/';
-    let uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let lowercase = 'abcdefghijklmnopqrstuvwxyz';
-    let numbers = new Date().getTime().toString();
-    let password = '';
-    password += generateRandomCharacters(uppercase, 2);
-    password += numbers.substr(4, 2)
-    password += generateRandomCharacters(lowercase, 4);
-    password += generateRandomCharacters(specials, 1);
-    return password;
-}
 
-function generateRandomCharacters(characters, total) {
-    let result = '';
-    for (let i = 0; i < total; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-}
+
 
 // Get user profile
 let getUserProfile = async function (req, res) {
@@ -124,8 +83,8 @@ let getUserProfile = async function (req, res) {
         let resourceType = "PractitionerRole";
         req.params.resourceType = resourceType;
         req.query = {practitionerId: req.params.id};
-        let resouceUrl = await manageResource.getResourceUrl(resourceType, req.query);
-        let responseData = await bundleFun.searchData(req.token,resouceUrl.link, resouceUrl.reqQuery);
+        let resourceUrl = await manageResource.getResourceUrl(resourceType, req.query);
+        let responseData = await bundleFun.searchData(req.token,resourceUrl.link, resourceUrl.reqQuery);
         let result = [];
         let data = {};
         if( !responseData.data.entry || responseData.data.total == 0) {

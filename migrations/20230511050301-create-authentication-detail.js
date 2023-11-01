@@ -20,21 +20,21 @@ module.exports = {
       },
       password: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       is_active: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: true
       },
-      first_login: {
+      forceSetPassword: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: true
       },
       salt: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       attempt_timestamp: {
         type: Sequelize.DATE,
@@ -63,10 +63,28 @@ module.exports = {
         allowNull: true,
         type: Sequelize.DATE
       },
-      createdOn: {
+      sessionId: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
+      sessionCount: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      },
+      setPasswordOn: {
+        allowNull: true,
+        type: Sequelize.DATE
+      },
+      updatedOn: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      },
+      otpVerified: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       }
     });
   }
