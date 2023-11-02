@@ -51,7 +51,7 @@ const login = async function (req, res) {
             response = { status: 0, "message": message }            
         }
         else {
-            const sessionData = setSessionId();
+            const sessionData = setSessionId(authData.sessionCount, authData.user_id);
             loginAttempts = 0;
             otpCheckAttempt = 0;
             otpGenAttempt = 0;
@@ -213,7 +213,7 @@ let verifyOTP = async function (req, res) {
                 upsertJson = { "login_attempts": loginAttempts, "attempt_timestamp": currentTime, "otp_check_attempts": otpCheckAttempt, "otp_generate_attempt": otpGenAttempt, "otp": null, "otp_gen_time": null, "otpVerified": true};
                 const userInfo = setUserDetail(userDetail.profile);
                 if(req.body.isMobile) {
-                    const sessionData = setSessionId();
+                    const sessionData = setSessionId(authData.sessionCount, userDetail.profile.user_id);
                     userInfo.sessionId = sessionData.sessionId;
                     upsertJson.sessionCount = sessionData.counterVal;
                     upsertJson.sessionId = sessionData.sessionId ;
@@ -339,7 +339,7 @@ const changePassword = async function (req, res) {
 
 // function to create a new session id for every login
 
-function setSessionId () {
+function setSessionId (sessionCount, userId) {
     try {
         let incrementMonth = sessionCounter.monthCounter;
         if(sessionCounter.montIncDate == null || new Date(sessionCounter.montIncDate).getMonth() != new Date().getMonth()) {
@@ -347,14 +347,15 @@ function setSessionId () {
             sessionCounter.monthCounter = incrementMonth;
             sessionCounter.montIncDate = new Date();
         }
-        let sessionIncVal = sessionCounter.sessionIdInc + 1;
+        let sessionIncVal = sessionCount + 1;
         let monthIncPadded = String(incrementMonth).padStart(2, "0");
-        let sessionIncPadded = String(sessionIncVal).padStart(3, "0");
+        let sessionIncPadded = String(sessionIncVal).padStart(2, "0");
+        let userIdPadded = String(userId).padStart(3, "0");
         sessionCounter.sessionIdInc = sessionIncVal;
         let fileName = __dirname + "/../utils/sessionCounter.json";
         let counterJson=sessionCounter;
         writeToFile(fileName, counterJson);
-        const sessionId =  monthIncPadded + "-" + sessionIncPadded;
+        const sessionId =  monthIncPadded + "-" + sessionIncPadded + "-" + userIdPadded;
         console.info("sessionCounter: ", sessionCounter)
         return {
             sessionId: sessionId, incrementVal: incrementMonth, counterVal: sessionIncVal
@@ -440,7 +441,7 @@ async function getUserData(mobileNumber) {
 async function getUserById(user_id) {
     try {
         let userData = await db.authentication_detail.findOne({
-            attributes: ['auth_id', 'user_id', 'password', 'salt', 'updatedOn', 'login_attempts', 'forceSetPassword', 'attempt_timestamp', 'is_active', "otp", "otp_check_attempts", "otp_generate_attempt", "otp_gen_time", "otpVerified"],
+            attributes: ['auth_id', 'user_id', 'password', 'salt', 'updatedOn', 'login_attempts', 'forceSetPassword', 'attempt_timestamp', 'is_active', "otp", "otp_check_attempts", "otp_generate_attempt", "otp_gen_time", "otpVerified", "sessionCount"],
             where: { "user_id": user_id }
         });
     
