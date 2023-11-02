@@ -120,7 +120,7 @@ const verifyContactAndGenOTP = async function (req, res) {
                     status: 1,
                     message: "User verified",
                     data: {
-                        setPasswordScreen: false
+                        otpPage: false
                     }
                 })
             }
@@ -139,9 +139,9 @@ const verifyContactAndGenOTP = async function (req, res) {
             
             const upsertJson = { "login_attempts": loginAttempts, "attempt_timestamp": currentTime, "otp_check_attempts": otpCheckAttempt, "otp_generate_attempt": otpGenAttempt, "otp": otp, "otp_gen_time": today,  "updatedOn": updatedOn};
             await updateLoginAttempt(upsertJson, userDetail.profile.user_id);
-            const setPasswordScreen = !req.body.isMobile;
+            const otpPage = !req.body.isMobile;
             return res.status(200).json({ status: 1, message: "User verified. OTP sent to your registered contact detail", data: {
-                setPasswordScreen: setPasswordScreen
+                otpPage: otpPage
             } });
         }
     }
@@ -378,7 +378,7 @@ function writeToFile(fileName, counterJson) {
 async function getUserDetail(contact) {
     try {
         let phone = `(${contact.isdCode}) ${contact.mobileNumber}` 
-        let existingPractitioner = await getUserData(phone)
+        let existingPractitioner = await getUserData(phone);
         if (existingPractitioner.length < 1) {
             return null;
         }
@@ -396,7 +396,7 @@ async function getUserDetail(contact) {
                     "user_name": user_name,
                     "user_email": email[0].value,
                     "mobile_number": phone[0].value,
-                    "is_active": practitionerData.active,
+                    "is_active": practitionerData.active ? practitionerData.active : true,
                     "user_id": user_id,
                     "roles": roleList,
                     "orgId": roleData.organization.reference.split("/")[1]
@@ -431,8 +431,7 @@ async function getUserData(mobileNumber) {
         return [];
     }    
     const roleResource = await db.sequelize.query(`select res_id, res_type, res_text_vc FROM hfj_res_ver where res_type = 'PractitionerRole' and res_id = 
-    (SELECT src_resource_id FROM public.hfj_res_link where source_resource_type = 'PractitionerRole' and target_resource_id=${practitionerResource[0].res_id})  order by res_ver desc limit 1;`,{type: sequelize.QueryTypes.SELECT});
-
+    (SELECT src_resource_id FROM public.hfj_res_link where source_resource_type = 'PractitionerRole' and target_resource_id=${practitionerResource[0].res_id} order by pId limit 1)  order by res_ver desc limit 1;`,{type: sequelize.QueryTypes.SELECT});
     
     return [practitionerResource[0], roleResource[0]];
     
