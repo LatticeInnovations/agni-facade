@@ -28,7 +28,7 @@ const login = async function (req, res) {
         let diffMinUpdatedOn = getMinutes(authData.updatedOn);
         console.log(loginAttempts, otpGenAttempt, otpCheckAttempt, diffMins)
         if ((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins < config.lockTimeInMin){
-            return res.status(401).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
+            return res.status(403).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
         }
         else if (((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins >= config.lockTimeInMin)|| diffMinUpdatedOn >= config.lockTimeInMin) {
             loginAttempts = 0; otpCheckAttempt = 0; otpGenAttempt = 0;
@@ -46,7 +46,7 @@ const login = async function (req, res) {
    
         if (bcryptjs.hashSync(req.body.password, authData.salt) != authData.password) {
             const message = loginAttempts >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : "Invalid credential";
-            status = 401;
+            status = loginAttempts >= config.totalLoginAttempts ? 403: 422;
             
             response = { status: 0, "message": message }            
         }
@@ -107,7 +107,7 @@ const verifyContactAndGenOTP = async function (req, res) {
             let diffMinUpdatedOn = getMinutes(authData.updatedOn)
             // check if account locked 
             if ((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins < config.lockTimeInMin) {
-                return res.status(401).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
+                return res.status(403).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
             }
             // check if lock time has passed reset the counter to 0
             else if (((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins >= config.lockTimeInMin)|| diffMinUpdatedOn >= config.lockTimeInMin) {
@@ -186,7 +186,7 @@ let verifyOTP = async function (req, res) {
             let diffMins = getMinutes(authData.attempt_timestamp);
             let diffMinUpdatedOn = getMinutes(authData.updatedOn)
             if ((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins < config.lockTimeInMin)
-                return res.status(401).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
+                return res.status(403).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
             else if (((loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts || otpCheckAttempt >= config.totalLoginAttempts) && diffMins >= config.lockTimeInMin)|| diffMinUpdatedOn >= config.lockTimeInMin) {                
                 loginAttempts = 0;  otpCheckAttempt = 0;  otpGenAttempt = 0;
             }
@@ -196,7 +196,7 @@ let verifyOTP = async function (req, res) {
             otpCheckAttempt += 1;
             upsertJson = { "login_attempts": loginAttempts, "attempt_timestamp": currentTime, "otp_check_attempts": otpCheckAttempt, "otp_generate_attempt": otpGenAttempt, "updatedOn": updatedOn};
             if (req.body.otp != authData.otp) {
-                apiStatus = 401;
+                apiStatus =otpCheckAttempt >= config.totalLoginAttempts ? 403: 422;
                 let e = otpCheckAttempt >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : `Invalid OTP`;
                 resMessage = { status: 0, message: e };
             }
@@ -204,7 +204,7 @@ let verifyOTP = async function (req, res) {
                 // if otp is valid check expire time of otp 
                 let otpExpTime = getMinutes(authData.otp_gen_time)
                 if (otpExpTime >= config.OTPExpireMin) {
-                    return res.status(401).json({ status: 0, message: `OTP expired` });
+                    return res.status(410).json({ status: 0, message: `OTP expired` });
                 }
                 loginAttempts = 0;
                 otpCheckAttempt = 0;
@@ -258,7 +258,7 @@ const setPassword = async function (req, res) {
       let diffMinUpdatedOn = getMinutes(authData.updatedOn);
       if ( (loginAttempts >= config.totalLoginAttempts || otpGenAttempt >= config.totalLoginAttempts ||  otpCheckAttempt >= config.totalLoginAttempts) &&
         diffMins < config.lockTimeInMin)
-        return res.status(401).json({
+        return res.status(403).json({
             status: 0,
             message: "Too many attempts. Please try after 5 mins",
           });
@@ -318,7 +318,7 @@ const changePassword = async function (req, res) {
         }            
         let authData =  await getUserById(req.decoded.user_id);  
         if(bcryptjs.hashSync(req.body.oldPassword, authData.salt) != authData.password)
-            return res.status(401).json({ status: 0, message: "Invalid old password" });
+            return res.status(422).json({ status: 0, message: "Invalid old password" });
         const salt = bcryptjs.genSaltSync(10);
         const hashedPassword = bcryptjs.hashSync(req.body.newPassword, salt);
         let upsertJson = { "user_id": req.decoded.user_id, "password": hashedPassword, "salt": salt, forceSetPassword: false,
