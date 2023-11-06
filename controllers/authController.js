@@ -420,7 +420,8 @@ function setUserDetail(userDetail) {
      "username": userDetail.user_name,
       "userId": userDetail.user_id,
       "roles": userDetail.roles,
-      "orgId": userDetail.orgId
+      "orgId": userDetail.orgId,
+      "contactNumber": userDetail.mobile_number
     }
 }
 
