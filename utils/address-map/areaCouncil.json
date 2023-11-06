@@ -1,0 +1,262 @@
+[
+  {
+    "display": "Central Malekula",
+    "aId": 1
+  },
+  {
+    "display": "North Ambrym",
+    "aId": 2
+  },
+  {
+    "display": "North East Malekula",
+    "aId": 3
+  },
+  {
+    "display": "North West Malekula",
+    "aId": 4
+  },
+  {
+    "display": "Paama",
+    "aId": 5
+  },
+  {
+    "display": "South East Ambrym",
+    "aId": 6
+  },
+  {
+    "display": "South East Malekula",
+    "aId": 7
+  },
+  {
+    "display": "South Malekula",
+    "aId": 8
+  },
+  {
+    "display": "South West Malekula",
+    "aId": 9
+  },
+  {
+    "display": "West Ambrym",
+    "aId": 10
+  },
+  {
+    "display": "Central Pentecost 1",
+    "aId": 11
+  },
+  {
+    "display": "Central Pentecost 2",
+    "aId": 12
+  },
+  {
+    "display": "East Ambae",
+    "aId": 13
+  },
+  {
+    "display": "North Ambae",
+    "aId": 14
+  },
+  {
+    "display": "North Maewo",
+    "aId": 15
+  },
+  {
+    "display": "North Pentecost",
+    "aId": 16
+  },
+  {
+    "display": "South Ambae",
+    "aId": 17
+  },
+  {
+    "display": "South Maewo",
+    "aId": 18
+  },
+  {
+    "display": "South Pentecost",
+    "aId": 19
+  },
+  {
+    "display": "West Ambae",
+    "aId": 20
+  },
+  {
+    "display": "Canal - Fanafo",
+    "aId": 21
+  },
+  {
+    "display": "East Malo",
+    "aId": 22
+  },
+  {
+    "display": "East Santo",
+    "aId": 23
+  },
+  {
+    "display": "Luganville",
+    "aId": 24
+  },
+  {
+    "display": "North Santo",
+    "aId": 25
+  },
+  {
+    "display": "North West Santo",
+    "aId": 26
+  },
+  {
+    "display": "South East Santo",
+    "aId": 27
+  },
+  {
+    "display": "South Santo",
+    "aId": 28
+  },
+  {
+    "display": "West Malo",
+    "aId": 29
+  },
+  {
+    "display": "West Santo",
+    "aId": 30
+  },
+  {
+    "display": "Emau",
+    "aId": 31
+  },
+  {
+    "display": "Erakor",
+    "aId": 32
+  },
+  {
+    "display": "Eratap",
+    "aId": 33
+  },
+  {
+    "display": "Eton",
+    "aId": 34
+  },
+  {
+    "display": "Ifira",
+    "aId": 35
+  },
+  {
+    "display": "Makimae",
+    "aId": 36
+  },
+  {
+    "display": "Malorua",
+    "aId": 37
+  },
+  {
+    "display": "Mele",
+    "aId": 38
+  },
+  {
+    "display": "Nguna",
+    "aId": 39
+  },
+  {
+    "display": "North Efate",
+    "aId": 40
+  },
+  {
+    "display": "North Tongoa",
+    "aId": 41
+  },
+  {
+    "display": "Port Vila",
+    "aId": 42
+  },
+  {
+    "display": "South Epi",
+    "aId": 43
+  },
+  {
+    "display": "Tongariki",
+    "aId": 44
+  },
+  {
+    "display": "Varisu",
+    "aId": 45
+  },
+  {
+    "display": "Vermali",
+    "aId": 46
+  },
+  {
+    "display": "Vermaul",
+    "aId": 47
+  },
+  {
+    "display": "Aneityum",
+    "aId": 48
+  },
+  {
+    "display": "Aniwa",
+    "aId": 49
+  },
+  {
+    "display": "Futuna",
+    "aId": 50
+  },
+  {
+    "display": "Middle Bush Tanna",
+    "aId": 51
+  },
+  {
+    "display": "North Erromango",
+    "aId": 52
+  },
+  {
+    "display": "North Tanna",
+    "aId": 53
+  },
+  {
+    "display": "South Erromango",
+    "aId": 54
+  },
+  {
+    "display": "South Tanna",
+    "aId": 55
+  },
+  {
+    "display": "South West Tanna",
+    "aId": 56
+  },
+  {
+    "display": "West Tanna",
+    "aId": 57
+  },
+  {
+    "display": "Whitesands",
+    "aId": 58
+  },
+  {
+    "display": "Gaua",
+    "aId": 59
+  },
+  {
+    "display": "Mere Lava",
+    "aId": 60
+  },
+  {
+    "display": "Mota",
+    "aId": 61
+  },
+  {
+    "display": "Mota Lava",
+    "aId": 62
+  },
+  {
+    "display": "Torres",
+    "aId": 63
+  },
+  {
+    "display": "Ureparapara",
+    "aId": 64
+  },
+  {
+    "display": "Vanua Lava",
+    "aId": 65
+  }
+]
