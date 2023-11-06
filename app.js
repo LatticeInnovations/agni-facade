@@ -7,6 +7,7 @@ const cors = require('cors');
 const cookieParser = require("cookie-parser");
 const config = require("./config/nodeConfig");
 const router = require('./router/index');
+const helmet = require('helmet')
 require('dotenv').config();
 
 let options = {
@@ -37,6 +38,7 @@ let options = {
 };
 expressSwagger(options);
 
+
 app.use('/upload', express.static('uploads'));
 
 logger.token('id', function getId(req) {
@@ -50,7 +52,7 @@ logger.token('req', function(req) {
 let loggerFormat = 'Logger --  :id [:date[web]] ":method :url" :status :response-time :req ';
 
 app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
- 
+app.use(helmet())
 let whitelist = config.whitelist;
 let corsOptions = {
   origin: (origin, callback) => {
