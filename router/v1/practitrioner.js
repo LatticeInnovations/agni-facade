@@ -27,11 +27,6 @@ let { check } = require('express-validator');
  * @typedef Practitioner
  * @property {string} firstName.required User first name - eg: Anita
  * @property {string} lastName.required User last name - eg: Shukla
- * @property {Array.<Identifier>} identifier.required 
- * @property {string} gender.required Gender - eg: male
- * @property {string} birthDate.required Gender - eg: 1997-12-11
- * @property {Address.model} address.required
- * @property {string} email.required Email - eg: tulika@thelattice.in
  * @property {string} mobileNumber Mobile number - eg: 9898778998
  * @property {Array.<Role>} role.required
  */
@@ -52,27 +47,28 @@ let { check } = require('express-validator');
  * @security JWT
  */
 
-router.post("/", 
-[
-    check('firstName').notEmpty().isAlpha().isLength({min: 3, max: 30}), 
-    check('lastName').notEmpty().isAlpha().isLength({min: 3, max: 30}),
-    check('identifier').isArray().notEmpty(), 
-        check("identifier.*.identifierType").notEmpty(),  
-        check("identifier.*.identifierNumber").notEmpty(),
-    check("gender").notEmpty().isIn('male', 'female', 'other', 'unknown'), 
-    check('birthDate').notEmpty().isDate(),
-    check("address").isObject().notEmpty(), 
-        check("address.addressLine1").notEmpty().isLength({min: 3, max: 100}), 
-        check("address.city").notEmpty().isLength({min: 2, max: 50}), 
-        check("address.district").isLength({min: 2, max: 50}), 
-        check("address.state").isLength({min: 2, max: 50}), 
-        check("address.country").isAlpha().isLength({min: 2, max: 50}),
-    check("email").isEmail().notEmpty(), check("mobileNumber").isNumeric().notEmpty().isLength({min: 10, max: 10}),
-    check("role").isArray().notEmpty(), 
-        check("role.*.roleId").notEmpty().isIn("doctor", "nurse", "ict", "397897005"), 
+router.post("/",
+    [
+        check('firstName').notEmpty().isAlpha().isLength({ min: 3, max: 30 }),
+        check('lastName').notEmpty().isAlpha().isLength({ min: 3, max: 30 }),
+        // check('identifier').isArray().notEmpty(), 
+        //     check("identifier.*.identifierType").notEmpty(),  
+        //     check("identifier.*.identifierNumber").notEmpty(),
+        // check("gender").notEmpty().isIn('male', 'female', 'other', 'unknown'), 
+        // check('birthDate').notEmpty().isDate(),
+        // check("address").isObject().notEmpty(), 
+        //     check("address.addressLine1").notEmpty().isLength({min: 3, max: 100}), 
+        //     check("address.city").notEmpty().isLength({min: 2, max: 50}), 
+        //     check("address.district").isLength({min: 2, max: 50}), 
+        //     check("address.state").isLength({min: 2, max: 50}), 
+        //     check("address.country").isAlpha().isLength({min: 2, max: 50}),
+        // check("email").isEmail().notEmpty(), 
+        check("mobileNumber").isNumeric().notEmpty().isLength({ min: 10, max: 10 }),
+        check("role").isArray().notEmpty(),
+        check("role.*.roleId").notEmpty().isIn("doctor", "nurse", "ict", "397897005"),
         check("role.*.orgId").notEmpty().isNumeric()
-],  
-practitionerController.createPractitioner);
+    ],
+    practitionerController.createPractitioner);
 
 
 /**
@@ -87,6 +83,6 @@ practitionerController.createPractitioner);
  * @returns {Error} 504 - Database connection error
  */
 
-router.get("/:id", practitionerController.getUserProfile); 
+router.get("/:id", practitionerController.getUserProfile);
 
 module.exports = router
