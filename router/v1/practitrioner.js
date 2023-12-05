@@ -28,6 +28,7 @@ let { check } = require('express-validator');
  * @property {string} firstName.required User first name - eg: Anita
  * @property {string} lastName.required User last name - eg: Shukla
  * @property {string} mobileNumber Mobile number - eg: 9898778998
+ * @property {boolean} active Is user active - eg: true
  * @property {Array.<Role>} role.required
  */
 
@@ -50,7 +51,8 @@ let { check } = require('express-validator');
 router.post("/",
     [
         check('firstName').notEmpty().isAlpha().isLength({ min: 3, max: 30 }),
-        check('lastName').notEmpty().isAlpha().isLength({ min: 3, max: 30 }),
+        check('lastName').optional({nullable: true, checkFalsy: true}).isAlpha().isLength({ min: 3, max: 30 }),
+        check('active').notEmpty().isBoolean(),
         // check('identifier').isArray().notEmpty(), 
         //     check("identifier.*.identifierType").notEmpty(),  
         //     check("identifier.*.identifierNumber").notEmpty(),
