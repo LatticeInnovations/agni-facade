@@ -50,12 +50,22 @@ let createPractitioner = async function (req, res) {
         }
     }
     catch (e) {
-        console.error("the error is here:", e);
-        return res.status(500).json({
-            status: 0,
-            message: "Unable to process. Please try again.",
-            error: e.response != null ? e.response.data : null
-        })
+        
+        console.error("the error is here: ===>", e, e.code);
+        if (e.code && e.code == "ERR") {
+            return res.status(e.statusCode).json({
+                status: 0,
+                message: e.message == null ? "Unable to process. Please try again." : e.message,
+                error: e.response != null ? e.response.data : null
+            })
+        }
+        else {
+            return res.status(500).json({
+                status: 0,
+                message: "Unable to process. Please try again.",
+                error: e.response != null ? e.response.data : null
+            })
+        }
     }
 
 }
