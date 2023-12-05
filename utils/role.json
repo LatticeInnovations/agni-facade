@@ -2,7 +2,7 @@
     {
         "system" : "http://terminology.hl7.org/CodeSystem/practitioner-role",
         "code": "doctor",
-        "display": "Doctor"
+        "display": "Healthcare provider"
     },
     {
         "system" : "http://terminology.hl7.org/CodeSystem/practitioner-role",
@@ -17,7 +17,7 @@
     {
         "system" : "http://terminology.hl7.org/CodeSystem/practitioner-role",
         "code": "ict",
-        "display": "Front-office staff"
+        "display": "Analyst"
     },
     {
         "system" : "http://snomed.info/sct",
@@ -28,5 +28,20 @@
         "system" : "http://snomed.info/sct",
         "code": "397897005",
         "display": "Paramedics"
+    },
+    {
+        "system" : "http://terminology.hl7.org/CodeSystem/practitioner-role",
+        "code": "224608005",
+        "display": "Administrative healthcare staff"
+    },
+    {
+        "system" : "http://terminology.hl7.org/CodeSystem/practitioner-role",
+        "code": "224529009",
+        "display": "Clinical assistant"
+    },
+    {
+        "system" : "http://terminology.hl7.org/CodeSystem/practitioner-role",
+        "code": "6868009",
+        "display": "Admin"
     }
 ]

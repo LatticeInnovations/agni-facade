@@ -44,15 +44,15 @@ async function createPractitioner(token, resType, reqInput, FHIRData) {
     let resourceResult = [];
     for (let practitionerData of reqInput) {
         let queryParam ={"_total": "accurate"};
-        if(practitionerData.email) {
-           practitionerData.email = practitionerData.email.toLowerCase();
-           queryParam.email = practitionerData.email;
-        }
+        // if(practitionerData.email) {
+        //    practitionerData.email = practitionerData.email.toLowerCase();
+        //    queryParam.email = practitionerData.email;
+        // }
         if(practitionerData.mobileNumber) 
            queryParam.phone = practitionerData.mobileNumber;
         let existingPractioner = await bundleOp.searchData(token, config.baseUrl + "Practitioner", queryParam);
         if (+existingPractioner.data.total != 0) {
-            let e = { status: 0, code: "ERR", message: "Practitioner data already exists." , statusCode: 500}
+            let e = { status: 0, code: "ERR", message: "Practitioner data already exists." , statusCode: 400}
             return Promise.reject(e);
         }
         else {
@@ -63,7 +63,7 @@ async function createPractitioner(token, resType, reqInput, FHIRData) {
            practitionerResource.resourceType = resType;
            practitionerResource.id = uuidv4();
            let practitionerRoles = practitionerData.role;
-           let practitionerBundle = await bundleFun.setBundlePost(practitionerResource, practitionerResource.telecom, practitionerResource.id, "POST", "telecom");  
+           let practitionerBundle = await bundleFun.setBundlePost(practitionerResource, null, practitionerResource.id, "POST", "identifier");  
            resourceResult.push(practitionerBundle);  
            for(let role of practitionerRoles) {
                role.practitionerUUid =  practitionerResource.id;
