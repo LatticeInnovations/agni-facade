@@ -63,9 +63,9 @@ router.post("/",
         //     check("address.state").isLength({min: 2, max: 50}), 
         //     check("address.country").isAlpha().isLength({min: 2, max: 50}),
         // check("email").isEmail().notEmpty(), 
-        check("mobileNumber").isNumeric().notEmpty().isLength({ min: 10, max: 10 }),
+        check("mobileNumber").notEmpty().isLength({ min: 10, max: 16 }),
         check("role").isArray().notEmpty(),
-        check("role.*.roleId").notEmpty().isIn("doctor", "nurse", "ict", "397897005"),
+        check("role.*.roleId").notEmpty().isIn(["224608005", "224529009", "doctor", "6868009", "ict"]),
         check("role.*.orgId").notEmpty().isNumeric()
     ],
     practitionerController.createPractitioner);
