@@ -35,7 +35,8 @@ let sendDBError = function(res, code) {
 let sendInvalidDataError = function(res, data) {
     res.status(422).json({
         status: 0,
-        data: data
+        data: data,
+        message: "Invalid request data"
     })
 }
 
