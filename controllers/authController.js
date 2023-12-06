@@ -396,7 +396,8 @@ async function getUserDetail(contact) {
                     "user_name": user_name,
                    // "user_email": email[0].value,
                     "mobile_number": phone[0].value,
-                    "is_active": practitionerData.active ? practitionerData.active : true,
+                    // "is_active": practitionerData.active ? practitionerData.active : true,
+                    "is_active": practitionerData.active,
                     "user_id": user_id,
                     "roles": roleList,
                     "orgId": roleData.organization.reference.split("/")[1]
