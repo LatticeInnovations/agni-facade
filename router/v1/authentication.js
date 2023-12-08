@@ -9,7 +9,6 @@ const auth = require("../../middleware/checkAuth");
  * @property {string} mobileNumber.required User mobile number or email address - eg: 8709135849
  * @property {string} isdCode.required Mobile number international code - eg: +91
  * @property {string} password.required password - eg: Lattice@123
- * @property {boolean} isMobile.required If the user is logging in using mobile - eg: true
  */
 
 /**
@@ -25,7 +24,7 @@ const auth = require("../../middleware/checkAuth");
  */
 
 
-router.post("/login", [check("mobileNumber").notEmpty().isNumeric().isLength({min: 5, max: 10}), check("password").notEmpty().isLength({min: 8, max: 16}), check("isdCode").notEmpty().isLength({min: 3, max: 4}), check('isMobile').notEmpty().isBoolean()], authController.login);
+router.post("/login", [check("mobileNumber").notEmpty().isNumeric().isLength({min: 5, max: 10}), check("password").notEmpty().isLength({min: 8, max: 16}), check("isdCode").notEmpty().isLength({min: 3, max: 4})], authController.login);
 
 /**
  * @typedef ContactVerification
