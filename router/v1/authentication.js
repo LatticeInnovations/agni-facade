@@ -68,7 +68,7 @@ router.post("/verifyUser", [check("mobileNumber").notEmpty().isNumeric().isLengt
  * @returns {Error} 504 - Database connection error
  */
 
-router.post("/setPassword", [check("mobileNumber").notEmpty().isNumeric().isLength({min: 10, max: 10}).trim(), check("newPassword").notEmpty().isLength({min: 8, max: 16}), check("isdCode").notEmpty().isLength({min: 3, max: 4}).trim()
+router.post("/setPassword", [check("mobileNumber").notEmpty().isNumeric().isLength({min: 5, max: 10}).trim(), check("newPassword").notEmpty().isLength({min: 8, max: 16}), check("isdCode").notEmpty().isLength({min: 3, max: 4}).trim()
 ], authController.setPassword);
 
 
@@ -93,7 +93,7 @@ router.post("/setPassword", [check("mobileNumber").notEmpty().isNumeric().isLeng
  */
 
 
-router.post("/otp", [check("mobileNumber").notEmpty().isNumeric().isLength({min: 10, max: 10}),  check("isdCode").notEmpty().isLength({min: 3, max: 4}).trim(), check("isMobile").notEmpty().isBoolean() ,check("otp").notEmpty().isLength({min: 6, max: 6})], authController.verifyOTP);
+router.post("/otp", [check("mobileNumber").notEmpty().isNumeric().isLength({min: 5, max: 10}),  check("isdCode").notEmpty().isLength({min: 3, max: 4}).trim(), check("isMobile").notEmpty().isBoolean() ,check("otp").notEmpty().isLength({min: 6, max: 6})], authController.verifyOTP);
 
 
 /**
