@@ -31,6 +31,7 @@ router.post("/login", [check("mobileNumber").notEmpty().isNumeric().isLength({mi
  * @property {string} mobileNumber.required User mobile number - eg: 8709135849
  * @property {string} isdCode.required Mobile number international code - eg: +91
  * @property {boolean} isMobile.required If the user is logging in using mobile - eg: true
+ * @property {boolean} forgotPass Send when forgot password API is hit in WEB
  */
 
 /**
