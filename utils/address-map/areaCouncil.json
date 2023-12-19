@@ -258,5 +258,9 @@
   {
     "display": "Vanua Lava",
     "aId": 65
+  },
+  {
+    "display": "Pango",
+    "aId": 66
   }
 ]
