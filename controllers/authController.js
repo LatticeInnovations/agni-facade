@@ -91,8 +91,9 @@ const verifyContactAndGenOTP = async function (req, res) {
         // check if user auth data exists
         let userDetail = await getUserDetail(req.body);
         let isMobile = req.body.isMobile;
+        let forgotPass = req?.body?.forgotPass;
         let roleID = userDetail?.profile?.roles[0];
-        if ((userDetail == null|| userDetail.dataValues.authentication_detail == null || !userDetail.profile.is_active) || (isMobile && (roleID == "6868009" || roleID == "ict")))
+        if ((userDetail == null || userDetail.dataValues.authentication_detail == null || !userDetail.profile.is_active) || (!forgotPass && isMobile && (roleID == "6868009" || roleID == "ict")))
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
         else {
             const authData = userDetail.dataValues.authentication_detail.dataValues;

@@ -28,7 +28,7 @@ router.use(async function (req, res, next) {
             } else {
                 // if everything is good, save to request for use in other routes
                 req.decoded = decoded;
-                req.token = config.authToken;
+                req.token = tokenData;
                 next();
             }
         });
