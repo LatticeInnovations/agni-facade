@@ -27,7 +27,7 @@ const uploadMiddleware = (req, res, next) => {
     const successFiles = [];
     files.forEach((file) => {
       const allowedTypes = ['image/jpeg', 'image/png', 'image/jpeg', 'application/pdf', 'image/img', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      const maxSize = 2 * 1024 * 1024; // 2MB
+      const maxSize = 5 * 1024 * 1024; // 5MB
     
       if (!allowedTypes.includes(file.mimetype)) {
         errors.push({ filename : file.filename, originalname : file.originalname, error: "Invalid file type" });
