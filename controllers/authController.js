@@ -389,7 +389,7 @@ async function getUserDetail(contact) {
             let user_id = existingPractitioner[0].res_id;
             const practitionerData = JSON.parse(existingPractitioner[0].res_text_vc);
             let user_name = practitionerData.name[0].given.join(' ');
-            user_name += " " + practitionerData.name[0].family;
+            user_name += practitionerData?.name[0]?.family ? " " + practitionerData.name[0].family : '';
             //let email = practitionerData.telecom.filter(e => e.system == "email");
             let phone = practitionerData.telecom.filter(e => e.system == "phone");
             let roleData = JSON.parse(existingPractitioner[1].res_text_vc);
