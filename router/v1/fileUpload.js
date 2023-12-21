@@ -11,6 +11,6 @@ router.get('/file', [query('name').notEmpty() ], downloadFile);
 
 router.get('/filenames', getAllFiles);
 
-router.get('/files', [check('files').isArray({min: 1, max: 10})], downloadMultipleFiles);
+router.post('/files', [check('files').isArray({min: 1, max: 10})], downloadMultipleFiles);
 
 module.exports = router;
