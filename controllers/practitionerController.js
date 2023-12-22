@@ -49,9 +49,13 @@ let createPractitioner = async function (req, res) {
             return res.status(409).json({ status: 0, message: "Data already exists." })
         }
     }
-    catch (e) {
-        
-        console.error("the error is here: ===>", e, e.code);
+    catch (e) {        
+
+        if(e.response && e.response.statusText) {
+            e.statusCode = e.response.status
+            e.message = e.response.statusText
+            e.code = "ERR"
+        }
         if (e.code && e.code == "ERR") {
             return res.status(e.statusCode).json({
                 status: 0,
