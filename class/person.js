@@ -178,9 +178,7 @@ class Person {
     }
 
     setActive() {
-        if (!checkEmptyData(this.personObj.active)) {
-            this.fhirResource.active = this.personObj.active
-        }
+        this.fhirResource.active = this.personObj.active;
     }
 
     patchActive() {
