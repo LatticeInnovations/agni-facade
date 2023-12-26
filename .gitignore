@@ -60,4 +60,5 @@ utils/sessionCounter.json
 
 package-lock.json
 upload/logo/*
+uploads/
 
