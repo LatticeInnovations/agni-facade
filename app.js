@@ -63,7 +63,7 @@ let corsOptions = {
     }
   }, credentials: true
 }
-app.use(cors(corsOptions));
+app.use(cors());
 
 //console.log= function(){}
 

@@ -3,7 +3,7 @@ let validationResponse = require("../utils/responseStatus");
 const fs = require('fs');
 const zip = require('express-zip');
 
-const uploadFiles = async (req, res, next) => {
+const uploadFiles = async (req, res) => {
     const files = req?.files;
     const errors =  req?.errors;
     const successFiles = req?.successFiles;
@@ -12,6 +12,7 @@ const uploadFiles = async (req, res, next) => {
         successFiles.forEach((file)=>{
             fileNames.push({originalName: file.originalname, filename : file.filename, url: file.path });
         });
+        console.log(successFiles, fileNames)
         return res.status(200).json({ status: 1, message: "files uploaded", data: { files: fileNames, errors } });
     }
     catch (e) {

@@ -100,7 +100,10 @@ let searchData = async function (token, link, reqQuery) {
             let responseData = await axios.get(url, { headers: {"Authorization": `${token}`}, params: reqQuery });
             return responseData;
         } catch (e) {
-            let eData = { status: 0, code: "ERR", e: e, statusCode: 500 }
+            console.error("check error: ", e )
+            let eData = { status: 0, code: "ERR", e: e, statusCode: 500  }
+            if(e.response && e.response.status)
+                eData = { status: 0, code: "ERR", e: e,  statusCode: e.response.status, message : e.response.statusText};
             return Promise.reject(eData);
         }
     }

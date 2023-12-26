@@ -161,7 +161,6 @@ const verifyContactAndGenOTP = async function (req, res) {
 // send otp via email or sms
 async function sendOTP(otp, contact) {
     try {   
-            contact.isdCode = "+91"; //change it as per server config
             let phone = contact.isdCode + contact.mobileNumber;
             let text = `<#> Use OTP ${otp} to set pin in  MDR App\n` + config.OTPHash;
             await sendSms(phone, text);
