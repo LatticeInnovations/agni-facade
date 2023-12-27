@@ -136,7 +136,7 @@ const verifyContactAndGenOTP = async function (req, res) {
                 otp = "111111";
             else {
                otp = generateOTP();
-             //  await sendOTP(otp, req.body);
+               await sendOTP(otp, req.body);
             }          
             
             const upsertJson = { "login_attempts": loginAttempts, "attempt_timestamp": currentTime, "otp_check_attempts": otpCheckAttempt, "otp_generate_attempt": otpGenAttempt, "otp": otp, "otp_gen_time": today,  "updatedOn": updatedOn};
