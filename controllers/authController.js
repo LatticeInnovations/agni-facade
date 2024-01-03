@@ -45,7 +45,7 @@ const login = async function (req, res) {
         let upsertJson =  { "login_attempts": loginAttempts, "attempt_timestamp": currentTime, "otp_check_attempts": otpCheckAttempt, "otp_generate_attempt": otpGenAttempt, "updatedOn": updatedOn };
    
         if (bcryptjs.hashSync(req.body.password, authData.salt) != authData.password) {
-            const message = loginAttempts >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : "Invalid credential";
+            const message = loginAttempts >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : "Incorrect password";
             status = loginAttempts >= config.totalLoginAttempts ? 403: 422;
             
             response = { status: 0, "message": message }            
@@ -60,7 +60,7 @@ const login = async function (req, res) {
             userInfo.token = token;
             userInfo.sessionId = sessionData.sessionId;
              upsertJson = { "login_attempts": loginAttempts, "attempt_timestamp": currentTime, "otp_check_attempts": otpCheckAttempt, "otp_generate_attempt": otpGenAttempt, "sessionCount": sessionData.counterVal, sessionId: sessionData.sessionId  };
-            response = { status: 1, "message": "Authorized user", data: userInfo }
+            response = { status: 1, "message": "Logged in successfully", data: userInfo }
         }
         
         await updateLoginAttempt(upsertJson, userDetail.profile.user_id);
