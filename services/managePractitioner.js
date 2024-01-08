@@ -52,7 +52,7 @@ async function createPractitioner(token, resType, reqInput, FHIRData) {
            queryParam.phone = practitionerData.mobileNumber;
         let existingPractioner = await bundleOp.searchData(token, config.baseUrl + "Practitioner", queryParam);
         if (+existingPractioner.data.total != 0) {
-            let e = { status: 0, code: "ERR", message: "Practitioner data already exists." , statusCode: 400}
+            let e = { status: 0, code: "ERR", message: "Duplicate mobile number." , statusCode: 400}
             return Promise.reject(e);
         }
         else {
