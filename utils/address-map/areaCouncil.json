@@ -88,15 +88,15 @@
     "aId": 22
   },
   {
-    "display": "East Santo",
+    "display": "Big Bay Inland",
     "aId": 23
   },
   {
-    "display": "Luganville",
+    "display": "Big Bay Cost",
     "aId": 24
   },
   {
-    "display": "North Santo",
+    "display": "West Coast Santo",
     "aId": 25
   },
   {
@@ -108,159 +108,179 @@
     "aId": 27
   },
   {
-    "display": "South Santo",
+    "display": "South Santo 1",
     "aId": 28
   },
   {
-    "display": "West Malo",
+    "display": "South Santo 2",
     "aId": 29
   },
   {
-    "display": "West Santo",
+    "display": "West Malo",
     "aId": 30
   },
   {
-    "display": "Emau",
+    "display": "East Santo",
     "aId": 31
   },
   {
-    "display": "Erakor",
+    "display": "Emae",
     "aId": 32
   },
   {
-    "display": "Eratap",
+    "display": "Erakor",
     "aId": 33
   },
   {
-    "display": "Eton",
+    "display": "Eratap",
     "aId": 34
   },
   {
-    "display": "Ifira",
+    "display": "East Efate",
     "aId": 35
   },
   {
-    "display": "Makimae",
+    "display": "Ifira",
     "aId": 36
   },
   {
-    "display": "Malorua",
+    "display": "North West Efate",
     "aId": 37
   },
   {
-    "display": "Mele",
+    "display": "Tanvasoko",
     "aId": 38
   },
   {
-    "display": "Nguna",
+    "display": "South Efate",
     "aId": 39
   },
   {
-    "display": "North Efate",
+    "display": "Emau",
     "aId": 40
   },
   {
-    "display": "North Tongoa",
+    "display": "North Efate",
     "aId": 41
   },
   {
-    "display": "Port Vila",
+    "display": "Mele",
     "aId": 42
   },
   {
-    "display": "South Epi",
+    "display": "Nguna - Pele",
     "aId": 43
   },
   {
-    "display": "Tongariki",
+    "display": "Yarsu",
     "aId": 44
   },
   {
-    "display": "Varisu",
+    "display": "Tongoa",
     "aId": 45
   },
   {
-    "display": "Vermali",
+    "display": "Tongariki - Buninga",
     "aId": 46
   },
   {
-    "display": "Vermaul",
+    "display": "Makira - Mataso",
     "aId": 47
   },
   {
-    "display": "Aneityum",
+    "display": "Varsu",
     "aId": 48
   },
   {
-    "display": "Aniwa",
+    "display": "Vermali",
     "aId": 49
   },
   {
-    "display": "Futuna",
+    "display": "Vermaul",
     "aId": 50
   },
   {
-    "display": "Middle Bush Tanna",
+    "display": "Aneityum",
     "aId": 51
   },
   {
-    "display": "North Erromango",
+    "display": "Aniwa",
     "aId": 52
   },
   {
-    "display": "North Tanna",
+    "display": "Futuna",
     "aId": 53
   },
   {
-    "display": "South Erromango",
+    "display": "East Tanna",
     "aId": 54
   },
   {
-    "display": "South Tanna",
+    "display": "North Erromango",
     "aId": 55
   },
   {
-    "display": "South West Tanna",
+    "display": "North Tanna",
     "aId": 56
   },
   {
-    "display": "West Tanna",
+    "display": "South Erromango",
     "aId": 57
   },
   {
-    "display": "Whitesands",
+    "display": "South Tanna",
     "aId": 58
   },
   {
-    "display": "Gaua",
+    "display": "South West Tanna",
     "aId": 59
   },
   {
-    "display": "Mere Lava",
+    "display": "West Tanna",
     "aId": 60
   },
   {
-    "display": "Mota",
+    "display": "Central Tanna",
     "aId": 61
   },
   {
-    "display": "Mota Lava",
+    "display": "South East Tanna",
     "aId": 62
   },
   {
-    "display": "Torres",
+    "display": "East Gaua",
     "aId": 63
   },
   {
-    "display": "Ureparapara",
+    "display": "Mota",
     "aId": 64
   },
   {
-    "display": "Vanua Lava",
+    "display": "West Gaua",
     "aId": 65
   },
   {
-    "display": "Pango",
+    "display": "Mota Lava",
     "aId": 66
+  },
+  {
+    "display": "Torres",
+    "aId": 67
+  },
+  {
+    "display": "Mere Lava - Merig",
+    "aId": 68
+  },
+  {
+    "display": "Ureparapara",
+    "aId": 69
+  },
+  {
+    "display": "West Vanua Lava",
+    "aId": 70
+  },
+  {
+    "display": "East Vanua Lava",
+    "aId": 71
   }
 ]
