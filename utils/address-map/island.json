@@ -24,11 +24,11 @@
     "iId": 6
   },
   {
-    "display": "Aore",
+    "display": "Nguna - Pele",
     "iId": 7
   },
   {
-    "display": "Araki",
+    "display": "South Epi",
     "iId": 8
   },
   {
@@ -44,7 +44,7 @@
     "iId": 11
   },
   {
-    "display": "Buninga",
+    "display": "Tongariki - Buninga",
     "iId": 12
   },
   {
@@ -64,103 +64,63 @@
     "iId": 16
   },
   {
-    "display": "Ifira",
+    "display": "East Epi",
     "iId": 17
   },
   {
-    "display": "Lelepa",
+    "display": "Makira - Mataso",
     "iId": 18
   },
   {
-    "display": "Makira",
+    "display": "West Epi",
     "iId": 19
   },
   {
-    "display": "Mataso",
+    "display": "Aneityum",
     "iId": 20
   },
   {
-    "display": "Moso",
+    "display": "Aniwa",
     "iId": 21
   },
   {
-    "display": "Nguna",
+    "display": "Erromango",
     "iId": 22
   },
   {
-    "display": "Pele",
+    "display": "Futuna",
     "iId": 23
   },
   {
-    "display": "Tongariki",
+    "display": "Tanna",
     "iId": 24
   },
   {
-    "display": "Tongoa",
+    "display": "Gaua",
     "iId": 25
   },
   {
-    "display": "Aneityum",
+    "display": "Mere Lava",
     "iId": 26
   },
   {
-    "display": "Aniwa",
+    "display": "Mota",
     "iId": 27
   },
   {
-    "display": "Erromango",
+    "display": "Mota Lava",
     "iId": 28
   },
   {
-    "display": "Futuna",
+    "display": "LOH Island",
     "iId": 29
   },
   {
-    "display": "Tanna",
+    "display": "Ureparapara",
     "iId": 30
   },
   {
-    "display": "Gaua",
-    "iId": 31
-  },
-  {
-    "display": "Hiu",
-    "iId": 32
-  },
-  {
-    "display": "Loh",
-    "iId": 33
-  },
-  {
-    "display": "Mere Lava",
-    "iId": 34
-  },
-  {
-    "display": "Mota",
-    "iId": 35
-  },
-  {
-    "display": "Mota Lava",
-    "iId": 36
-  },
-  {
-    "display": "Rah",
-    "iId": 37
-  },
-  {
-    "display": "Tegua",
-    "iId": 38
-  },
-  {
-    "display": "Toga",
-    "iId": 39
-  },
-  {
-    "display": "Ureparapara",
-    "iId": 40
-  },
-  {
     "display": "Vanua Lava",
-    "iId": 41
+    "iId": 31
   }
 ]
