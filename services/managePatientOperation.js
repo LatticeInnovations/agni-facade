@@ -3,7 +3,7 @@ let bundleFun = require("./bundleOperation");
 let config = require("../config/nodeConfig");
 const { v4: uuidv4 } = require('uuid');
 
-let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
+let setPatientData = async function (token, resType, reqInput, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
@@ -30,7 +30,7 @@ let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
             for (let inputData of reqInput) {
                 let patient = new Person(inputData, []);
                 let link = config.baseUrl + resType;
-                let resourceSavedData = await bundleFun.searchData(link, { "_id": inputData.id });
+                let resourceSavedData = await bundleFun.searchData(token, link, { "_id": inputData.id });
                 if (resourceSavedData.data.total != 1) {
                     let e = { status: 0, code: "ERR", message: "Patient Id " + inputData.id + " does not exist.", statusCode: 500}
                    return Promise.reject(e);

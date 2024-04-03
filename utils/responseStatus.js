@@ -1,8 +1,8 @@
 
 
-let sendSuccess = function(res, message, data) {
+let sendstatus = function(res, message, data) {
     res.status(200).json({
-        success: 1,
+        status: 1,
         message: message,
         data: data
     })
@@ -34,21 +34,22 @@ let sendDBError = function(res, code) {
 
 let sendInvalidDataError = function(res, data) {
     res.status(422).json({
-        error: 1,
-        data: data
+        status: 0,
+        data: data,
+        message: "Invalid request data"
     })
 }
 
 let sendNotExists = function(res, message) {
     res.status(200).json({
-        success: 0,
+        status: 0,
         message: message
     })
 }
 
 let sendAlreadyExists = function(res, message) {
     res.status(400).json({
-        success: 0,
+        status: 0,
         message: message
     })
 }
@@ -69,4 +70,4 @@ let sendOTPAPIError = function(res, status, message) {
 
 
 
-module.exports = {sendSuccess, sendDBError, sendNotExists, sendInvalidDataError, sendUnauthorizedError, sendAlreadyExists, sendError, sendOTPAPIError} ;
+module.exports = {sendstatus, sendDBError, sendNotExists, sendInvalidDataError, sendUnauthorizedError, sendAlreadyExists, sendError, sendOTPAPIError} ;

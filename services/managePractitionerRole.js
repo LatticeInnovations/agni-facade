@@ -2,13 +2,9 @@ let PractitionerRole = require("../class/practitionerRole");
 let Organization = require("../class/organization");
 let Practitioner = require("../class/practitioner");
 
-let setPractitionerRoleData = async function (relatedPersonList, reqInput, FHIRData, reqMethod) {
+let setPractitionerRoleData = async function (token, relatedPersonList, reqInput, FHIRData, reqMethod) {
     try {
-        let resourceResult = [], errData = [];
-        if (["post", "POST", "put", "PUT"].includes(reqMethod)) {
-
-        }
-        else if (["GET", "get"].includes(reqMethod)) {
+        let resourceResult = [], errData = []; if (["GET", "get"].includes(reqMethod)) {
             let role = [];
             let practitioner = FHIRData.find(e => e.resource.resourceType == "Practitioner");
             let practitionerData = new Practitioner({}, practitioner.resource);
@@ -23,7 +19,7 @@ let setPractitionerRoleData = async function (relatedPersonList, reqInput, FHIRD
                 let orgData = new Organization({},orgResource.resource);
                 orgData.getFHIRToUserInput();
                 orgData = orgData.getOrgResource();
-                roleObj.orgId = orgData.orgId,
+                roleObj.orgId = orgData.orgId;
                 roleObj.orgName = orgData.orgName,
                 roleObj.orgType = orgData.orgType;
                 role.push(roleObj);
@@ -39,9 +35,6 @@ let setPractitionerRoleData = async function (relatedPersonList, reqInput, FHIRD
                 "role": role
             }
             resourceResult.push(data);
-        }
-        else if (["patch", "PATCH"].includes(reqMethod)) {
-            let deleteList = [];
         }
         return {resourceResult, errData};
     }
