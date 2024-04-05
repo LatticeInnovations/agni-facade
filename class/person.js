@@ -1,4 +1,5 @@
 let { checkEmptyData } = require("../services/CheckEmpty");
+const config = require("../config/nodeConfig");
 
 class Person {
     personObj;
@@ -104,7 +105,7 @@ class Person {
             jsonObj = {
                 type: {
                     "coding": [{
-                        system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        system: config.fhirCodeUrl,
                         code: element.code
                     }]
                 },
@@ -177,9 +178,7 @@ class Person {
     }
 
     setActive() {
-        if (!checkEmptyData(this.personObj.active)) {
-            this.fhirResource.active = this.personObj.active
-        }
+        this.fhirResource.active = this.personObj.active;
     }
 
     patchActive() {
@@ -223,7 +222,6 @@ class Person {
         let json = {}
         if(!fetchedData.telecom){
             let telecomValue = [];
-                json = {"op": "add", "path": "/telecom", value: [{}]}
             if(this.personObj.mobileNumber)
                 telecomValue.push({"system": "phone", "value": this.personObj.mobileNumber.value});
             if(this.personObj.email)

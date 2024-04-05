@@ -3,37 +3,14 @@ let resourceFunc = require("../services/resourceOperation");
 let bundleFun = require("../services/bundleOperation");
 let config = require("../config/nodeConfig");
 let url = require('url');
-
+let resourceValid = require("../utils/Validator/validateRsource").resourceValidation;
 let getResourceUrl = async function (resourceType, queryParams) {
     let url = "", nestedResource = null, specialOffset = null;
     switch (resourceType) {
         case "Patient": 
-        case "Medication" :
         case "Practitioner" :
              queryParams._total = "accurate"
              url = config.baseUrl + resourceType;
-            break;
-        case "RelatedPerson": {
-            let patientIds = queryParams.patientId
-            url = config.baseUrl + `Person`;
-            queryParams = {
-                "_include" : "Person:link:RelatedPerson",
-                "patient._id" : patientIds,
-                "_total": "accurate",
-                "_count" : queryParams._count
-            };
-            nestedResource = 1;
-        }
-
-            break;
-        case "MedicationRequest" : 
-            url = config.baseUrl + "Encounter";
-            queryParams.patient = queryParams.patientId;
-            delete queryParams.patientId;
-            queryParams._count= 3000;
-            queryParams._revinclude = "MedicationRequest:encounter:Encounter";
-            queryParams["appointment.status"] = "arrived,proposed,fulfilled,cancelled,noshow",
-            nestedResource = 1;
             break;
         case "Organization" : 
             url = config.baseUrl + resourceType;
@@ -52,29 +29,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
                 "_total": "accurate"
             }
             nestedResource = 1;
-            break;
-        case "Schedule":
-            queryParams._total = "accurate"
-            queryParams["actor.organization"] = queryParams.orgId;
-            delete queryParams.orgId;
-            url = config.baseUrl + resourceType;
-            nestedResource = 1;
-            specialOffset = 1;
-            break;
-        case "Appointment": 
-             queryParams._total = "accurate"
-             if(queryParams.orgId) {
-                queryParams["location.organization"] = queryParams.orgId;
-                delete queryParams.orgId;
-             }
-             if(queryParams.patientId) {
-                queryParams["patient"] = queryParams.patientId;
-                delete queryParams.patientId;
-             }
-            url = config.baseUrl + resourceType;
-            nestedResource = 1;
-            specialOffset = 1;
-            break;
+            break;        
 
     }
 
@@ -83,9 +38,15 @@ let getResourceUrl = async function (resourceType, queryParams) {
 
 let searchResourceData = async function (req, res) {
     try {
-        let resourceType = req.params.resourceType;
+        let response = resourceValid(req.params);
+        if (response.error) {
+            console.error(response.error.details)
+            let errData = { status: 0, response: { data: response.error.details }, message: "Invalid input" }
+            return res.status(422).json(errData);
+        }
+        const resourceType = req.params.resourceType;
         let resouceUrl = await getResourceUrl(resourceType, req.query);
-        let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        let responseData = await bundleFun.searchData(req.token,resouceUrl.link, resouceUrl.reqQuery);
         let reqUrl = url.parse(req.originalUrl, true)
         let reqQuery = reqUrl.query;
         console.info(responseData.data.link)
@@ -96,7 +57,7 @@ let searchResourceData = async function (req, res) {
             return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
         }
         else if (resouceUrl.nestedResource == 1) {
-            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, reqQuery, 0);
+            let res_data = await resourceFunc.getResource(req.token, resourceType, {}, responseData.data.entry, req.method, reqQuery, 0);
             result = result.concat(res_data.resourceResult);
             if(resouceUrl.specialOffset) {
                 let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
@@ -124,7 +85,7 @@ let searchResourceData = async function (req, res) {
                 }           
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {
-                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0);
+                let res_data = await resourceFunc.getResource(req.token, resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0);
                 result = result.concat(res_data.resourceResult);
             }
              res.status(200).json({ status: resStatus, message: "Data fetched successfully.", total: result.length,"offset": +reqQuery._offset, data: result  })

@@ -1,18 +1,10 @@
 let Organization = require("../class/organization");
 let Location = require("../class/location");
-let bundleFun = require("./bundleOperation");
-const { v4: uuidv4 } = require('uuid');
 
-let setOrganizationData = async function (resType, reqInput, FHIRData, reqMethod) {
+let setOrganizationData = async function (token, resType, reqInput, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
-        if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
-            for (let orgData of reqInput) { 
-            }
-        }
-        else if (["patch", "PATCH"].includes(reqMethod)) {
-        }
-        else {
+         if (["GET"].includes(reqMethod)) {
             let orgList = FHIRData.filter(e => e.resource.resourceType == "Organization").map(e => e.resource);
             for (let orgData of orgList) { 
                 let locationResource = FHIRData.filter(e => e.resource.resourceType == "Location" && e.resource.managingOrganization.reference == "Organization/" + orgData.id).map(e => e.resource)[0];

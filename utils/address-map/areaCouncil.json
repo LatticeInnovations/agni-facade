@@ -1,0 +1,286 @@
+[
+  {
+    "display": "Central Malekula",
+    "aId": 1
+  },
+  {
+    "display": "North Ambrym",
+    "aId": 2
+  },
+  {
+    "display": "North East Malekula",
+    "aId": 3
+  },
+  {
+    "display": "North West Malekula",
+    "aId": 4
+  },
+  {
+    "display": "Paama",
+    "aId": 5
+  },
+  {
+    "display": "South East Ambrym",
+    "aId": 6
+  },
+  {
+    "display": "South East Malekula",
+    "aId": 7
+  },
+  {
+    "display": "South Malekula",
+    "aId": 8
+  },
+  {
+    "display": "South West Malekula",
+    "aId": 9
+  },
+  {
+    "display": "West Ambrym",
+    "aId": 10
+  },
+  {
+    "display": "Central Pentecost 1",
+    "aId": 11
+  },
+  {
+    "display": "Central Pentecost 2",
+    "aId": 12
+  },
+  {
+    "display": "East Ambae",
+    "aId": 13
+  },
+  {
+    "display": "North Ambae",
+    "aId": 14
+  },
+  {
+    "display": "North Maewo",
+    "aId": 15
+  },
+  {
+    "display": "North Pentecost",
+    "aId": 16
+  },
+  {
+    "display": "South Ambae",
+    "aId": 17
+  },
+  {
+    "display": "South Maewo",
+    "aId": 18
+  },
+  {
+    "display": "South Pentecost",
+    "aId": 19
+  },
+  {
+    "display": "West Ambae",
+    "aId": 20
+  },
+  {
+    "display": "Canal - Fanafo",
+    "aId": 21
+  },
+  {
+    "display": "East Malo",
+    "aId": 22
+  },
+  {
+    "display": "Big Bay Inland",
+    "aId": 23
+  },
+  {
+    "display": "Big Bay Cost",
+    "aId": 24
+  },
+  {
+    "display": "West Coast Santo",
+    "aId": 25
+  },
+  {
+    "display": "North West Santo",
+    "aId": 26
+  },
+  {
+    "display": "South East Santo",
+    "aId": 27
+  },
+  {
+    "display": "South Santo 1",
+    "aId": 28
+  },
+  {
+    "display": "South Santo 2",
+    "aId": 29
+  },
+  {
+    "display": "West Malo",
+    "aId": 30
+  },
+  {
+    "display": "East Santo",
+    "aId": 31
+  },
+  {
+    "display": "Emae",
+    "aId": 32
+  },
+  {
+    "display": "Erakor",
+    "aId": 33
+  },
+  {
+    "display": "Eratap",
+    "aId": 34
+  },
+  {
+    "display": "East Efate",
+    "aId": 35
+  },
+  {
+    "display": "Ifira",
+    "aId": 36
+  },
+  {
+    "display": "North West Efate",
+    "aId": 37
+  },
+  {
+    "display": "Tanvasoko",
+    "aId": 38
+  },
+  {
+    "display": "South Efate",
+    "aId": 39
+  },
+  {
+    "display": "Emau",
+    "aId": 40
+  },
+  {
+    "display": "North Efate",
+    "aId": 41
+  },
+  {
+    "display": "Mele",
+    "aId": 42
+  },
+  {
+    "display": "Nguna - Pele",
+    "aId": 43
+  },
+  {
+    "display": "Yarsu",
+    "aId": 44
+  },
+  {
+    "display": "Tongoa",
+    "aId": 45
+  },
+  {
+    "display": "Tongariki - Buninga",
+    "aId": 46
+  },
+  {
+    "display": "Makira - Mataso",
+    "aId": 47
+  },
+  {
+    "display": "Varsu",
+    "aId": 48
+  },
+  {
+    "display": "Vermali",
+    "aId": 49
+  },
+  {
+    "display": "Vermaul",
+    "aId": 50
+  },
+  {
+    "display": "Aneityum",
+    "aId": 51
+  },
+  {
+    "display": "Aniwa",
+    "aId": 52
+  },
+  {
+    "display": "Futuna",
+    "aId": 53
+  },
+  {
+    "display": "East Tanna",
+    "aId": 54
+  },
+  {
+    "display": "North Erromango",
+    "aId": 55
+  },
+  {
+    "display": "North Tanna",
+    "aId": 56
+  },
+  {
+    "display": "South Erromango",
+    "aId": 57
+  },
+  {
+    "display": "South Tanna",
+    "aId": 58
+  },
+  {
+    "display": "South West Tanna",
+    "aId": 59
+  },
+  {
+    "display": "West Tanna",
+    "aId": 60
+  },
+  {
+    "display": "Central Tanna",
+    "aId": 61
+  },
+  {
+    "display": "South East Tanna",
+    "aId": 62
+  },
+  {
+    "display": "East Gaua",
+    "aId": 63
+  },
+  {
+    "display": "Mota",
+    "aId": 64
+  },
+  {
+    "display": "West Gaua",
+    "aId": 65
+  },
+  {
+    "display": "Mota Lava",
+    "aId": 66
+  },
+  {
+    "display": "Torres",
+    "aId": 67
+  },
+  {
+    "display": "Mere Lava - Merig",
+    "aId": 68
+  },
+  {
+    "display": "Ureparapara",
+    "aId": 69
+  },
+  {
+    "display": "West Vanua Lava",
+    "aId": 70
+  },
+  {
+    "display": "East Vanua Lava",
+    "aId": 71
+  }
+]
