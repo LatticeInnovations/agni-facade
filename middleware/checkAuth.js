@@ -5,7 +5,6 @@ router.use(bodyParser.urlencoded({ extended: true }));
 let jwt = require('jsonwebtoken');
 let secretKey = require('../config/nodeConfig').jwtSecretKey;
 
-
 //middleware to verify the
 router.use(function (req, res, next) {
     // check header or url parameters or post parameters for token
@@ -25,8 +24,8 @@ router.use(function (req, res, next) {
                         return res.status(401).json({ status: 0, message: 'Unauthorized' });
             } else {
                 // if everything is good, save to request for use in other routes
-                console.log(decoded);
                 req.decoded = decoded;
+                req.token = {"userId": decoded.userId, "orgId": decoded.orgId};
                 next();
             }
         });

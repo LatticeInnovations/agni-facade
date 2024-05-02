@@ -83,6 +83,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
 
 let searchResourceData = async function (req, res) {
     try {
+        let token = req.token;
         let response = resourceValid(req.params);
         if (response.error) {
             console.error(response.error.details)
@@ -94,7 +95,7 @@ let searchResourceData = async function (req, res) {
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
         let reqUrl = url.parse(req.originalUrl, true)
         let reqQuery = reqUrl.query;
-        console.info(responseData.data.link)
+        // console.info(responseData.data.link)
         let result = [];
         let resStatus = 1;
         if( !responseData.data.entry || responseData.data.total == 0) {
@@ -130,7 +131,7 @@ let searchResourceData = async function (req, res) {
                 }           
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {
-                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0);
+                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0, token);
                 result = result.concat(res_data.resourceResult);
             }
              res.status(200).json({ status: resStatus, message: "Data fetched successfully.", total: result.length,"offset": +reqQuery._offset, data: result  })

@@ -7,12 +7,12 @@ let practitioner = require("./managePractitioner");
 let practitionerRole = require("./managePractitionerRole");
 let schedule= require("./manageSchedule")
 let appointment = require("./manageAppointment");
-let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery) {
+let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
         switch (resType) {
             case "Patient":
-                bundleData = await patient.setPatientData(resType, inputData, FHIRData, reqMethod);
+                bundleData = await patient.setPatientData(resType, inputData, FHIRData, reqMethod, token);
                 break;
             case "RelatedPerson":
                 bundleData = await relatedPerson.setRelatedPersonData(inputData, FHIRData, reqMethod);

@@ -4,6 +4,7 @@ let config = require("../config/nodeConfig");
 let resourceValid = require("../utils/Validator/validateRsource").resourceValidation;
 let createBundle = async function (req, res) {
     try {
+        let token = req.token;
         let response = resourceValid(req.params);
         if (response.error) {
             console.error(response.error.details)
@@ -15,7 +16,7 @@ let createBundle = async function (req, res) {
         let bundle;
         let fhirResource = {};
 
-        let resourceData = await getBundleJSON(reqInput, resourceType, fhirResource, "POST");
+        let resourceData = await getBundleJSON(reqInput, resourceType, fhirResource, "POST", token);
             bundle = resourceData.bundle;
       //return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
         if (bundle.entry.length > 0) {
@@ -120,14 +121,14 @@ let patchBundle = async function (req, res) {
 
 }
 
-let getBundleJSON = async function (reqInput, resourceType, fhirResource, reqMethod) {
+let getBundleJSON = async function (reqInput, resourceType, fhirResource, reqMethod, token) {
     let bundle = {
         "resourceType": "Bundle",
         "type": "transaction",
         "entry": []
     };
     let errData = [] ;
-    let resourceData = await resourceFun.getResource(resourceType, reqInput, fhirResource, reqMethod, null);
+    let resourceData = await resourceFun.getResource(resourceType, reqInput, fhirResource, reqMethod, null, token);
     console.info(resourceData)
         bundle.entry = resourceData.resourceResult
         errData = resourceData.errData

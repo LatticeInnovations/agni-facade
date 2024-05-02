@@ -41,7 +41,7 @@ let login = async function (req, res) {
             OTPGenerateAttempt = authentication_detail.dataValues.otp_generate_attempt + 1;
         }
 
-        if (req.body.userContact == 1111111111 || req.body.userContact == 9999999999 || req.body.userContact == "devtest@gmail.com" || req.body.userContact == "dev3test@gmail.com") {
+        if (req.body.userContact == 1111111111 || req.body.userContact == 9999999999 || req.body.userContact == "himanshu@thelattice.in" || req.body.userContact == "dev3test@gmail.com") {
             otp = 111111;
         } else if (req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") {
             otp = 222222;
@@ -122,7 +122,8 @@ let OTPAuthentication = async function (req, res) {
                 return res.status(401).json({ status: 0, message: `OTP expired` });
             }
             let userProfile = {
-                "userId": userDetail.dataValues.user_id, "userName": userDetail.dataValues.user_name
+                "userId": userDetail.dataValues.user_id, "userName": userDetail.dataValues.user_name,
+                "orgId": userDetail.dataValues.org_id
             }
             let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '5d' });
             upsertOTP(null, userDetail.dataValues, timeData.currentTime, null, 0, authentication_detail.dataValues.otp_generate_attempt);
@@ -175,7 +176,7 @@ async function sendOTP(isEmail, userDetail, otp) {
 // get user and his/her OTP details using sequelize
 async function getUserDetail(req, contact) {
     try {
-        let queryParam ={"_total": "accurate"};
+        let queryParam ={"_total": "accurate", "_revinclude": "PractitionerRole:practitioner"};
         queryParam[contact] = contact == "email" ? req.body.userContact.toLowerCase() : req.body.userContact;
         let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam);
         if (existingPractioner.data.total != 1) {
@@ -187,12 +188,14 @@ async function getUserDetail(req, contact) {
             user_name += " " + existingPractioner.data.entry[0].resource.name[0].family;
             let email = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "email");
             let phone = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "phone");
+            let orgId = existingPractioner.data.entry[1].resource.organization.reference.split('/')[1];
             let userDetail = {}; userDetail.dataValues = {
                 "user_name": user_name,
                 "user_email" : email[0].value,
                 "mobile_number" : phone[0].value,
                 "is_active":  existingPractioner.data.entry[0].resource.active,
-                "user_id": user_id
+                "user_id": user_id,
+                "org_id": orgId
             }
             let userData = await db.authentication_detail.findOne({
                 attributes:['auth_id', 'user_id', 'otp', 'expire_time', 'createdOn', 'login_attempts', 'otp_generate_attempt'],
