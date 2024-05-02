@@ -1,5 +1,6 @@
 let { checkEmptyData } = require("../services/CheckEmpty");
 const config = require("../config/nodeConfig");
+const token = require('../utils/token.json');
 
 class Person {
     personObj;
@@ -16,6 +17,8 @@ class Person {
         this.fhirResource.telecom = [];
         this.fhirResource.address = [];
         this.fhirResource.link = [];
+        this.fhirResource.managingOrganization = {};
+        this.fhirResource.generalPractitioner = [];
     }
 
     setIdAsIdentifier() {
@@ -393,6 +396,40 @@ class Person {
             });
     }
 
+    getManagingOrg(){
+        if(!this.fhirResource.managingOrganization){
+            this.personObj.managingOrganization = {
+                reference : null
+            }
+        }
+        else{
+            this.personObj.managingOrganization = this.fhirResource.managingOrganization
+        }
+    }
+
+    getGeneralPractitioner(){
+        if(!this.fhirResource?.generalPractitioner){
+            this.personObj.generalPractitioner = [];
+        }
+        else{
+            this.personObj.generalPractitioner = this.fhirResource.generalPractitioner;
+        }
+    }
+
+    setManagingOrg(){
+        this.fhirResource.managingOrganization = {
+            reference : "Organization/"+token.orgId
+        }
+    }
+
+    setGeneralPractitioner(){
+        this.fhirResource.generalPractitioner = [
+            {
+                reference: "Practitioner/"+token.userId
+            }
+        ];
+    }
+
     getFHIRResource() {
         return this.fhirResource;
     }
@@ -415,7 +452,8 @@ class Person {
         this.setEmailAddress();
         this.setAddress("home");
         this.setAddress("temp");
-
+        this.setManagingOrg();
+        this.setGeneralPractitioner();
     }
 
     getFHIRToUserInput() {
@@ -430,6 +468,8 @@ class Person {
         this.getPhone();
         this.getEmailAddress();
         this.getAddress();
+        this.getManagingOrg();
+        this.getGeneralPractitioner();
     }
 
     patchUserInputToFHIR(fetchedResourceData) {
@@ -448,7 +488,6 @@ class Person {
             this.patchAddress("home", fetchedResourceData);
         if (this.personObj["tempAddress"] !== undefined && fetchedResourceData.address)
             this.patchAddress("temp", fetchedResourceData);
-
     }
 }
 

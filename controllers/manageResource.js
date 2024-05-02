@@ -94,7 +94,7 @@ let searchResourceData = async function (req, res) {
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
         let reqUrl = url.parse(req.originalUrl, true)
         let reqQuery = reqUrl.query;
-        console.info(responseData.data.link)
+        // console.info(responseData.data.link)
         let result = [];
         let resStatus = 1;
         if( !responseData.data.entry || responseData.data.total == 0) {
