@@ -1,13 +1,14 @@
 let { checkEmptyData } = require("../services/CheckEmpty");
 const config = require("../config/nodeConfig");
-const token = require('../utils/token.json');
 
 class Person {
     personObj;
     fhirResource;
-    constructor(personObj, fhirResource) {
+    token;
+    constructor(personObj, fhirResource, token) {
         this.personObj = personObj;
         this.fhirResource = fhirResource;
+        this.token = token;
     }
 
     setBasicStructure() {
@@ -418,14 +419,14 @@ class Person {
 
     setManagingOrg(){
         this.fhirResource.managingOrganization = {
-            reference : "Organization/"+token.orgId
+            reference : "Organization/"+this.token.orgId
         }
     }
 
     setGeneralPractitioner(){
         this.fhirResource.generalPractitioner = [
             {
-                reference: "Practitioner/"+token.userId
+                reference: "Practitioner/"+this.token.userId
             }
         ];
     }

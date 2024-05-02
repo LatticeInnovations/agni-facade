@@ -3,12 +3,12 @@ let bundleFun = require("./bundleOperation");
 let config = require("../config/nodeConfig");
 const { v4: uuidv4 } = require('uuid');
 
-let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
+let setPatientData = async function (resType, reqInput, FHIRData, reqMethod, token) {
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
             for (let patientData of reqInput) {
-                let patient = new Person(patientData, FHIRData);
+                let patient = new Person(patientData, FHIRData, token);
                 patient.getJsonToFhirTranslator();
                 let patientResource = {};
                 patientResource = {...patient.getFHIRResource()};
@@ -43,7 +43,7 @@ let setPatientData = async function (resType, reqInput, FHIRData, reqMethod) {
             }
         }
         else {
-            let patient = new Person(reqInput, FHIRData);
+            let patient = new Person(reqInput, FHIRData, token);
             patient.getFHIRToUserInput();
             resourceResult.push(patient.getPersonResource())
         }

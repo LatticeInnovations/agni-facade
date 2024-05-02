@@ -4,8 +4,6 @@ router.use(bodyParser.json()); // support json encoded bodies
 router.use(bodyParser.urlencoded({ extended: true }));
 let jwt = require('jsonwebtoken');
 let secretKey = require('../config/nodeConfig').jwtSecretKey;
-let fs = require('fs');
-let path = require('path');
 
 //middleware to verify the
 router.use(function (req, res, next) {
@@ -27,8 +25,7 @@ router.use(function (req, res, next) {
             } else {
                 // if everything is good, save to request for use in other routes
                 req.decoded = decoded;
-                const filename = path.join(__dirname, '..', '/utils/token.json');
-                fs.writeFileSync(filename, JSON.stringify({"userId": decoded.userId, "orgId": decoded.orgId}));
+                req.token = {"userId": decoded.userId, "orgId": decoded.orgId};
                 next();
             }
         });
