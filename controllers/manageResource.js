@@ -4,10 +4,14 @@ let bundleFun = require("../services/bundleOperation");
 let config = require("../config/nodeConfig");
 let url = require('url');
 let resourceValid = require("../utils/Validator/validateRsource").resourceValidation;
-let getResourceUrl = async function (resourceType, queryParams) {
+let getResourceUrl = async function (resourceType, queryParams, token) {
     let url = "", nestedResource = null, specialOffset = null;
     switch (resourceType) {
         case "Patient": 
+             queryParams._total = "accurate"
+             queryParams['general-practitioner'] = "Practitioner/"+token.userId;
+             url = config.baseUrl + resourceType;
+            break;
         case "Medication" :
         case "Practitioner" :
              queryParams._total = "accurate"
@@ -91,7 +95,7 @@ let searchResourceData = async function (req, res) {
             return res.status(422).json(errData);
         }
         const resourceType = req.params.resourceType;
-        let resouceUrl = await getResourceUrl(resourceType, req.query);
+        let resouceUrl = await getResourceUrl(resourceType, req.query, token);
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
         let reqUrl = url.parse(req.originalUrl, true)
         let reqQuery = reqUrl.query;
