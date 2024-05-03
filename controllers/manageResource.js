@@ -9,7 +9,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
     switch (resourceType) {
         case "Patient": 
              queryParams._total = "accurate"
-             queryParams['general-practitioner'] = "Practitioner/"+token.userId;
+             queryParams['organization'] = "Organization/"+token.orgId;
              url = config.baseUrl + resourceType;
             break;
         case "Medication" :
