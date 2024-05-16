@@ -4,6 +4,7 @@ let resourceFunc = require("../services/resourceOperation");
 let model = require('../models/index');
 let { validationResult } = require('express-validator');
 let response = require("../utils/responseStatus");
+let resourceValid = require("../utils/Validator/validateRsource").validTimestamp;
 // Get user profile
 let getUserProfile = async function (req, res, next) {
     try {
@@ -65,11 +66,13 @@ const getTimestamp = async (req, res, next) => {
 
 const updateTimestamp = async (req, res, next) => {
     try{
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return response.sendInvalidDataError(res, errors);
-        }
-        let { data } = req.body;        
+        let data = req.body;
+        let response = resourceValid(data);
+        if (response.error) {
+            console.error(response.error.details)
+            let errData = { status: 0, response: { data: response.error.details }, message: "Invalid input" }
+            return res.status(422).json(errData);
+        }      
         await model.userTimeMap.bulkCreate(data, { updateOnDuplicate: [ 'timestamp' ] });
         res.json({ status: 1, message: "timestamp updated", data });
     }
