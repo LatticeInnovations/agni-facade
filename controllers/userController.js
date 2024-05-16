@@ -52,7 +52,8 @@ let getUserProfile = async function (req, res, next) {
 
 const getTimestamp = async (req, res, next) => {
     try{
-        let timestamp = await model.userTimeMap.findAll({ attributes: ['uuid', 'timestamp']});
+        let token = req.token;
+        let timestamp = await model.userTimeMap.findAll({ attributes: ['uuid', 'timestamp'], where : { orgId : token.orgId }});
         res.json({ status: 1, message: "timestamp fetched", data : timestamp });
     }
     catch(e){
@@ -66,14 +67,19 @@ const getTimestamp = async (req, res, next) => {
 
 const updateTimestamp = async (req, res, next) => {
     try{
+        let token = req.token;
         let data = req.body;
         let response = resourceValid(data);
         if (response.error) {
             console.error(response.error.details)
             let errData = { status: 0, response: { data: response.error.details }, message: "Invalid input" }
             return res.status(422).json(errData);
-        }      
-        await model.userTimeMap.bulkCreate(data, { updateOnDuplicate: [ 'timestamp' ] });
+        }
+        data = data.map((d) => {
+            d.orgId = token.orgId;
+            return d;
+        });      
+        await model.userTimeMap.bulkCreate(data, { updateOnDuplicate: [ 'timestamp', 'orgId' ] });
         res.json({ status: 1, message: "timestamp updated", data });
     }
     catch(e){
