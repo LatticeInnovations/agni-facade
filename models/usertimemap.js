@@ -23,6 +23,9 @@ module.exports = (sequelize, DataTypes) => {
     timestamp: {
       allowNull: false,
       type: DataTypes.DATE
+    },
+    orgId : {
+      type : DataTypes.INTEGER
     }
   }, {
     sequelize,
