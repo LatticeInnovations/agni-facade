@@ -16,10 +16,6 @@ let { check, oneOf, checkIf, body } = require('express-validator');
 
 router.get("/", userController.getTimestamp);
 
-router.post("/", [
-    check('data').isArray().isLength({ min : 1, max: 20 }),
-    check('data.*.uuid').notEmpty(),
-    check('data.*.timestamp').notEmpty()  
-], userController.updateTimestamp);
+router.post("/", userController.updateTimestamp);
 
 module.exports = router
