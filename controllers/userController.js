@@ -79,7 +79,7 @@ const updateTimestamp = async (req, res, next) => {
             d.orgId = token.orgId;
             return d;
         });      
-        await model.userTimeMap.bulkCreate(data, { updateOnDuplicate: [ 'timestamp' ] });
+        await model.userTimeMap.bulkCreate(data, { updateOnDuplicate: [ 'timestamp', 'orgId' ] });
         res.json({ status: 1, message: "timestamp updated", data });
     }
     catch(e){
