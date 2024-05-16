@@ -51,7 +51,7 @@ let getUserProfile = async function (req, res, next) {
 
 const getTimestamp = async (req, res, next) => {
     try{
-        let timestamp = await model.userTimeMap.findAll({ attributes: ['id', 'uuid', 'timestamp']});
+        let timestamp = await model.userTimeMap.findAll({ attributes: ['uuid', 'timestamp']});
         res.json({ status: 1, message: "timestamp fetched", data : timestamp });
     }
     catch(e){
