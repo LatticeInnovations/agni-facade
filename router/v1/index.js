@@ -5,6 +5,7 @@ router.use("/auth", require("./authentication"));
 router.use("/sync", auth, require("./patientBundle"));
 router.use("/user", auth, require("./user"));
 router.use("/sct", auth, require("./snomedCT"));
+router.use("/timestamp", auth, require('./timestamp'));
 router.use("/", auth, require("./resource"));
 
 

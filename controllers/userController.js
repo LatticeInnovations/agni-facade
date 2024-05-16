@@ -1,6 +1,9 @@
 let manageResource = require("./manageResource");
 let bundleFun = require("../services/bundleOperation");
 let resourceFunc = require("../services/resourceOperation");
+let model = require('../models/index');
+let { validationResult } = require('express-validator');
+let response = require("../utils/responseStatus");
 // Get user profile
 let getUserProfile = async function (req, res, next) {
     try {
@@ -46,7 +49,42 @@ let getUserProfile = async function (req, res, next) {
 
 }
 
+const getTimestamp = async (req, res, next) => {
+    try{
+        let timestamp = await model.userTimeMap.findAll({ attributes: ['id', 'uuid', 'timestamp']});
+        res.json({ status: 1, message: "timestamp fetched", data : timestamp });
+    }
+    catch(e){
+        return res.status(500).json({
+            status: 0,
+            message: "Unable to process. Please try again.",
+            error: e
+        });
+    }
+} 
+
+const updateTimestamp = async (req, res, next) => {
+    try{
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return response.sendInvalidDataError(res, errors);
+        }
+        let { data } = req.body;        
+        await model.userTimeMap.bulkCreate(data, { updateOnDuplicate: [ 'timestamp' ] });
+        res.json({ status: 1, message: "timestamp updated", data });
+    }
+    catch(e){
+        return res.status(500).json({
+            status: 0,
+            message: "Unable to process. Please try again.",
+            error: e
+        });
+    }
+}
+
 
 module.exports = {
-    getUserProfile
+    getUserProfile,
+    getTimestamp,
+    updateTimestamp
 }
