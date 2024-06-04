@@ -4,6 +4,22 @@ const Encounter = require("../class/encounter")
 const { v4: uuidv4 } = require('uuid');
 let config = require("../config/nodeConfig");
 let bundleOp = require("./bundleOperation");
+const DocumentReference = require("../class/DocumentReference");
+let axios = require('axios');
+
+const createDocument = async (data) => {
+    let response = await axios.post(config.baseUrl+'DocumentReference', data);
+    if(response.status == 201){
+        return response.data.id;
+    }
+}
+
+const fetchDocument = async (docId) => {
+    let response = await axios.get(config.baseUrl+`DocumentReference?_id=${33728}`);
+    if(response.status == 200){
+        return response?.data?.entry[0]?.resource?.content[0]?.attachment;
+    }
+}
 
 let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqMethod) {
     try {
@@ -38,17 +54,21 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 let lastDigits = dateToday.slice(9, -1);
                 let grpIdentify =  lastDigits + patPres.patientId;
                 for(let prescription of medList) {
+                    let document = new DocumentReference(prescription.filename, {});
+                    document.getJSONtoFhir();
+                    let docData = {...document.getFhirResource()};
+                    let docId = await createDocument(docData);
                     prescription.patientId = patPres.patientId;
                     prescription.generatedOn = patPres.generatedOn;
                     prescription.prescriptionId = patPres.prescriptionId;
                     prescription.encounterId = encounterData.data.entry[0].resource.id
                     prescription.grpIdentify = grpIdentify;
                     prescription.identifier = [... encounterData.data.entry[0].resource.identifier];
-                    prescription.identifier.push({
-                        "system":config.sctCodeUrl,
-                        "value": prescription.medFhirId
-                    })
-
+                    // prescription.identifier.push({
+                    //     "system":config.sctCodeUrl,
+                    //     "value": prescription.medFhirId
+                    // })
+                    prescription.docId = docId;
                     let medRequest = new MedicationRquest(prescription, {});
                     medRequest.getJSONtoFhir();
                     let medReqData = {...medRequest.getFhirResource()};
@@ -66,13 +86,22 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 let encounter = new Encounter({}, encData);
                 encounter.getFhirToJson();
                 let encounterData = encounter.getEncounterResource();
-            let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);            
+            let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);          
              encounterData.prescription = [];
                     for(let medReq of medReqList) {                     
                             let medReqData = new MedicationRquest({}, medReq);
                             medReqData.getFhirToJson();
                             let medData = medReqData.getMedReqResource();
-                            medData.qtyPrescribed = medData.qtyPerDose * medData.frequency * medData.duration;
+                            medData.document = [];
+                            let supportingInformation = medReq?.supportingInformation || [];
+                            for(let doc of supportingInformation){
+                                let documentId = doc.reference.split('/')[1];
+                                let document = await fetchDocument(documentId);
+                                console.info(document.url);
+                                medData.document.push({
+                                    filename : document.title
+                                })
+                            }
                             encounterData.prescription.push(medData)
                     }
                 if(encounterData.prescription.length > 0)
