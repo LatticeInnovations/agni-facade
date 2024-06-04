@@ -24,6 +24,7 @@ let config = function () {
             orgType : process.env.orgType,
             fhirCodeUrl : process.env.fhirCodeUrl,
             roleCodeUrl : process.env.roleCodeUrl,
+            facadeUrl : process.env.facadeUrl 
         };
 };
 module.exports = new config();
