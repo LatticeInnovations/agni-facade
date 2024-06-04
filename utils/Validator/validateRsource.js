@@ -10,4 +10,12 @@ function resourceValidation(userInput) {
   return JoiSchema.validate(userInput);
 }
 
-module.exports = {resourceValidation}
+function validTimestamp(data){
+  let JoiSchema = Joi.array().min(1).max(20).required().items(Joi.object({
+    uuid : Joi.string().required(),
+    timestamp : Joi.required(),
+  }));
+  return JoiSchema.validate(data);
+}
+
+module.exports = {resourceValidation, validTimestamp}

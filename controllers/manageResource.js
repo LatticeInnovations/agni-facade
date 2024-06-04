@@ -4,10 +4,14 @@ let bundleFun = require("../services/bundleOperation");
 let config = require("../config/nodeConfig");
 let url = require('url');
 let resourceValid = require("../utils/Validator/validateRsource").resourceValidation;
-let getResourceUrl = async function (resourceType, queryParams) {
+let getResourceUrl = async function (resourceType, queryParams, token) {
     let url = "", nestedResource = null, specialOffset = null;
     switch (resourceType) {
         case "Patient": 
+             queryParams._total = "accurate"
+             queryParams['organization'] = "Organization/"+token.orgId;
+             url = config.baseUrl + resourceType;
+            break;
         case "Medication" :
         case "Practitioner" :
              queryParams._total = "accurate"
@@ -83,6 +87,7 @@ let getResourceUrl = async function (resourceType, queryParams) {
 
 let searchResourceData = async function (req, res) {
     try {
+        let token = req.token;
         let response = resourceValid(req.params);
         if (response.error) {
             console.error(response.error.details)
@@ -90,11 +95,11 @@ let searchResourceData = async function (req, res) {
             return res.status(422).json(errData);
         }
         const resourceType = req.params.resourceType;
-        let resouceUrl = await getResourceUrl(resourceType, req.query);
+        let resouceUrl = await getResourceUrl(resourceType, req.query, token);
         let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
         let reqUrl = url.parse(req.originalUrl, true)
         let reqQuery = reqUrl.query;
-        console.info(responseData.data.link)
+        // console.info(responseData.data.link)
         let result = [];
         let resStatus = 1;
         if( !responseData.data.entry || responseData.data.total == 0) {
@@ -130,7 +135,7 @@ let searchResourceData = async function (req, res) {
                 }           
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {
-                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0);
+                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0, token);
                 result = result.concat(res_data.resourceResult);
             }
              res.status(200).json({ status: resStatus, message: "Data fetched successfully.", total: result.length,"offset": +reqQuery._offset, data: result  })

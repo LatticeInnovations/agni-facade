@@ -1,6 +1,6 @@
 require('dotenv').config();
-const accountid = process.env.accountSid;
-const authToken = process.env.authToken;
+const accountid = process.env.twilioAccountSid; 
+const authToken = process.env.twilioAuthToken;
 const config = require('../config/nodeConfig')
 const client = require('twilio')(accountid, authToken);
 let sendSms = async function (phoneNumber, text) {

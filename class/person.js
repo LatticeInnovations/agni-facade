@@ -4,9 +4,11 @@ const config = require("../config/nodeConfig");
 class Person {
     personObj;
     fhirResource;
-    constructor(personObj, fhirResource) {
+    token;
+    constructor(personObj, fhirResource, token) {
         this.personObj = personObj;
         this.fhirResource = fhirResource;
+        this.token = token;
     }
 
     setBasicStructure() {
@@ -16,6 +18,8 @@ class Person {
         this.fhirResource.telecom = [];
         this.fhirResource.address = [];
         this.fhirResource.link = [];
+        this.fhirResource.managingOrganization = {};
+        this.fhirResource.generalPractitioner = [];
     }
 
     setIdAsIdentifier() {
@@ -393,6 +397,40 @@ class Person {
             });
     }
 
+    getManagingOrg(){
+        if(!this.fhirResource.managingOrganization){
+            this.personObj.managingOrganization = {
+                reference : null
+            }
+        }
+        else{
+            this.personObj.managingOrganization = this.fhirResource.managingOrganization
+        }
+    }
+
+    getGeneralPractitioner(){
+        if(!this.fhirResource?.generalPractitioner){
+            this.personObj.generalPractitioner = [];
+        }
+        else{
+            this.personObj.generalPractitioner = this.fhirResource.generalPractitioner;
+        }
+    }
+
+    setManagingOrg(){
+        this.fhirResource.managingOrganization = {
+            reference : "Organization/"+this.token.orgId
+        }
+    }
+
+    setGeneralPractitioner(){
+        this.fhirResource.generalPractitioner = [
+            {
+                reference: "Practitioner/"+this.token.userId
+            }
+        ];
+    }
+
     getFHIRResource() {
         return this.fhirResource;
     }
@@ -415,7 +453,8 @@ class Person {
         this.setEmailAddress();
         this.setAddress("home");
         this.setAddress("temp");
-
+        this.setManagingOrg();
+        this.setGeneralPractitioner();
     }
 
     getFHIRToUserInput() {
@@ -430,6 +469,8 @@ class Person {
         this.getPhone();
         this.getEmailAddress();
         this.getAddress();
+        this.getManagingOrg();
+        this.getGeneralPractitioner();
     }
 
     patchUserInputToFHIR(fetchedResourceData) {
@@ -448,7 +489,6 @@ class Person {
             this.patchAddress("home", fetchedResourceData);
         if (this.personObj["tempAddress"] !== undefined && fetchedResourceData.address)
             this.patchAddress("temp", fetchedResourceData);
-
     }
 }
 
