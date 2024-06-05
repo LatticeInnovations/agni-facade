@@ -15,9 +15,9 @@ const createDocument = async (data) => {
 }
 
 const fetchDocument = async (docId) => {
-    let response = await axios.get(config.baseUrl+`DocumentReference?_id=${33728}`);
-    if(response.status == 200){
-        return response?.data?.entry[0]?.resource?.content[0]?.attachment;
+    let response = await axios.get(config.baseUrl+`DocumentReference?_id=${docId}`);
+    if(response.status == 200){ 
+        return response?.data?.entry?.[0]?.resource?.content[0]?.attachment || null;
     }
 }
 
@@ -92,17 +92,16 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                             let medReqData = new MedicationRquest({}, medReq);
                             medReqData.getFhirToJson();
                             let medData = medReqData.getMedReqResource();
-                            medData.document = [];
+                            medData.filename = null;
                             let supportingInformation = medReq?.supportingInformation || [];
                             for(let doc of supportingInformation){
                                 let documentId = doc.reference.split('/')[1];
                                 let document = await fetchDocument(documentId);
-                                console.info(document.url);
-                                medData.document.push({
-                                    filename : document.title
-                                })
+                                medData.filename = document?.title;
                             }
-                            encounterData.prescription.push(medData)
+                            if(medData.filename){
+                                encounterData.prescription.push(medData)
+                            }
                     }
                 if(encounterData.prescription.length > 0)
                     resourceResult.push(encounterData)
