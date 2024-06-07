@@ -135,8 +135,9 @@ class MedicationRquest {
         
     }
 
-    setDocument(){
-        this.fhirResource.supportingInformation.push({"reference": `DocumentReference/${this.medReqObj.docId}`});
+    setDocument(docId){
+        console.info("doc id = ", docId);
+        this.fhirResource.supportingInformation.push({"reference": `DocumentReference/${docId}`});
     }
 
     getJSONtoFhir() {
@@ -149,7 +150,7 @@ class MedicationRquest {
         this.setEncounter();
         this.setNote();
         // this.setDosageInstruction();
-        this.setDocument();
+        // this.setDocument();
     }
 
     getFhirToJson() {

@@ -16,8 +16,16 @@ const createDocument = async (data) => {
 
 const fetchDocument = async (docId) => {
     let response = await axios.get(config.baseUrl+`DocumentReference?_id=${docId}`);
-    if(response.status == 200){ 
-        return response?.data?.entry?.[0]?.resource?.content[0]?.attachment || null;
+    if(response.status == 200){
+        if(response?.data?.entry?.[0]?.resource?.content[0]?.attachment){
+            return { 
+                filename: response?.data?.entry?.[0]?.resource?.content[0]?.attachment?.title,
+                note: response?.data?.entry?.[0]?.resource?.description || ""
+            }
+        } 
+        else{
+            return null;
+        }
     }
 }
 
@@ -39,7 +47,6 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                         "start": patPres.generatedOn,
                         "end": patPres.generatedOn
                     }
-                console.info(patPres)
                     encounterData.data.entry[0].resource.identifier.push(
                     {   "system": config.snUrl,
                         "value": patPres.prescriptionId
@@ -53,30 +60,37 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 let dateToday = (new Date(patPres.generatedOn)).getTime().toString();
                 let lastDigits = dateToday.slice(9, -1);
                 let grpIdentify =  lastDigits + patPres.patientId;
+                let medicationRequestData = {
+                    patientId: patPres.patientId,
+                    generatedOn: patPres.generatedOn,
+                    prescriptionId: patPres.prescriptionId,
+                    encounterId: encounterData.data.entry[0].resource.id,
+                    grpIdentify: grpIdentify,
+                    identifier: [... encounterData.data.entry[0].resource.identifier],
+                }
+                let medRequest = new MedicationRquest(medicationRequestData, {});
+                medRequest.getJSONtoFhir();
                 for(let prescription of medList) {
-                    let document = new DocumentReference(prescription.filename, {});
+                    let document = new DocumentReference(prescription.filename, prescription.note, {});
                     document.getJSONtoFhir();
                     let docData = {...document.getFhirResource()};
                     let docId = await createDocument(docData);
-                    prescription.patientId = patPres.patientId;
-                    prescription.generatedOn = patPres.generatedOn;
-                    prescription.prescriptionId = patPres.prescriptionId;
-                    prescription.encounterId = encounterData.data.entry[0].resource.id
-                    prescription.grpIdentify = grpIdentify;
-                    prescription.identifier = [... encounterData.data.entry[0].resource.identifier];
-                    // prescription.identifier.push({
-                    //     "system":config.sctCodeUrl,
-                    //     "value": prescription.medFhirId
-                    // })
-                    prescription.docId = docId;
-                    let medRequest = new MedicationRquest(prescription, {});
-                    medRequest.getJSONtoFhir();
-                    let medReqData = {...medRequest.getFhirResource()};
-                    medReqData.resourceType = "MedicationRequest";
-                    medReqData.id = uuidv4();
-                    let medReqResource = await bundleFun.setBundlePost(medReqData, prescription.identifier, medReqData.id, "POST", "identifier");
-                    resourceResult.push(medReqResource);                    
+                    medRequest.setDocument(docId);
+                    // prescription.patientId = patPres.patientId;
+                    // prescription.generatedOn = patPres.generatedOn;
+                    // prescription.prescriptionId = patPres.prescriptionId;
+                    // prescription.encounterId = encounterData.data.entry[0].resource.id
+                    // prescription.grpIdentify = grpIdentify;
+                    // prescription.identifier = [... encounterData.data.entry[0].resource.identifier];
+                    // prescription.docId = docId;
+                    // let medRequest = new MedicationRquest(prescription, {});
+                                      
                 }
+                let medReqData = {...medRequest.getFhirResource()}; 
+                medReqData.resourceType = "MedicationRequest";
+                medReqData.id = uuidv4();
+                let medReqResource = await bundleFun.setBundlePost(medReqData, medicationRequestData.identifier, medReqData.id, "POST", "identifier");
+                resourceResult.push(medReqResource); 
             }
         }
         else {
@@ -92,15 +106,22 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                             let medReqData = new MedicationRquest({}, medReq);
                             medReqData.getFhirToJson();
                             let medData = medReqData.getMedReqResource();
+                            let files = [];
                             medData.filename = null;
                             let supportingInformation = medReq?.supportingInformation || [];
                             for(let doc of supportingInformation){
                                 let documentId = doc.reference.split('/')[1];
                                 let document = await fetchDocument(documentId);
-                                medData.filename = document?.title;
+                                medData.filename = document?.filename;
+                                if(medData.filename){
+                                    files.push({
+                                        filename: document?.filename,
+                                        note: document?.note
+                                    });
+                                }
                             }
-                            if(medData.filename){
-                                encounterData.prescription.push(medData)
+                            if(files.length > 0){
+                                encounterData.prescription.push(...files)
                             }
                     }
                 if(encounterData.prescription.length > 0)

@@ -2,10 +2,12 @@ const config = require("../config/nodeConfig")
 
 class DocumentReference {
     filename;
+    note;
     fhirResource;
 
-    constructor(filename, fhir_resource) {
+    constructor(filename, note, fhir_resource) {
         this.filename = filename;
+        this.note = note
         this.fhirResource = fhir_resource;
     }
 
@@ -21,15 +23,21 @@ class DocumentReference {
         );
     }
 
+    setNote(){
+        this.fhirResource.description = this.note;
+    }
+
     getJSONtoFhir() {
         this.setBasicStructure();
         this.setDocumentContent();
+        this.setNote();
     }
 
     setBasicStructure() {
         this.fhirResource.resourceType = "DocumentReference";
         this.fhirResource.status = "current";
         this.fhirResource.content = [];
+        this.fhirResource.description = ""
     }
 
     getFhirResource() {
