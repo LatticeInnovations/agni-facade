@@ -29,6 +29,13 @@ const fetchDocument = async (docId) => {
     }
 }
 
+const fetchMedicationRequest = async (encounterId) => {
+    let response = await axios.get(config.baseUrl+`MedicationRequest?encounter=${encounterId}`);
+    if(response.status == 200){
+        return response?.data?.entry?.[0]?.resource;
+    }
+}
+
 let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
@@ -93,6 +100,22 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 resourceResult.push(medReqResource); 
             }
         }
+        else if(["PATCH", "patch"].includes(reqMethod)){
+            for(let patPres of reqInput){
+                let medicationRequest = await fetchMedicationRequest(patPres.prescriptionFhirId);
+                let supportingInformation = [];
+                for(let prescription of patPres.prescription) {
+                    let document = new DocumentReference(prescription.filename, prescription.note, {});
+                    document.getJSONtoFhir();
+                    let docData = {...document.getFhirResource()};
+                    let docId = await createDocument(docData);
+                    supportingInformation.push({ reference: `DocumentReference/${docId}` });
+                }
+                medicationRequest.supportingInformation = supportingInformation;
+                let medReqResource = await bundleFun.setBundlePost(medicationRequest, medicationRequest.identifier, medicationRequest.id, "PUT", "identifier");
+                resourceResult.push(medReqResource); 
+            }
+        }
         else {
             let encounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter" && (e.resource.status == "in-progress" || e.resource.status == "finished")).map(e => e.resource);
             console.info("check encounter length: ", encounterList.length)
@@ -102,6 +125,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 let encounterData = encounter.getEncounterResource();
             let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);          
              encounterData.prescription = [];
+             let insert = false;
                     for(let medReq of medReqList) {                     
                             let medReqData = new MedicationRquest({}, medReq);
                             medReqData.getFhirToJson();
@@ -120,11 +144,12 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                                     });
                                 }
                             }
+                            insert = !medReq?.medicationReference;
                             if(files.length > 0){
                                 encounterData.prescription.push(...files)
                             }
                     }
-                if(encounterData.prescription.length > 0)
+                if(insert)
                     resourceResult.push(encounterData)
             }
 
