@@ -59,7 +59,7 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length);
             let id = (fullUrl.includes("uuid:")) ? fullUrl.split("uuid:")[1] : fullUrl;
             if(resType == "MedicationRequest") {
-                id = element.resource.identifier[1].value;
+                id = element?.resource?.identifier?.[1]?.value;
             }
             // need to see the or statment to be removed
             
