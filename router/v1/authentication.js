@@ -46,4 +46,18 @@ router.post("/otp",[oneOf([
 ]), check("otp").notEmpty().isNumeric().isLength({min: 6, max: 6})], authController.OTPAuthentication);
 
 
+// user verification
+router.post('/verification', [
+    oneOf([
+        check("userContact").notEmpty().isEmail().isLength({max: 70}), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})]),
+    check('type').notEmpty().isIn(['register', 'delete']),
+], authController.userVerification);
+
+// user verification verify OTP
+router.post('/verification/otp', [oneOf([
+    check("userContact").notEmpty().isEmail().isLength({max: 70}), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})
+]), check("otp").notEmpty().isNumeric().isLength({min: 6, max: 6}),
+    check('type').notEmpty().isIn(['register', 'delete']),
+],authController.userVerificationVerifyOTP);
+
 module.exports = router
