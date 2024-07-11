@@ -181,7 +181,7 @@ async function getUserDetail(req, contact) {
         let queryParam ={"_total": "accurate", "_revinclude": "PractitionerRole:practitioner"};
         queryParam[contact] = contact == "email" ? req.body.userContact.toLowerCase() : req.body.userContact;
         let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam);
-        if (existingPractioner.data.total != 1) {
+        if (existingPractioner.data.total == 0 || !existingPractioner?.data?.entry) {
             return null;
         }
         else {
@@ -408,11 +408,13 @@ const userVerificationVerifyOTP = async (req, res, next) => {
             "userId": userDetail?.dataValues?.user_id || req.body.userContact, 
             "userName": userDetail?.dataValues?.user_name || req.body.userContact,
             "orgId": userDetail?.dataValues?.org_id || req.body.userContact,
-            type: type
+            type: type,
+            "email": userDetail?.dataValues?.user_email || null,
+            "mobile": userDetail?.dataValues?.mobile_number || null
         }
         let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '5m' });
         client.del(id);
-        return res.status(200).json({ status: 1, message: "User Verified", data: { token: token } });
+        return res.status(200).json({ status: 1, message: "User Verified", data: { token: 'Bearer ' + token } });
     }
     catch(e){
         console.error(e);

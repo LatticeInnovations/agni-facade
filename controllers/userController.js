@@ -103,7 +103,10 @@ const deleteUserData = async (req, res, next) => {
         let {temptoken} = req.headers;
         let type = null;
         let userId = null;
+        let mobile = null;
+        let email = null;
         let errorMessage = '';
+        temptoken = temptoken?.split(" ")[1] || null;
         if (temptoken) {
             jwt.verify(temptoken, secretKey,function (err, decoded) {
                 if (err) {
@@ -113,6 +116,8 @@ const deleteUserData = async (req, res, next) => {
                 else {
                     type = decoded?.type;
                     userId =  decoded?.userId;
+                    mobile = decoded?.mobile;
+                    email = decoded?.email;
                 }
             });
         } else { errorMessage = 'No token provided'}
@@ -124,7 +129,23 @@ const deleteUserData = async (req, res, next) => {
             return res.status(422).json({ status: 0, message: "Invalid token" });
         }
         
-        deleteUserDataQueue.add({ userId: req.decoded.userId, orgId: req.decoded.orgId }).then(() => {
+        await axios.put(config.baseUrl+'Practitioner/'+userId, {
+            "resourceType": "Practitioner",
+            "id": userId,
+            "active": false,
+            "telecom": [
+              {
+                "system": "phone",
+                "value": mobile,
+                "rank": 1
+              },
+              {
+                "system": "email",
+                "value": email
+              }
+            ]
+        });
+        deleteUserDataQueue.add({ userId: req.decoded.userId, orgId: req.decoded.orgId, mobile, email }).then(() => {
             return res.json({ status : 1, message: "Your account will be delete within 48 hours, you will get confirmation SMS or email"});
         });
     }
