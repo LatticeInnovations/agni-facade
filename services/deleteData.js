@@ -1,5 +1,7 @@
 const axios = require('axios');
 const config = require("../config/nodeConfig");
+let sendSms = require('../utils/twilio.util');
+let sendEmail = require("../utils/sendgrid.util").sendEmail
 
 const parseData = (resource) => {
     let resourceData = resource?.data?.entry || [];
@@ -31,7 +33,9 @@ const deleteData = async (data) => {
     let documentRefIds = [];
     try{
         let userId = data.userId;
-        let orgId = data.orgId; 
+        let orgId = data.orgId;
+        let email = data.email;
+        let mobile = data.mobile;
         let practitionerRole = await axios.get(config.baseUrl+`PractitionerRole?practitioner=Practitioner/${userId}`);
         practitionerRoleIds = parseData(practitionerRole);
         
@@ -68,9 +72,6 @@ const deleteData = async (data) => {
             encounterIds = parseData(encounter)
         }
        
-        
-        // let documentRef = await axios.get(config.baseUrl+`DocumentReference?_id=${33779}&_count=100000`);
-
         console.info("practitionerRole",practitionerRoleIds)
         console.info("location",locationIds)
         console.info("patients", patientIds)
@@ -82,6 +83,142 @@ const deleteData = async (data) => {
         console.info("slots", slotIds)
         console.info("medicationreqs", medicationReqIds)
         console.info("documentrefs", documentRefIds)
+
+        let request = {
+            resourceType: "Bundle",
+            type: "transaction",
+            entry: []
+        }
+
+        request.entry.push({
+            "request": {
+                  "method": "DELETE",
+                  "url": "Practitioner/"+userId
+                }
+            },
+            {
+            "request": {
+                  "method": "DELETE",
+                  "url": "Organization/"+orgId
+                }
+            }
+        )
+
+        practitionerRoleIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "PractitionerRole/"+id
+                }
+              })
+        })
+
+        locationIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "Location/"+id
+                }
+              })
+        })
+
+        patientIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "Patient/"+id
+                }
+              })
+        })
+
+        relatedPersonIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "RelatedPerson/"+id
+                }
+              })
+        })
+
+        personIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "Person/"+id
+                }
+              })
+        })
+
+        appointmentIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "Appointment/"+id
+                }
+              })
+        })
+
+        encounterIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "Encounter/"+id
+                }
+              })
+        })
+
+        scheduleIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "Schedule/"+id
+                }
+              })
+        })
+
+        slotIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "Schedule/"+id
+                }
+              })
+        })
+
+        medicationReqIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "MedicationRequest/"+id
+                }
+              })
+        })
+
+        documentRefIds.forEach((id) => {
+            request.entry.push({
+                "request": {
+                  "method": "DELETE",
+                  "url": "DocumentReference/"+id
+                }
+              })
+        })
+
+        if(request.entry.length > 0){
+            await axios.post(config.baseUrl, request);
+            if (email) {
+                let mailData = {
+                    to: [{ email: email }],
+                    subject: 'Agni : Account Deleted',
+                    content: 'Your account has been successfully deleted.'
+                }
+                await sendEmail(mailData);
+            }
+            
+            if(mobile) {
+                let text = `Your Agni account has been successfully deleted.`
+                await sendSms(mobile, text);
+            }
+        }
     }
     catch(e){
         console.error(e)      
