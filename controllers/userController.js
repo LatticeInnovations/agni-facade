@@ -29,8 +29,9 @@ let getUserProfile = async function (req, res, next) {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
             result = result.concat(res_data);
             result = result[0].resourceResult;
+            console.info(result)
             data.userId = result[0].practitionerId,
-            data.userName = result[0].firstName + " " + (result[0].middleName? result[0].middleName + " " : "") + result[0].lastName;
+            data.userName = result[0].firstName + " " + (result[0].middleName? result[0].middleName + " " : "") + (result[0]?.lastName || '');
             data.mobileNumber = result[0].mobileNumber;
             data.userEmail = result[0].email;
             data.address = result[0].address;
@@ -133,6 +134,7 @@ const deleteUserData = async (req, res, next) => {
             "resourceType": "Practitioner",
             "id": userId,
             "active": false,
+            "name": [{"family": '', "given": [mobile || email]} ],
             "telecom": [
               {
                 "system": "phone",
