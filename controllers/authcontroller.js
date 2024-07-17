@@ -164,7 +164,7 @@ async function sendOTP(isEmail, userDetail, otp) {
             await sendEmail(mailData);
         }
         else {
-            let text = `<#> Use OTP ${otp} to login to agni App\n` + config.OTPHash;
+            let text = `<#> Use OTP ${otp} for authentication in agni App\n` + config.OTPHash;
             console.log("check text message", text);
             await sendSms(userDetail.dataValues.mobile_number, text);
         }
@@ -187,7 +187,7 @@ async function getUserDetail(req, contact) {
         else {
             let user_id = existingPractioner.data.entry[0].resource.id;
             let user_name = existingPractioner.data.entry[0].resource.name[0].given.join(' ');
-            user_name += " " + existingPractioner.data.entry[0].resource.name[0].family;
+            // user_name += " " + existingPractioner?.data?.entry?.[0]?.resource?.name?.[0]?.family || '';
             let email = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "email");
             let phone = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "phone");
             let orgId = existingPractioner.data.entry[1].resource.organization.reference.split('/')[1];

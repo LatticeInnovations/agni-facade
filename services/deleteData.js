@@ -180,7 +180,7 @@ const deleteData = async (data) => {
             request.entry.push({
                 "request": {
                   "method": "DELETE",
-                  "url": "Schedule/"+id
+                  "url": "Slot/"+id
                 }
               })
         })
