@@ -25,7 +25,7 @@ router.use(function (req, res, next) {
             } else {
                 // if everything is good, save to request for use in other routes
                 req.decoded = decoded;
-                req.token = {"userId": decoded.userId, "orgId": decoded.orgId};
+                req.token = {"userId": decoded.userId, "orgId": decoded.orgId, "type": decoded?.type || null};
                 next();
             }
         });

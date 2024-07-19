@@ -5,7 +5,7 @@ module.exports = [
         files : [],
         content: `Hello %s,
         <br>
-         Please use OTP %s to login to the Agni App.`
+         Please use OTP %s for authentication in agni App.`
     },
     {
         notification_type_id: 2,

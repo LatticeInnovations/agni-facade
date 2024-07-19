@@ -7,6 +7,7 @@ const cors = require('cors');
 const cookieParser = require("cookie-parser");
 let cronJob= require("./services/cros-jobs/triggerAppointment")
 const config = require("./config/nodeConfig");
+require('./services/deleteDataProcess');
 
 require('dotenv').config();
 
