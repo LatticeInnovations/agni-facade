@@ -20,8 +20,12 @@ const login = async function (req, res) {
         }
         // get user details
         let userDetail = await getUserDetail(req.body);
-        if (userDetail == null || userDetail.dataValues.authentication_detail == null || !userDetail.dataValues.authentication_detail.dataValues.password ||!userDetail.profile.is_active)
+        if (userDetail == null || userDetail.dataValues.authentication_detail == null || !userDetail.dataValues.authentication_detail.dataValues.password){
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
+        }
+        else if(!userDetail.profile.is_active){
+            return res.status(401).json({ status: 0, message: "Your account has been disabled. Please contact your administrator." });
+        }
         let { authData, currentTime, otpCheckAttempt, otpGenAttempt, loginAttempts } = setData(userDetail);
         let updatedOn = Date.now();
         let diffMins = getMinutes(authData.attempt_timestamp);
@@ -92,8 +96,12 @@ const verifyContactAndGenOTP = async function (req, res) {
         let userDetail = await getUserDetail(req.body);
         let isMobile = req.body.isMobile;
         let roleID = userDetail?.profile?.roles[0];
-        if ((userDetail == null || userDetail.dataValues.authentication_detail == null || !userDetail.profile.is_active) || (req.body.forgotPass == undefined && isMobile && (roleID == "6868009" || roleID == "ict")))
+        if ((userDetail == null || userDetail.dataValues.authentication_detail == null) || (req.body.forgotPass == undefined && isMobile && (roleID == "6868009" || roleID == "ict"))){
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
+        }
+        else if(!userDetail.profile.is_active){
+            return res.status(401).json({ status: 0, message: "Your account has been disabled. Please contact your administrator." });
+        }
         else {
             const authData = userDetail.dataValues.authentication_detail.dataValues;
             let diffMins = 100000;
