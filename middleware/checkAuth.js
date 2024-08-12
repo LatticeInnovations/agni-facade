@@ -29,13 +29,18 @@ router.use(async function (req, res, next) {
             } else {
                 // if everything is good, save to request for use in other routes
                 req.decoded = decoded;
-              
+                console.info("decoded Token", decoded)
                 let practitionerData = await getUserData(req.decoded.user_id);
-                console.info(req.decoded, practitionerData)
+                let practitionerRoleData = await getPractitionerRoleData(req.decoded.user_id);
+                let userData = createUserData(practitionerData, practitionerRoleData);
+                console.info(userData)
                 if(practitionerData.length < 1) {
                     return res.status(401).json({ status: 0, message: 'Unauthorized' });
                 }
                 else if(!JSON.parse(practitionerData[0].res_text_vc).active){
+                    return res.status(401).json({ status: 0, message: 'Your account has been disabled. Please contact your administrator.' });
+                }
+                else if((decoded.user_name != userData.user_name) || (decoded.mobile_number != userData.mobile_number) || (decoded.orgId != userData.orgId) || (decoded.roles[0] != userData.roles[0])){
                     return res.status(401).json({ status: 0, message: 'Unauthorized' });
                 }
                 else {
@@ -74,6 +79,32 @@ async function getUserData(user_id) {
     
 }
 
+async function getPractitionerRoleData(user_id){
+    try{
+        const roleResource = await db.sequelize.query(`select res_id, res_type, res_text_vc FROM hfj_res_ver where res_type = 'PractitionerRole' and res_id = 
+            (SELECT src_resource_id FROM public.hfj_res_link where source_resource_type = 'PractitionerRole' and target_resource_id=${user_id} order by pId limit 1)  order by res_ver desc limit 1;`,{type: sequelize.QueryTypes.SELECT});
+        return roleResource;
+    }
+    catch(e){
+        return Promise.reject(e)
+    }
+}
+
+const createUserData = (practitionerData, practitionerRoleData) => {
+    practitionerData = JSON.parse(practitionerData[0].res_text_vc);
+    let user_name = practitionerData.name[0].given.join(' ');
+    user_name += practitionerData?.name[0]?.family ? " " + practitionerData.name[0].family : '';
+            
+    let phone = practitionerData.telecom.filter(e => e.system == "phone");
+    let roleData = JSON.parse(practitionerRoleData[0].res_text_vc);
+    let roleList = roleData.code[0].coding.map(element => element.code);
+    return {
+        user_name,
+        mobile_number: phone[0].value,
+        orgId: roleData.organization.reference.split("/")[1],
+        roles: roleList
+    }
+}
 
 
 module.exports = router;
