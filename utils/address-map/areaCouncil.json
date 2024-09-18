@@ -282,5 +282,17 @@
   {
     "display": "East Vanua Lava",
     "aId": 71
+  },
+  {
+    "display": "Luganville",
+    "aId": 72
+  },
+  {
+    "display": "Port Villa",
+    "aId": 73
+  },
+  {
+    "display": "Lenakel",
+    "aId": 74
   }
 ]
