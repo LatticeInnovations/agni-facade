@@ -23,8 +23,13 @@ let login = async function (req, res) {
         let userDetail = await getUserDetail(req, contact);
         let loginAttempts = 0, otp = 0;
         let OTPGenerateAttempt = 1;
-        if (userDetail == null || !userDetail.dataValues.is_active)
-            return res.status(401).json({ status: 0, message: "Unauthorized user" });
+        if (userDetail == null){
+            return res.status(401).json({ status: 0, message: "User does not exist" });
+        }
+        else if(!userDetail.dataValues.is_active){
+            return res.status(401).json({ status: 0, message: "we received a delete request for your account, you can signup again after deletion" });
+        }
+            
         let authentication_detail = userDetail.dataValues.authentication_detail;
         let timeData = await calculateTime(authentication_detail);
         // if user comes back after >= 5 mins reset every value 
@@ -85,8 +90,12 @@ let OTPAuthentication = async function (req, res) {
         let isEmail = checkIsEmail(req.body.userContact);
         let contact = isEmail ? 'email' : 'phone';
         let userDetail = await getUserDetail(req, contact);
-        if (userDetail == null || !userDetail.dataValues.is_active)
-            return res.status(401).json({ status: 0, message: "Unauthorized user" });
+        if (userDetail == null){
+            return res.status(401).json({ status: 0, message: "User does not exist" });
+        }
+        else if(!userDetail.dataValues.is_active){
+            return res.status(401).json({ status: 0, message: "we received a delete request for your account, you can signup again after deletion" });
+        }
         let loginAttempts = 0, apiStatus = 200;
         let resMessage = {};
         let authentication_detail = userDetail.dataValues.authentication_detail;
@@ -296,7 +305,7 @@ const userVerification = async (req, res, next) => {
                 });
             }
             userdata = await client.hGetAll(id);
-            if ((userdata.loginCount >= config.totalLoginAttempts)) {
+            if ((userdata.loginCount >= config.totalLoginAttempts) || userdata.otpVerifyCount >= 5) {
                 console.log("Login count reset");
                 return res.status(401).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
             }
@@ -376,7 +385,7 @@ const userVerificationVerifyOTP = async (req, res, next) => {
         }
         else if (userdata.otpVerifyCount >= 5) {
             console.log("To many incorrect otp attempts");
-            return res.status(401).json({ status: 0, message: "Too many invalid attempts. Please retry after sometime."});
+            return res.status(401).json({ status: 0, message: "Too many attempts. Please try after 5 mins"});
         }
         userdata = await client.hGetAll(id);
         if (userdata.otp != req.body.otp) {
