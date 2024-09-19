@@ -144,19 +144,19 @@ class MedicationRquest {
         this.setBasicStructure();
         this.setIdentifier();
         this.setIntent();
-        // this.setMedication();
+        this.setMedication();
         this.setGroupIdentifier();
         this.setPatientReference();
         this.setEncounter();
         this.setNote();
-        // this.setDosageInstruction();
+        this.setDosageInstruction();
         // this.setDocument();
     }
 
     getFhirToJson() {
-        // this.getId();
-        // this.getNote();
-        // this.getDoseInstruction();
+        this.getId();
+        this.getNote();
+        this.getDoseInstruction();
     }
 
     getMedReqResource() {
@@ -168,13 +168,13 @@ class MedicationRquest {
     }
 
     setBasicStructure() {
-        // this.fhirResource.dosageInstruction = [];
-        // this.fhirResource.medicationReference = {};
+        this.fhirResource.dosageInstruction = [];
+        this.fhirResource.medicationReference = {};
         this.fhirResource.subject = {};
         this.fhirResource.encounter = {};
         this.fhirResource.note = [];
         this.fhirResource.identifier = [];
-        this.fhirResource.supportingInformation = [];
+        // this.fhirResource.supportingInformation = [];
     }
 
 }
