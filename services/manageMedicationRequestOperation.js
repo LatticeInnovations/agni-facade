@@ -67,55 +67,64 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 let dateToday = (new Date(patPres.generatedOn)).getTime().toString();
                 let lastDigits = dateToday.slice(9, -1);
                 let grpIdentify =  lastDigits + patPres.patientId;
-                let medicationRequestData = {
-                    patientId: patPres.patientId,
-                    generatedOn: patPres.generatedOn,
-                    prescriptionId: patPres.prescriptionId,
-                    encounterId: encounterData.data.entry[0].resource.id,
-                    grpIdentify: grpIdentify,
-                    identifier: [... encounterData.data.entry[0].resource.identifier],
-                }
-                let medRequest = new MedicationRquest(medicationRequestData, {});
-                medRequest.getJSONtoFhir();
+                // let medicationRequestData = {
+                //     patientId: patPres.patientId,
+                //     generatedOn: patPres.generatedOn,
+                //     prescriptionId: patPres.prescriptionId,
+                //     encounterId: encounterData.data.entry[0].resource.id,
+                //     grpIdentify: grpIdentify,
+                //     identifier: [... encounterData.data.entry[0].resource.identifier],
+                // }
+                // let medRequest = new MedicationRquest(medicationRequestData, {});
+                // medRequest.getJSONtoFhir();
                 for(let prescription of medList) {
-                    let document = new DocumentReference(prescription.filename, prescription.note, {});
-                    document.getJSONtoFhir();
-                    let docData = {...document.getFhirResource()};
-                    let docId = await createDocument(docData);
-                    medRequest.setDocument(docId);
-                    // prescription.patientId = patPres.patientId;
-                    // prescription.generatedOn = patPres.generatedOn;
-                    // prescription.prescriptionId = patPres.prescriptionId;
-                    // prescription.encounterId = encounterData.data.entry[0].resource.id
-                    // prescription.grpIdentify = grpIdentify;
-                    // prescription.identifier = [... encounterData.data.entry[0].resource.identifier];
+                    // let document = new DocumentReference(prescription.filename, prescription.note, {});
+                    // document.getJSONtoFhir();
+                    // let docData = {...document.getFhirResource()};
+                    // let docId = await createDocument(docData);
+                    // medRequest.setDocument(docId);
+                    prescription.patientId = patPres.patientId;
+                    prescription.generatedOn = patPres.generatedOn;
+                    prescription.prescriptionId = patPres.prescriptionId;
+                    prescription.encounterId = encounterData.data.entry[0].resource.id
+                    prescription.grpIdentify = grpIdentify;
+                    prescription.identifier = [... encounterData.data.entry[0].resource.identifier];
+                    prescription.identifier.push({
+                        "system": config.sctCodeUrl,
+                        "value": prescription.medFhirId
+                    })
                     // prescription.docId = docId;
-                    // let medRequest = new MedicationRquest(prescription, {});
-                                      
+                    let medRequest = new MedicationRquest(prescription, {});
+                    medRequest.getJSONtoFhir();
+                    let medReqData = {...medRequest.getFhirResource()};
+                    medReqData.resourceType = "MedicationRequest";
+                    medReqData.id = uuidv4();
+                    let medReqResource = await bundleFun.setBundlePost(medReqData, prescription.identifier, medReqData.id, "POST", "identifier");
+                    resourceResult.push(medReqResource); 
                 }
-                let medReqData = {...medRequest.getFhirResource()}; 
-                medReqData.resourceType = "MedicationRequest";
-                medReqData.id = uuidv4();
-                let medReqResource = await bundleFun.setBundlePost(medReqData, medicationRequestData.identifier, medReqData.id, "POST", "identifier");
-                resourceResult.push(medReqResource); 
+                // let medReqData = {...medRequest.getFhirResource()}; 
+                // medReqData.resourceType = "MedicationRequest";
+                // medReqData.id = uuidv4();
+                // let medReqResource = await bundleFun.setBundlePost(medReqData, medicationRequestData.identifier, medReqData.id, "POST", "identifier");
+                // resourceResult.push(medReqResource); 
             }
         }
-        else if(["PATCH", "patch"].includes(reqMethod)){
-            for(let patPres of reqInput){
-                let medicationRequest = await fetchMedicationRequest(patPres.prescriptionFhirId);
-                let supportingInformation = [];
-                for(let prescription of patPres.prescription) {
-                    let document = new DocumentReference(prescription.filename, prescription.note, {});
-                    document.getJSONtoFhir();
-                    let docData = {...document.getFhirResource()};
-                    let docId = await createDocument(docData);
-                    supportingInformation.push({ reference: `DocumentReference/${docId}` });
-                }
-                medicationRequest.supportingInformation = supportingInformation;
-                let medReqResource = await bundleFun.setBundlePost(medicationRequest, medicationRequest.identifier, medicationRequest.id, "PUT", "identifier");
-                resourceResult.push(medReqResource); 
-            }
-        }
+        // else if(["PATCH", "patch"].includes(reqMethod)){
+        //     for(let patPres of reqInput){
+        //         let medicationRequest = await fetchMedicationRequest(patPres.prescriptionFhirId);
+        //         let supportingInformation = [];
+        //         for(let prescription of patPres.prescription) {
+        //             let document = new DocumentReference(prescription.filename, prescription.note, {});
+        //             document.getJSONtoFhir();
+        //             let docData = {...document.getFhirResource()};
+        //             let docId = await createDocument(docData);
+        //             supportingInformation.push({ reference: `DocumentReference/${docId}` });
+        //         }
+        //         medicationRequest.supportingInformation = supportingInformation;
+        //         let medReqResource = await bundleFun.setBundlePost(medicationRequest, medicationRequest.identifier, medicationRequest.id, "PUT", "identifier");
+        //         resourceResult.push(medReqResource); 
+        //     }
+        // }
         else {
             let encounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter" && (e.resource.status == "in-progress" || e.resource.status == "finished")).map(e => e.resource);
             console.info("check encounter length: ", encounterList.length)
@@ -123,33 +132,35 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 let encounter = new Encounter({}, encData);
                 encounter.getFhirToJson();
                 let encounterData = encounter.getEncounterResource();
-            let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);          
+            let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);         
              encounterData.prescription = [];
-             let insert = false;
+            //  let insert = false;
                     for(let medReq of medReqList) {                     
                             let medReqData = new MedicationRquest({}, medReq);
                             medReqData.getFhirToJson();
                             let medData = medReqData.getMedReqResource();
-                            let files = [];
-                            medData.filename = null;
-                            let supportingInformation = medReq?.supportingInformation || [];
-                            for(let doc of supportingInformation){
-                                let documentId = doc.reference.split('/')[1];
-                                let document = await fetchDocument(documentId);
-                                medData.filename = document?.filename;
-                                if(medData.filename){
-                                    files.push({
-                                        filename: document?.filename,
-                                        note: document?.note
-                                    });
-                                }
-                            }
-                            insert = !medReq?.medicationReference;
-                            if(files.length > 0){
-                                encounterData.prescription.push(...files)
-                            }
+                            medData.qtyPrescribed = medData.qtyPerDose * medData.frequency * medData.duration;
+                            encounterData.prescription.push(medData);
+                            // let files = [];
+                            // medData.filename = null;
+                            // let supportingInformation = medReq?.supportingInformation || [];
+                            // for(let doc of supportingInformation){
+                            //     let documentId = doc.reference.split('/')[1];
+                            //     let document = await fetchDocument(documentId);
+                            //     medData.filename = document?.filename;
+                            //     if(medData.filename){
+                            //         files.push({
+                            //             filename: document?.filename,
+                            //             note: document?.note
+                            //         });
+                            //     }
+                            // }
+                            // insert = !medReq?.medicationReference;
+                            // if(files.length > 0){
+                            //     encounterData.prescription.push(...files)
+                            // }
                     }
-                if(insert)
+                if(encounterData.prescription.length > 0)
                     resourceResult.push(encounterData)
             }
 
