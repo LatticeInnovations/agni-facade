@@ -66,7 +66,7 @@ let corsOptions = {
 }
 app.use(cors(corsOptions));
 
-console.log= function(){}
+// console.log= function(){}
 
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json());
@@ -91,6 +91,7 @@ cronJob.appointmentList();
 require('./router')(app);
 
 app.use((req, res, next) => {
+  console.log(req)
   console.log("check 404")
   const error = new Error('Not found');
   error.status = 404;

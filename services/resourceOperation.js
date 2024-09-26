@@ -7,6 +7,7 @@ let practitioner = require("./managePractitioner");
 let practitionerRole = require("./managePractitionerRole");
 let schedule= require("./manageSchedule")
 let appointment = require("./manageAppointment");
+let medDispense = require("./manageMedicineDispense")
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
@@ -30,6 +31,8 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
             case "Schedule" : bundleData = await schedule.setScheduleData(resType, inputData, FHIRData, reqMethod);
             break;
             case "Appointment" : bundleData = await appointment.setApptData(resType, inputData, FHIRData, reqMethod, reqQuery);
+            break;
+             case "MedicationDispense" : bundleData = await medDispense.setMedicationDispenseData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
              break;
         }
 

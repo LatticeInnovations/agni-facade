@@ -19,7 +19,7 @@ class MedicationRquest {
    }
 
     getId() {
-        this.medReqObj.medFhirId = this.fhirResource.medicationReference.reference.split("/")[1];
+        this.medReqObj.medFhirId = this.fhirResource?.medicationReference?.reference.split("/")[1];
     }
 
 
@@ -77,18 +77,21 @@ class MedicationRquest {
     }
 
     getDoseInstruction() {
-        this.medReqObj.qtyPerDose = this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.value;
-        this.medReqObj.frequency = this.fhirResource.dosageInstruction[0].timing.repeat.frequency;
-        this.medReqObj.doseForm = this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.unit;
-        this.medReqObj.doseFormCode = doseFormList[this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.unit];
-        this.medReqObj.duration = this.fhirResource.dosageInstruction[0].timing.repeat.period;
-        console.log()
-        if(this.fhirResource.dosageInstruction[0].additionalInstruction) {
-            this.medReqObj.timing = this.fhirResource.dosageInstruction[0].additionalInstruction[0].coding[0].code;
+        if (this.fhirResource?.dosageInstruction) {
+            this.medReqObj.qtyPerDose = this.fhirResource?.dosageInstruction[0]?.doseAndRate[0].doseQuantity.value;
+            this.medReqObj.frequency = this.fhirResource?.dosageInstruction[0]?.timing?.repeat?.frequency;
+            this.medReqObj.doseForm = this.fhirResource?.dosageInstruction[0]?.doseAndRate[0]?.doseQuantity?.unit;
+            this.medReqObj.doseFormCode = doseFormList[this.fhirResource?.dosageInstruction[0]?.doseAndRate[0]?.doseQuantity?.unit];
+            this.medReqObj.duration = this.fhirResource?.dosageInstruction[0]?.timing?.repeat?.period;
+            console.log()
+            if(this.fhirResource?.dosageInstruction[0]?.additionalInstruction) {
+                this.medReqObj.timing = this.fhirResource?.dosageInstruction[0]?.additionalInstruction[0]?.coding[0]?.code;
+            }
+            else {
+                this.medReqObj.timing = null;
+            }
         }
-        else {
-            this.medReqObj.timing = null;
-        }
+
     }
 
     setDosageInstruction() {

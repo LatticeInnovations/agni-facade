@@ -21,6 +21,7 @@ let login = async function (req, res) {
         let isEmail = checkIsEmail(req.body.userContact);
         let contact = isEmail ? 'email' : 'phone';
         let userDetail = await getUserDetail(req, contact);
+        console.log(userDetail)
         let loginAttempts = 0, otp = 0;
         let OTPGenerateAttempt = 1;
         if (userDetail == null){
@@ -31,12 +32,14 @@ let login = async function (req, res) {
         }
             
         let authentication_detail = userDetail.dataValues.authentication_detail;
+        console.log(authentication_detail.dataValues)
         let timeData = await calculateTime(authentication_detail);
         // if user comes back after >= 5 mins reset every value 
         if (timeData.lastAttemptTimeDiff > config.lockTimeInMin) {
             loginAttempts = 0;
             OTPGenerateAttempt = 1;
         }
+        
         // if otp validation falied attempt (login attempts) >= 5 and <= 5min or otp generations >= 5 and time elapsed <= 5 mins give error
         else if (authentication_detail != null && timeData.lastAttemptTimeDiff <= config.lockTimeInMin && (authentication_detail.dataValues.login_attempts >= config.totalLoginAttempts || authentication_detail.dataValues.otp_generate_attempt >= config.OTPGenAttempt)) {
             let e = { status: 0, message: "Too many attempts. Please try after 5 mins" }

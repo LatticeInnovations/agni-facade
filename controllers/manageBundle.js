@@ -15,11 +15,12 @@ let createBundle = async function (req, res) {
         const reqInput = req.body;
         let bundle;
         let fhirResource = {};
-
+        //  get JSON format of bundle resource
         let resourceData = await getBundleJSON(reqInput, resourceType, fhirResource, "POST", token);
             bundle = resourceData.bundle;
-      //return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
+        //return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
         if (bundle.entry.length > 0) {
+            // Save bundle data
             let response = await axios.post(config.baseUrl, bundle);
             if (response.status == 200) {
                 let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType);
@@ -122,17 +123,24 @@ let patchBundle = async function (req, res) {
 }
 
 let getBundleJSON = async function (reqInput, resourceType, fhirResource, reqMethod, token) {
-    let bundle = {
-        "resourceType": "Bundle",
-        "type": "transaction",
-        "entry": []
-    };
-    let errData = [] ;
-    let resourceData = await resourceFun.getResource(resourceType, reqInput, fhirResource, reqMethod, null, token);
-    console.info(resourceData)
-        bundle.entry = resourceData.resourceResult
-        errData = resourceData.errData
-    return {bundle, errData};
+    try {
+        let bundle = {
+            "resourceType": "Bundle",
+            "type": "transaction",
+            "entry": []
+        };
+        let errData = [] ;
+        // get result of all the resources operations
+        let resourceData = await resourceFun.getResource(resourceType, reqInput, fhirResource, reqMethod, null, token);
+        console.info(resourceData)
+            bundle.entry = resourceData.resourceResult
+            errData = resourceData.errData
+        return {bundle, errData};
+    }
+    catch(e) {
+        return Promise.reject(e)
+    }
+
 }
 
 
