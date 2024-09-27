@@ -10,20 +10,23 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
     let resourceResult = [],
       errData = [];
     if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
-      console.log("Post or put request", token);     
-      for(let reqData of reqInput) {
-        reqData.practitionerId = token.userId
+      for (let reqData of reqInput) {
+        reqData.practitionerId = token.userId;
         let bundleResources = await addNewRecord(resType, reqData);
-        console.log("bundleResources", bundleResources)
-        resourceResult = [...resourceResult, ...bundleResources]
+        resourceResult = [...resourceResult, ...bundleResources];
       }
-      console.log(resourceResult)
-
+      console.log(resourceResult);
     } else if (["PATCH", "patch"].includes(reqMethod)) {
       console.log("patch section");
     } else {
-      console.log("get data section");
-
+      console.log("Medication dispense GET API")     
+      const mainEncounters = FHIRData.map(e => e.resource)
+      console.log("get data section", mainEncounters);
+      const mainEncounterFhirIds = mainEncounters.map((e) => e.id).join(",");
+      // Fetch medication list and sub encounter from main encounter
+      const medDispenseWithEncounter = await fetchMedDispenseList(mainEncounterFhirIds)
+      // console.log(medDispenseWithEncounter);      
+      resourceResult = await mapEncounterAndMedDispense(mainEncounters, medDispenseWithEncounter)
     }
     return { resourceResult, errData };
   } catch (e) {
@@ -32,38 +35,88 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
 };
 
 
+const mapEncounterAndMedDispense= async function(mainEncounters, medDispenseWithEncounter) {
+  try {
+    const medicationDispenseResult = mainEncounters.map((mainEnc) => {
+      // get main encounter object
+      const mainEncounterObj = new DispenseEncounter({}, mainEnc, true).getFhirToJson();
+      // get sub encounter
+      let subEncounterWithMedDispenseObj = medDispenseWithEncounter
+        .filter(
+          (e) => e.subEncounter.partOf.reference.split("/")[1] == mainEnc.id
+        )
+        .map((e) => {
+          const subEncounterObj = new DispenseEncounter({}, e.subEncounter, false).getFhirToJson();
+          // get dispense list for a sub encounter
+          const medDispenseObjects = e.medDispenseRes.map((medDispense) =>
+            new MedicationDispense({}, medDispense).getFhirToJson()
+          );
+          return { ...subEncounterObj,  medicineDispensedList: medDispenseObjects};
+        });
+        subEncounterWithMedDispenseObj = subEncounterWithMedDispenseObj.sort((a, b) => new Date(b.generatedOn) - new Date(a.generatedOn))
+        mainEncounterObj.dispenseData = subEncounterWithMedDispenseObj
+      return mainEncounterObj
+    });
+    return medicationDispenseResult
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+// Fetch medicine dispense list with their sub encounters combined
+const fetchMedDispenseList = async function(ids) {
+  try {
+    let subEncountersMedDispense = await bundleOp.searchData( config.baseUrl + "Encounter",
+      { "part-of": ids, type: "dispensing-encounter", _revinclude: "MedicationDispense:context:Encounter",  _count: 2000}
+    );
+    const medResources = subEncountersMedDispense.data.entry;
+    //  filter sub encounter resource from fetched resources
+    const encounters = medResources.filter(
+      (res) => res.resource.resourceType == "Encounter"
+    ).map(e => e.resource);
+    //  map sub encounter resources to their respective MedicationDispense resources
+    const medDispenseWithEncounter = encounters.map((enc) => {
+    const medDispenseRes = medResources.filter((md) => md.resource.resourceType == "MedicationDispense" && md.resource.context.reference.split("/")[1] == enc.id)
+        .map((e) => e.resource);
+      return {
+        subEncounter: enc, medDispenseRes: medDispenseRes
+      };
+    });
+    return medDispenseWithEncounter;
+  } catch (e) {
+    console.error(e);
+    const err = { statusCode: 404, code: "ERR", message: "Data not found" };
+    return Promise.reject(err);
+  }
+
+}
 const addNewRecord = async function (resType, reqInput) {
   try {
     let bundleResources = []
     // get encounter id of the prescription from which it is attached
     let prescriptionEncounterId = reqInput.prescriptionFhirId;
-    const subEncounterId = uuidv4()
-    reqInput.subEncounterId = subEncounterId
+    const mainEncounterUuid = uuidv4()
+    reqInput.mainEncounterUuid = mainEncounterUuid
     // Matching MedicationRequest list to be fetched to further link it to medicationDispense
-    let combinedMedReqResource = await combineMedReqAndInput(  prescriptionEncounterId, reqInput.medicineDispensedList, reqInput);
+    let combinedMedReqResource = await combineMedReqAndInput(prescriptionEncounterId, reqInput.medicineDispensedList, reqInput);
     // get OTC medicines list
-    let mainEncounterQuery = {"part-of": reqInput.prescriptionFhirId, type: "http://custom-coding-system|" + "pharapharmacy-service",  _count: 1000 };
+    let mainEncounterQuery = {"part-of": reqInput.prescriptionFhirId, type: "pharmacy-service",  _count: 1000 };
     const mainEncounterResource = await getEncounterResource( reqInput, {}, true, mainEncounterQuery );
-    // console.log("main encounter: ", mainEncounterResource);
-    const mainEncounterId = mainEncounterResource.id  ? mainEncounterResource.id : "urn:uuid:" + reqInput.dispenseId;
-  //  create main encounter to maintain status
-    reqInput.mainEncounterId = mainEncounterId;
-    if (!mainEncounterResource.id) {
-        const mainEncounterResInBundle = await bundleFun.setBundlePost(mainEncounterResource, mainEncounterResource.identifier, reqInput.dispenseId, "POST", "identifier");
-        bundleResources.push(mainEncounterResInBundle)
+    let mainEncounterResInBundle = null
+    if (!mainEncounterResource.id) {        
+        mainEncounterResInBundle = await bundleFun.setBundlePost(mainEncounterResource, mainEncounterResource.identifier, mainEncounterUuid, "POST", "identifier");       
     }
     else {
-      const mainEncounterResInBundle = await bundleFun.setBundlePost(mainEncounterResource, mainEncounterResource.identifier, mainEncounterResource.id, "PUT", "identifier");        
-      bundleResources.push(mainEncounterResInBundle)
+      reqInput.mainEncounterFhirId = mainEncounterResource.id
+      mainEncounterResInBundle = await bundleFun.setBundlePost(mainEncounterResource, mainEncounterResource.identifier, mainEncounterResource.id, "PUT", "identifier");        
     }
+    bundleResources.push(mainEncounterResInBundle)
      // create sub-encounter to maintain notes and date time
     const subEncounter = await getEncounterResource(reqInput, {}, false, {});
-    const subEncounterResInBundle = await bundleFun.setBundlePost(subEncounter, subEncounter.identifier, reqInput.subEncounterId, "POST", "identifier");
-    // console.log("sub encounter: ", subEncounter);
+    const subEncounterResInBundle = await bundleFun.setBundlePost(subEncounter, subEncounter.identifier, reqInput.dispenseId, "POST", "identifier");
     bundleResources.push(subEncounterResInBundle)
     //  create medical dispense record
     const medicationDispenseResources = await getMedicationDispenseResources(combinedMedReqResource)
-    // console.log("medicationDispenseResources: ", medicationDispenseResources)
     bundleResources = [...bundleResources, ...medicationDispenseResources]
 
     return bundleResources
@@ -76,8 +129,8 @@ const addNewRecord = async function (resType, reqInput) {
 const getMedicationDispenseResources = async function(combinedMedReqResource) {
     try {
         let medicationDispenseResources = []
-        for ( let dispData of combinedMedReqResource) {
-            const medDispenseClass = new MedicationDispense(dispData, {})
+        for ( let dispenseData of combinedMedReqResource) {
+            const medDispenseClass = new MedicationDispense(dispenseData, {})
             let medDisResource = medDispenseClass.getJSONtoFhir()
             const dispenseResourceBundle = await bundleFun.setBundlePost(medDisResource, medDisResource.identifier, medDisResource.identifier[0].value, "POST", "identifier");    
             medicationDispenseResources.push(dispenseResourceBundle)
@@ -96,20 +149,15 @@ const combineMedReqAndInput = async function ( prescriptionEncounterId, medicine
       .join(",");
     //  get medIds to fetch MedicationRequest data for that prescriptionId
     let medicationRequestResources = await bundleOp.searchData(
-      config.baseUrl + "MedicationRequest",
-      {
-        encounter: prescriptionEncounterId,
-        medication: dispenseListMedIds,
-        _count: 2000,
-      }
+      config.baseUrl + "MedicationRequest",{encounter: prescriptionEncounterId,  medication: dispenseListMedIds,  _count: 2000}
     );
-
     // create lookup of medicines to be dispensed list
     const medDispenseLookup = new Map(
       medicineDispensedList.map((dispense) => [dispense.medFhirId, dispense])
     );
     // combine both using medId
-    const combined = medicationRequestResources.data.entry.map((obj1) => {
+    const combined = medicationRequestResources.data.entry
+    .map((obj1) => {
       const medFhirId =
         obj1.resource.medicationReference.reference.split("/")[1];
       const medDispense = medDispenseLookup.get(medFhirId) || {};
@@ -117,22 +165,15 @@ const combineMedReqAndInput = async function ( prescriptionEncounterId, medicine
       // Remove the matched item from the lookup to track unmatched items
       medDispenseLookup.delete(medFhirId);
       return {
-        ...medDispense,
-        medReqFhirId: obj1.resource.id,
-        dosageInstruction: obj1.resource.dosageInstruction,
-        subEncounterId: reqInput.subEncounterId,
-        patientId: reqInput.patientId,
-        date: reqInput.generatedOn,
-        practitionerId: reqInput.practitionerId
-
-      };
+        ...medDispense,  medReqFhirId: obj1.resource.id, dosageInstruction: obj1.resource.dosageInstruction,  subEncounterId: reqInput.dispenseId,
+        patientId: reqInput.patientId, date: reqInput.generatedOn, practitionerId: reqInput.practitionerId};
     });
 
     // Add the remaining unmatched items from the lookup
     const unmatchedDispenses = Array.from(medDispenseLookup.values()).map((unmatched) => ({
         ...unmatched, 
         date: reqInput.generatedOn,
-        subEncounterId: reqInput.subEncounterId,
+        subEncounterId: reqInput.dispenseId,
         patientId: reqInput.patientId,
         practitionerId: reqInput.practitionerId
     }));

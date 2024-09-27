@@ -267,7 +267,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                 e.encounter == obj3.encStatus &&
                 e.type == obj1.apptType
             );
-
+            console.log(statusData)
             obj1.status = statusData.uiStatus;
             if (typeof obj2 == "undefined") {
             obj2 = { slot: null, slotId: null };

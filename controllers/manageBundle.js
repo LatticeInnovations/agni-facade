@@ -1,7 +1,7 @@
 let axios = require("axios");
 let resourceFun = require("../services/resourceOperation");
 let config = require("../config/nodeConfig");
-let resourceValid = require("../utils/Validator/validateRsource").resourceValidation;
+let resourceValid = require("../utils/Validator/validateResource").resourceValidation;
 let createBundle = async function (req, res) {
     try {
         let token = req.token;

@@ -10,24 +10,27 @@ class DispenseEncounter {
     this.fhirResource = fhir_resource;
     this.isMain = Boolean(isMain);
     this.fhirResource.resourceType = "Encounter"
-    console.log("check the receieved resource: ", this.isMain, this.dispenseObj)
+    console.log("check the received resource: ", this.isMain, this.dispenseObj)
   }
 
   setIdentifier() {
+    const identifierId = this.isMain ? this.dispenseObj.mainEncounterUuid : this.dispenseObj.dispenseId
     this.fhirResource.identifier.push({
       system: config.snUrl,
-      value: this.isMain ? this.dispenseObj.dispenseId : this.dispenseObj.subEncounterId,
+      value: identifierId
     });
   }
 
   getId() {
-    console.info(this.fhirResource.id);
-    this.dispenseObj.dispenseId = this.fhirResource?.identifier[1]?.value;
-    this.dispenseObj.fhirId = this.fhirResource?.id;
+    if(!this.isMain) {
+      console.log(this.fhirResource)
+      this.dispenseObj.dispenseId = this.fhirResource?.identifier[0]?.value;
+      this.dispenseObj.dispenseFhirId = this.fhirResource?.id;
+    }
+
   }
 
   setStatus() {
-
     if(this.isMain) {
       console.log("it should not work in sub encounter")
       console.log("check if this is coming to if: ")
@@ -39,10 +42,11 @@ class DispenseEncounter {
   }
 
   getStatus() {
-    let statusData = dispenseStatus.find(
-      (e) => e.encounter == this.fhirResource?.status
-    );
-    this.dispenseObj.status = statusData?.statusId;
+    if(this.isMain) {
+      let statusData = dispenseStatus.find( (e) => e.encounter == this.fhirResource?.status);
+      this.dispenseObj.status = statusData?.statusId;
+    }
+
   }
 
   setType() {
@@ -67,7 +71,8 @@ class DispenseEncounter {
     console.log("check type: ", this.fhirResource.type[0].coding[0])
   }
   getType() {
-    this.dispenseObj.type = this.fhirResource?.type[0]?.coding[0]?.code;
+    if(!this.isMain)
+      this.dispenseObj.type = this.fhirResource?.type[0]?.coding[0]?.code;
   }
 
   setPatientReference() {
@@ -77,29 +82,29 @@ class DispenseEncounter {
 
   setPartOf() {
       this.fhirResource.partOf = {
-        reference: this.isMain ? "Encounter/" + this.dispenseObj.prescriptionFhirId : "urn:uuid:" + this.dispenseObj?.dispenseId,
+        reference: this.isMain ? "Encounter/" + this.dispenseObj.prescriptionFhirId : (this.dispenseObj.mainEncounterFhirId ? "Encounter/" + this.dispenseObj.mainEncounterFhirId : "urn:uuid:" + this.dispenseObj.mainEncounterUuid),
       };
   }
 
   getPartOf() {
-    this.dispenseObj.prescriptionFhirId = this.fhirResource?.partOf?.reference.split("/")[1]
+    if(this.isMain)
+      this.dispenseObj.prescriptionFhirId = this.fhirResource?.partOf?.reference.split("/")[1]
   }
 
   setNote() {
     if (!this.isMain) {
-      this.fhirResource.note = [
+      this.fhirResource.extension = [
         {
-          authorReference: {
-            reference: "Practitioner/" + this.dispenseObj?.practitionerId,
-          },
-          text: this.dispenseObj?.note,
-        },
+          "url": "http://hl7.org/fhir/StructureDefinition/encounter-note",
+          "valueString": this.dispenseObj?.note
+        }
       ];
     }
   }
 
   getNote() {
-    this.dispenseObj.note = this.fhirResource?.note[0]?.text
+    if(!this.isMain && this.fhirResource.extension)
+      this.dispenseObj.note = this.fhirResource?.extension[0]?.valueString
   }
 
   getPatientReference() {
@@ -117,7 +122,7 @@ class DispenseEncounter {
   }
 
   getEncounterTime() {
-    if (this.fhirResource.period)
+    if (this.fhirResource.period && !this.isMain)
       this.dispenseObj.generatedOn = this.fhirResource.period.start;
   }
 
@@ -141,6 +146,7 @@ class DispenseEncounter {
     this.getType()
     this.getNote()
     this.getPartOf()
+    return this.dispenseObj;
   }
 
   getUserResponseFormat() {

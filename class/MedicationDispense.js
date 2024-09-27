@@ -44,12 +44,12 @@ class MedicationRquest {
   }
 
   getIdentifier() {
-    this.medDispenseObj.identifier = this.fhirResource.identifier;
+    this.medDispenseObj.medDispenseUuid = this.fhirResource.identifier[0].value;
   }
 
   getId() {
     this.medDispenseObj.medDispenseFhirId =
-      this.fhirResource.medicationReference.reference.split("/")[1];
+      this.fhirResource.id;
   }
 
   setMedication() {
@@ -85,8 +85,8 @@ class MedicationRquest {
 
 
   getMedicationRequestId() {
-    this.medDispenseObj.medReqFhirId =
-      this.fhirResource?.authorizingPrescription[0]?.reference;
+    if(this.fhirResource.authorizingPrescription)
+      this.medDispenseObj.medReqFhirId = this.fhirResource?.authorizingPrescription[0]?.reference.split("/")[1];
   }
 
   setDispenseQuantityDetail() {
@@ -107,7 +107,7 @@ class MedicationRquest {
 
   getMedicationDetail() {
     this.medDispenseObj.medFhirId =
-      this.fhirResource.medicationCodeableConcept?.coding[0]?.code;
+      this.fhirResource.medicationReference.reference.split("/")[1];
   }
 
   setMedHandoverTime() {
@@ -134,19 +134,47 @@ class MedicationRquest {
     this.medDispenseObj.category = this.fhirResource?.category?.coding[0]?.code;
   }
 
+  setSubstitution() {
+    this.fhirResource.substitution = {
+      wasSubstituted: this.medDispenseObj.isModified
+    }
+    if (this.medDispenseObj.isModified)
+      this.fhirResource.substitution.reason = [
+    {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActReason",
+          "code": this.medDispenseObj.modificationType
+        }
+      ]
+    }
+    ]
+  }
+
+  getSubstitution() {
+    this.medDispenseObj.isModified = this.fhirResource.substitution.wasSubstituted
+    if(this.medDispenseObj.isModified)
+      this.medDispenseObj.modificationType = this.fhirResource.substitution.reason[0].coding[0].code
+
+  }
   setMedicationDispenseNote() {
-    if (this.medDispenseObj.note) {
+    if (this.medDispenseObj.medNote) {
         this.fhirResource.note = [
             {
-              text: this.medDispenseObj?.medNote,
+              authorString: this.medDispenseObj?.medNote,
             },
           ];
     }
 
   }
   getMedicationDispenseNote() {
-    this.medDispenseObj.medNote = this.fhirResource?.note[0]?.text;
+    if(this.fhirResource.note)
+      this.medDispenseObj.medNote = this.fhirResource?.note[0]?.authorString;
+    else
+      this.medDispenseObj.medNote = null
   }
+
+
 
   getJSONtoFhir() {
     this.setBasicStructure();
@@ -158,20 +186,23 @@ class MedicationRquest {
     this.setMedicationRequestId();
     this.setMedHandoverTime();
     this.setMedicationDispenseCategory();
+    this.setSubstitution();
     this.setMedicationDispenseNote();
     return this.fhirResource
   }
 
   getFhirToJson() {
     this.getId();
+    this.getIdentifier();
     this.getPatientReference();
-    this.getEncounter();
     this.getDispenseQuantityDetail();
     this.getMedicationDetail();
     this.getMedicationRequestId();
     this.getMedHandoverDetail();
     this.getMedicationDispenseCategory();
+    this.getSubstitution();
     this.getMedicationDispenseNote();
+    return this.medDispenseObj;
   }
 
   getUserResponseFormat() {
