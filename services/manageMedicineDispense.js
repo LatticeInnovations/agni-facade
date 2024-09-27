@@ -144,28 +144,28 @@ const getMedicationDispenseResources = async function(combinedMedReqResource) {
 
 const combineMedReqAndInput = async function ( prescriptionEncounterId, medicineDispensedList, reqInput) {
   try {
-    let dispenseListMedIds = medicineDispensedList
-      .map((e) => e.medFhirId)
+    let dispenseListMedReqIds = medicineDispensedList
+      .map((e) => e.medReqFhirId)
       .join(",");
-    //  get medIds to fetch MedicationRequest data for that prescriptionId
+    //  get medReqFhirId to fetch MedicationRequest data for that prescriptionId
     let medicationRequestResources = await bundleOp.searchData(
-      config.baseUrl + "MedicationRequest",{encounter: prescriptionEncounterId,  medication: dispenseListMedIds,  _count: 2000}
+      config.baseUrl + "MedicationRequest",{encounter: prescriptionEncounterId,  _id: dispenseListMedReqIds,  _count: 2000}
     );
     // create lookup of medicines to be dispensed list
     const medDispenseLookup = new Map(
-      medicineDispensedList.map((dispense) => [dispense.medFhirId, dispense])
+      medicineDispensedList.map((dispense) => [dispense.medReqFhirId, dispense])
     );
-    // combine both using medId
+    // combine both using medReqFhirId
     const combined = medicationRequestResources.data.entry
     .map((obj1) => {
-      const medFhirId =
-        obj1.resource.medicationReference.reference.split("/")[1];
-      const medDispense = medDispenseLookup.get(medFhirId) || {};
+      const medReqFhirId =
+        obj1.resource.id;
+      const medDispense = medDispenseLookup.get(medReqFhirId) || {};
 
       // Remove the matched item from the lookup to track unmatched items
-      medDispenseLookup.delete(medFhirId);
+      medDispenseLookup.delete(medReqFhirId);
       return {
-        ...medDispense,  medReqFhirId: obj1.resource.id, dosageInstruction: obj1.resource.dosageInstruction,  subEncounterId: reqInput.dispenseId,
+        ...medDispense,  medFhirId: obj1.resource.medicationReference.reference.split("/")[1], dosageInstruction: obj1.resource.dosageInstruction,  subEncounterId: reqInput.dispenseId,
         patientId: reqInput.patientId, date: reqInput.generatedOn, practitionerId: reqInput.practitionerId};
     });
 

@@ -18,7 +18,10 @@ class MedicationRquest {
     this.medReqObj.identifier = this.fhirResource.identifier;
    }
 
-    getId() {
+   getId() {
+    this.medReqObj.medReqFhirId = this.fhirResource.id
+   }
+    getMedFhirId() {
         this.medReqObj.medFhirId = this.fhirResource?.medicationReference?.reference.split("/")[1];
     }
 
@@ -157,7 +160,8 @@ class MedicationRquest {
     }
 
     getFhirToJson() {
-        this.getId();
+        this.getId()
+        this.getMedFhirId();
         this.getNote();
         this.getDoseInstruction();
     }

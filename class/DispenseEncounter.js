@@ -103,8 +103,8 @@ class DispenseEncounter {
   }
 
   getNote() {
-    if(!this.isMain && this.fhirResource.extension)
-      this.dispenseObj.note = this.fhirResource?.extension[0]?.valueString
+    if(!this.isMain)
+      this.dispenseObj.note = this.fhirResource.extension ? this.fhirResource?.extension[0]?.valueString : null
   }
 
   getPatientReference() {

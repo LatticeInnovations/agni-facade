@@ -152,7 +152,7 @@ class MedicationRquest {
   }
 
   getSubstitution() {
-    this.medDispenseObj.isModified = this.fhirResource.substitution.wasSubstituted
+    this.medDispenseObj.isModified = this.fhirResource?.substitution?.wasSubstituted ?? false
     if(this.medDispenseObj.isModified)
       this.medDispenseObj.modificationType = this.fhirResource.substitution.reason[0].coding[0].code
 
