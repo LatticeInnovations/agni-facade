@@ -82,7 +82,7 @@ class DispenseEncounter {
 
   setPartOf() {
       this.fhirResource.partOf = {
-        reference: this.isMain ? "Encounter/" + this.dispenseObj.prescriptionFhirId : (this.dispenseObj.mainEncounterFhirId ? "Encounter/" + this.dispenseObj.mainEncounterFhirId : "urn:uuid:" + this.dispenseObj.mainEncounterUuid),
+        reference: this.isMain ? "Encounter/" + this.dispenseObj.prescriptionFhirId : (this.dispenseObj.mainEnounterId),
       };
   }
 

@@ -85,7 +85,9 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 delete queryParams.prescriptionId;
              }
              if(queryParams.patientId) {
+                queryParams["subject"] = queryParams.patientId;
                 delete queryParams.patientId;
+
              }
              queryParams["type"]="pharmacy-service";
              url = config.baseUrl + "Encounter";
