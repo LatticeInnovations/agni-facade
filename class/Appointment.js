@@ -30,7 +30,7 @@ class Appointment {
     
     setStatus() {
         let statusData = apptStatus.find(e => e.uiStatus == this.apptObj.status);
-        console.info("statusData", statusData, this.apptObj.status, apptStatus)
+        // console.info("statusData", statusData, this.apptObj.status, apptStatus)
         this.fhirResource.status = statusData.fhirStatus;
         this.fhirResource.appointmentType.coding = [
             {
@@ -65,7 +65,7 @@ class Appointment {
     this.fhirResource.participant.push({
         actor : { "reference": "Location/" + this.apptObj.locationId } 
     })
-    console.info("", this.fhirResource.participant)
+    // console.info("", this.fhirResource.participant)
    }
 
    getParticipant() {

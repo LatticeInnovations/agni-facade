@@ -36,6 +36,12 @@
         "encounter": "in-progress"
     },
     {
+        "uiStatus": "scheduled",
+        "fhirStatus": "proposed",
+        "type": "routine",
+        "encounter": "in-progress"
+    },
+    {
         "uiStatus": "completed",
         "fhirStatus": "arrived",
         "type": "routine",

@@ -1,12 +1,25 @@
 let PractitionerRole = require("../class/practitionerRole");
 let Organization = require("../class/organization");
 let Practitioner = require("../class/practitioner");
-
-let setPractitionerRoleData = async function (relatedPersonList, reqInput, FHIRData, reqMethod) {
+let config = require("../config/nodeConfig");
+let bundleOp = require("./bundleOperation");
+const { v4: uuidv4 } = require('uuid');
+let setPractitionerRoleData = async function (resourceType, reqInput, FHIRData, reqMethod) {
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "put", "PUT"].includes(reqMethod)) {
             console.log(reqInput)
+            // Fetch practitioner data if it already exists throw error
+            let practitionerRoleData = await bundleOp.searchData(config.baseUrl + "PractitionerRole", { practitioner: reqInput.practitionerId});
+            console.log("exisiting practitioner role: ", practitionerRoleData)
+            if(practitionerRoleData.data.total > 0)
+               return  Promise.reject({statusCode: 404, code: "ERR", message: "Practitioner role already exists"})
+            let practitionerRole = new PractitionerRole(reqInput,{})
+            let practitionerResource = practitionerRole.setUserInputToFhir()
+            practitionerResource.resourceType = resourceType;
+            practitionerResource.id = uuidv4();
+            let roleResource = await bundleOp.setBundlePost(practitionerResource, null, practitionerResource.id, "POST", "identifier");
+            resourceResult.push(roleResource);
         }
         else if (["GET", "get"].includes(reqMethod)) {
             let role = [];

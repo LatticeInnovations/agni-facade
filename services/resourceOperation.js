@@ -7,6 +7,7 @@ let practitioner = require("./managePractitioner");
 let practitionerRole = require("./managePractitionerRole");
 let schedule= require("./manageSchedule")
 let appointment = require("./manageAppointment");
+let medDispense = require("./manageMedicineDispense")
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
@@ -30,6 +31,8 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
             case "Schedule" : bundleData = await schedule.setScheduleData(resType, inputData, FHIRData, reqMethod);
             break;
             case "Appointment" : bundleData = await appointment.setApptData(resType, inputData, FHIRData, reqMethod, reqQuery);
+            break;
+             case "MedicationDispense" : bundleData = await medDispense.setMedicationDispenseData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
              break;
         }
 
@@ -44,17 +47,21 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
     try {
         let response = [], filtereredData = [];
         let mergedArray = bundleResponse.map((data, i) => Object.assign({}, data, reqData[i]));
-        console.info(mergedArray[0].fullUrl.split("/")[0], reqMethod, resType)
+        console.info(" ==>", mergedArray, " ---->", reqMethod, " **>", resType, " +++>", reqData, "----------------")
         if (["post", "POST", "put", "PUT"].includes(reqMethod) && (resType == "Patient"|| resType == "Appointment"))
             filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
         else if(["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "MedicationRequest") {
             filtereredData = mergedArray.filter(e => e.resource.resourceType != resType && e.resource.resourceType != "Appointment");
         }
+        else if(["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "MedicationDispense") {
+            console.log("mergedArray: ", mergedArray, "--------------------------------------------------")
+            filtereredData = mergedArray.filter(e => e.resource.resourceType == "Encounter" && e.resource.type[0].coding[0].code == "dispensing-encounter")
+
+        }
         else if(["patch", "PATCH"].includes(reqMethod) && resType == "Appointment")
             filtereredData = mergedArray.filter(e => e.fullUrl.split("/")[0] == resType);
         else
             filtereredData = mergedArray;
-            console.info("filetered Data")
         filtereredData.forEach(element => {
             let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length);
             let id = (fullUrl.includes("uuid:")) ? fullUrl.split("uuid:")[1] : fullUrl;

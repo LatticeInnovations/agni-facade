@@ -3,7 +3,7 @@ let resourceFunc = require("../services/resourceOperation");
 let bundleFun = require("../services/bundleOperation");
 let config = require("../config/nodeConfig");
 let url = require('url');
-let resourceValid = require("../utils/Validator/validateRsource").resourceValidation;
+let resourceValid = require("../utils/Validator/validateResource").resourceValidation;
 let getResourceUrl = async function (resourceType, queryParams, token) {
     let url = "", nestedResource = null, specialOffset = null;
     switch (resourceType) {
@@ -28,7 +28,6 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             };
             nestedResource = 1;
         }
-
             break;
         case "MedicationRequest" : 
             url = config.baseUrl + "Encounter";
@@ -79,6 +78,22 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             nestedResource = 1;
             specialOffset = 1;
             break;
+        case "MedicationDispense": 
+             queryParams._total = "accurate"
+             if(queryParams.prescriptionId) {
+                queryParams["part-of"]= queryParams.prescriptionId;
+                delete queryParams.prescriptionId;
+             }
+             if(queryParams.patientId) {
+                queryParams["subject"] = queryParams.patientId;
+                delete queryParams.patientId;
+
+             }
+             queryParams["type"]="pharmacy-service";
+             url = config.baseUrl + "Encounter";
+             nestedResource = 1;
+            //  specialOffset = 1;
+             break;
 
     }
 
@@ -95,8 +110,8 @@ let searchResourceData = async function (req, res) {
             return res.status(422).json(errData);
         }
         const resourceType = req.params.resourceType;
-        let resouceUrl = await getResourceUrl(resourceType, req.query, token);
-        let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        let resourceUrl = await getResourceUrl(resourceType, req.query, token);
+        let responseData = await bundleFun.searchData(resourceUrl.link, resourceUrl.reqQuery);
         let reqUrl = url.parse(req.originalUrl, true)
         let reqQuery = reqUrl.query;
         // console.info(responseData.data.link)
@@ -106,10 +121,10 @@ let searchResourceData = async function (req, res) {
             resStatus = reqUrl.query && reqUrl.query._offset ? 2 : 1;
             return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
         }
-        else if (resouceUrl.nestedResource == 1) {
+        else if (resourceUrl.nestedResource == 1) {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, reqQuery, 0);
             result = result.concat(res_data.resourceResult);
-            if(resouceUrl.specialOffset) {
+            if(resourceUrl.specialOffset) {
                 let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
                 if(nextIndex != -1) {
                      let urlPart = url.parse(responseData.data.link[nextIndex].url, true);                   
