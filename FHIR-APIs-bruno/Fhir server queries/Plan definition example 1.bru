@@ -1,0 +1,234 @@
+meta {
+  name: Plan definition example 1
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://64.227.182.172:8080/fhir/PlanDefinition
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "resourceType": "PlanDefinition",
+      "id": "hypertension-treatment-plan",
+      "status": "active",
+      "title": "Hypertension Treatment Plan",
+      "description": "Plan for managing hypertension with treatment protocols.",
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/plan-definition-type",
+            "code": "treatment",
+            "display": "Treatment"
+          }
+        ]
+      },
+      "action": [
+        {
+          "id": "hypertension-diuretic",
+          "title": "Diuretic Protocol",
+          "description": "Diuretic as first-line treatment",
+          "condition": [
+            {
+              "kind": "applicability",
+              "expression": "!Condition.exists('pregnancy-contradiction')",
+              "description": "This protocol is contraindicated for women who are or could become pregnant."
+            }
+          ],
+          "action": [
+            {
+              "id": "step-1",
+              "title": "Step 1: Prescribe Thiazide-like Diuretic",
+              "description": "If the patient's BP is still ≥140/90, prescribe a thiazide-like diuretic.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/thiazide-like-diuretic-prescription",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "step-2",
+              "title": "Step 2: Add ACE-I or ARB",
+              "description": "If BP remains ≥140/90 after one month, add starting dose of ACE-I or ARB.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/ace-i-or-arb-prescription",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "step-3",
+              "title": "Step 3: Increase ACE-I or ARB Dose",
+              "description": "If BP remains ≥140/90 after one month, increase to full dose of ACE-I or ARB.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/increase-ace-i-or-arb-dose",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "step-4",
+              "title": "Step 4: Add CCB",
+              "description": "If BP remains ≥140/90 after one month, add starting dose of CCB.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/ccb-prescription",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "step-5",
+              "title": "Step 5: Increase CCB Dose",
+              "description": "If BP remains ≥140/90 after one month, increase to full dose of CCB.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/increase-ccb-dose",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "step-6",
+              "title": "Step 6: Referral to Specialist",
+              "description": "If BP remains ≥140/90, check medication adherence and refer to a specialist if necessary.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/specialist-referral",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90 and patient.medicationAdherence = 'Good'"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hypertension-ccb",
+          "title": "CCB Protocol",
+          "description": "CCB as first-line treatment",
+          "action": [
+            {
+              "id": "step-1",
+              "title": "Step 1: Prescribe Starting Dose of CCB",
+              "description": "If the patient's BP is still ≥140/90, prescribe starting dose of CCB.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/ccb-prescription",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "step-2",
+              "title": "Step 2: Add ACE-I or ARB",
+              "description": "If BP remains ≥140/90 after one month, add starting dose of ACE-I or ARB.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/ace-i-or-arb-prescription",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "step-3",
+              "title": "Step 3: Increase ACE-I or ARB Dose",
+              "description": "If BP remains ≥140/90 after one month, increase to full dose of ACE-I or ARB.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/increase-ace-i-or-arb-dose",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "step-4",
+              "title": "Step 4: Increase CCB Dose",
+              "description": "If BP remains ≥140/90 after one month, increase to full dose of CCB.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/increase-ccb-dose",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "step-5",
+              "title": "Step 5: Add Thiazide-like Diuretic",
+              "description": "If BP remains ≥140/90 after one month, add thiazide-like diuretic.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/thiazide-like-diuretic-prescription",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "step-6",
+              "title": "Step 6: Referral to Specialist",
+              "description": "If BP remains ≥140/90, check medication adherence and refer to a specialist if necessary.",
+              "definitionCanonical": "http://example.org/fhir/ActivityDefinition/specialist-referral",
+              "condition": [
+                {
+                  "kind": "applicability",
+                  "expression": {
+                    "language": "text/fhirpath",
+                    "expression": "currentBP.systolic >= 140 or currentBP.diastolic >= 90 and patient.medicationAdherence = 'Good'"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    
+}

@@ -1,0 +1,23 @@
+meta {
+  name: PractitionerRole
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{api_endpoint}}sync/PractitionerRole
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  {
+      "orgId": "9",
+      "practitionerId": "77",
+      "roleId": "doctor"
+  }
+}

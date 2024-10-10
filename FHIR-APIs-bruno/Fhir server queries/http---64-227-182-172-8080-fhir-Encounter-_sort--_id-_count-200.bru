@@ -1,0 +1,47 @@
+meta {
+  name: http---64-227-182-172-8080-fhir-Encounter-_sort--_id-_count-200
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://64.227.182.172:8081/fhir/Encounter/87
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+                  "resourceType": "Encounter",
+                  "id": "87",
+                  "meta": {
+                      "versionId": "2",
+                      "lastUpdated": "2024-09-25T11:20:15.236+00:00",
+                      "source": "#gdB2pbzbzDfLy6cu"
+                  },
+                  "identifier": [
+                      {
+                          "system": "http://hl7.org/fhir/sid/sn",
+                          "value": "f53da004-10f9-4caa-99cd-7c826b029383"
+                      },
+                      {
+                          "system": "http://hl7.org/fhir/sid/sn",
+                          "value": "6a95a6ae-8f21-4e21-9b12-772140b8da44"
+                      }
+                  ],
+                  "status": "planned",
+                  "subject": {
+                      "reference": "Patient/81"
+                  },
+                  "appointment": [
+                      {
+                          "reference": "Appointment/86"
+                      }
+                  ],
+                  "period": {
+                      "start": "2024-09-25T16:25:45+05:30",
+                      "end": "2024-09-25T16:25:45+05:30"
+                  }
+  }
+              
+}

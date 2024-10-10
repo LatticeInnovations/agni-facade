@@ -1,0 +1,22 @@
+meta {
+  name: --api_endpoint--Schedule
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{api_endpoint}}Schedule?_count=1000&_offset=0&orgId=9&date=2024-09-25
+  body: none
+  auth: none
+}
+
+query {
+  _count: 1000
+  _offset: 0
+  orgId: 9
+  date: 2024-09-25
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

@@ -1,0 +1,19 @@
+meta {
+  name: --api_endpoint--auth-login
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{api_endpoint}}auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "userContact": "8347053779"
+  }
+  
+  
+}

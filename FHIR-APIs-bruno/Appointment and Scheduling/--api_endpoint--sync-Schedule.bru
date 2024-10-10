@@ -1,0 +1,28 @@
+meta {
+  name: --api_endpoint--sync-Schedule
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_endpoint}}sync/Schedule
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  [
+     {
+      "orgId": "9",
+      "planningHorizon": {
+        "start": "2024-10-08T16:00:00+05:30",
+          "end": "2024-10-08T16:29:59+05:30"
+      },
+      "uuid": "30904127-797d-4a61-96b8-b4dc1056f0c2"
+    }
+  ]
+}

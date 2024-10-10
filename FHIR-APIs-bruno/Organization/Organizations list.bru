@@ -1,0 +1,15 @@
+meta {
+  name: Organizations list
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_endpoint}}Organization
+  body: none
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

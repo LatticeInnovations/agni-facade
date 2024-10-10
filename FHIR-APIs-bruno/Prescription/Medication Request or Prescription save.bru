@@ -1,0 +1,137 @@
+meta {
+  name: Medication Request or Prescription save
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_endpoint}}sync/MedicationRequest
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  
+      [
+          {
+          "appointmentId": "266",
+          "patientId": "252",
+          "generatedOn": "2024-10-08T17:00:00+05:30",
+          "prescriptionId": "24baba88-4694-4f6f-9567-4c6743695f93",
+          "prescription": [
+              {
+                  "medFhirId": "34",
+                  "qtyPerDose": 2,
+                  "frequency": 1,
+                  "doseForm": "Tablet",
+                  "timing": "1521000175104",
+                  "duration": 5,
+                  "qtyPrescribed": 10,
+                  "note": "Please take this medicine at night after food patient 252"
+              },
+              {
+                  "medFhirId": "28",
+                  "qtyPerDose": 2,
+                  "frequency": 1,
+                  "doseForm": "Tablet",
+                  "timing": "1521000175104",
+                  "duration": 5,
+                  "qtyPrescribed": 10,
+                  "note": "Please take this medicine at night after food patient 252"
+              }
+  
+          ]
+      },
+      {
+          "appointmentId": "268",
+          "patientId": "254",
+          "generatedOn": "2024-10-08T17:00:00+05:30",
+          "prescriptionId": "5b732ff8-653d-4932-9af4-83e96e49781c",
+          "prescription": [
+              {
+                  "medFhirId": "34",
+                  "qtyPerDose": 2,
+                  "frequency": 1,
+                  "doseForm": "Tablet",
+                  "timing": "1521000175104",
+                  "duration": 5,
+                  "qtyPrescribed": 10,
+                  "note": "Please take this medicine at night after food patient 254"
+              },
+              {
+                  "medFhirId": "28",
+                  "qtyPerDose": 2,
+                  "frequency": 1,
+                  "doseForm": "Tablet",
+                  "timing": "1521000175104",
+                  "duration": 5,
+                  "qtyPrescribed": 10,
+                  "note": "Please take this medicine at night after food patient 254"
+              }
+  
+          ]
+      },
+      {
+          "appointmentId": "270",
+          "patientId": "256",
+          "generatedOn": "2024-10-08T17:00:00+05:30",
+          "prescriptionId": "d0bc9bbb-0078-43b1-9be4-40df564606b0",
+          "prescription": [
+              {
+                  "medFhirId": "34",
+                  "qtyPerDose": 2,
+                  "frequency": 1,
+                  "doseForm": "Tablet",
+                  "timing": "1521000175104",
+                  "duration": 5,
+                  "qtyPrescribed": 10,
+                  "note": "Please take this medicine at night after food patient 256"
+              },
+              {
+                  "medFhirId": "28",
+                  "qtyPerDose": 2,
+                  "frequency": 1,
+                  "doseForm": "Tablet",
+                  "timing": "1521000175104",
+                  "duration": 5,
+                  "qtyPrescribed": 10,
+                  "note": "Please take this medicine at night after food patient 256"
+              }
+  
+          ]
+      },
+      {
+          "appointmentId": "272",
+          "patientId": "258",
+          "generatedOn": "2024-10-08T17:00:00+05:30",
+          "prescriptionId": "cb862616-86a0-4fd9-b36f-2c11418d6bc8",
+          "prescription": [
+              {
+                  "medFhirId": "34",
+                  "qtyPerDose": 2,
+                  "frequency": 1,
+                  "doseForm": "Tablet",
+                  "timing": "1521000175104",
+                  "duration": 5,
+                  "qtyPrescribed": 10,
+                  "note": "Please take this medicine at night after food patient 258"
+              },
+              {
+                  "medFhirId": "28",
+                  "qtyPerDose": 2,
+                  "frequency": 1,
+                  "doseForm": "Tablet",
+                  "timing": "1521000175104",
+                  "duration": 5,
+                  "qtyPrescribed": 10,
+                  "note": "Please take this medicine at night after food patient 258"
+              }
+  
+          ]
+      }
+  ]
+}

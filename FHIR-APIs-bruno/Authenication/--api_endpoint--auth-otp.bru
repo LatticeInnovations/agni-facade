@@ -1,0 +1,21 @@
+meta {
+  name: --api_endpoint--auth-otp
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_endpoint}}auth/otp
+  body: json
+  auth: none
+}
+
+headers {
+  : 
+}
+
+body:json {
+  {
+    "userContact": "8347053779",
+    "otp": 228072}
+}

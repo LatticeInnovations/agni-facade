@@ -1,0 +1,15 @@
+meta {
+  name: --api_endpoint--sct-medTime
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_endpoint}}sct/medTime
+  body: none
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

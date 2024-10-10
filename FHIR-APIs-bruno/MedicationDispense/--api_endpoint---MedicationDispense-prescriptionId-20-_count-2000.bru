@@ -1,0 +1,20 @@
+meta {
+  name: --api_endpoint---MedicationDispense-prescriptionId-20-_count-2000
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{api_endpoint}}/MedicationDispense?prescriptionId=20&_count=2000
+  body: none
+  auth: none
+}
+
+query {
+  prescriptionId: 20
+  _count: 2000
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

@@ -1,0 +1,20 @@
+meta {
+  name: --api_endpoint---MedicationRequest-_count-1000-_sort--_id
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_endpoint}}MedicationRequest?_count=100&_sort=-_id
+  body: none
+  auth: none
+}
+
+query {
+  _count: 100
+  _sort: -_id
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

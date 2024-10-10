@@ -1,0 +1,109 @@
+meta {
+  name: FHIR bulk sync patch api Patient
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{api_endpoint}}sync/Patient
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  [
+      {
+          "id": 592,
+          "email": {
+              "operation": "replace",
+              "value": "abhinav.Shukla01@gmail.com"
+          },
+          "mobileNumber": {
+              "operation": "replace",
+              "value": "8678765450"
+          },
+          "identifier": [
+              {
+                  "operation": "add",
+                  "value": {
+                      "identifierType": "https://www.passportindia.gov.in",
+                      "identifierNumber": "100000000000"
+                  }
+              },
+              {
+                  "operation": "replace",
+                  "value": {
+                      "identifierType": "https://www.nvsp.in",
+                      "identifierNumber": "111176544511"
+                  }
+              }
+          ],
+          "permanentAddress": {
+              "operation": "replace",
+              "value": {
+                  "addressLine1": "P 112-E4, near c complex",
+                  "city": "New Delhi",
+                  "district": "South West Delhi",
+                  "state": "Delhi",
+                  "postalCode": "110010",
+                  "country": "India",
+                  "addressLine2": null
+              }
+          },
+          "tempAddress": {
+              "operation": "remove",
+              "value": {
+                  "addressLine1": "P 111-E4, near c complex",
+                  "city": "New Delhi",
+                  "district": "South West Delhi",
+                  "state": "Delhi",
+                  "postalCode": "110010",
+                  "country": "India"
+              }
+          }
+      },
+      {
+          "id": 594,
+          "email": {
+              "operation": "replace",
+              "value": "prajkta.Venkatesh01@gmail.com"
+          },
+          "mobileNumber": {
+              "operation": "replace",
+              "value": "7837812094"
+          },
+          "identifier": [
+              {
+                  "operation": "remove",
+                  "value": {
+                      "identifierType": "https://www.passportindia.gov.in",
+                      "identifierNumber": "100000000000"
+                  }
+              },
+              {
+                  "operation": "add",
+                  "value": {
+                      "identifierType": "https://www.nvsp.in",
+                      "identifierNumber": "227676544522"
+                  }
+              }
+          ],
+          "permanentAddress": {
+              "operation": "replace",
+              "value": {
+                  "addressLine1": "P 112-E4, near c complex, Shankar Vihar",
+                  "city": "New Delhi",
+                  "district": "South West Delhi",
+                  "state": "Delhi",
+                  "postalCode": "110010",
+                  "country": "India",
+                  "addressLine2": null
+              }
+          }
+      }
+  ]
+}

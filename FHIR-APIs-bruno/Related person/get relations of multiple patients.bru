@@ -1,0 +1,20 @@
+meta {
+  name: get relations of multiple patients
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api_endpoint}}RelatedPerson?patientId=23212,23214&_count=1000
+  body: none
+  auth: none
+}
+
+query {
+  patientId: 23212,23214
+  _count: 1000
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

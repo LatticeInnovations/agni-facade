@@ -1,0 +1,22 @@
+meta {
+  name: --api_endpoint--Schedule-_count-100-_offset-0-_sort-_id-orgId-22344
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api_endpoint}}Schedule?_count=100&_offset=0&_sort=_id&orgId=22344
+  body: none
+  auth: none
+}
+
+query {
+  _count: 100
+  _offset: 0
+  _sort: _id
+  orgId: 22344
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

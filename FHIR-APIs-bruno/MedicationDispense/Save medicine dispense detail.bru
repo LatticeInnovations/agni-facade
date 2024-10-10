@@ -1,0 +1,124 @@
+meta {
+  name: Save medicine dispense detail
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_endpoint}}sync/MedicationDispense
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  [
+      {
+          "prescriptionFhirId": "271",
+          "patientId": "256",
+          "generatedOn": "2024-09-30T17:35:00+05:30",
+          "status": "partially-dispensed",
+          "note": "Med 34 out of stock right now, will provide later by tomorrow",
+          "dispenseId": "3db30f13-0c1c-400a-9158-85df7d6ec10f",
+          "medicineDispensedList": [
+              {
+                  "medReqFhirId": "278",
+                  "dispenseQty": 10,
+                  "category": "prescribed",
+                  "medNote": null,
+                  "isModified": true,
+                  "medFhirId": "28",
+                  "modificationType": "OS"
+              },
+              {
+                  "dispenseQty": 5,
+                  "category": "OTC",
+                  "medNote": null,
+                  "isModified": false,
+                  "medFhirId": "64"
+              }
+          ]
+      },
+      {
+          "prescriptionFhirId": "269",
+          "patientId": "254",
+          "generatedOn": "2024-09-30T17:35:00+05:30",
+          "status": "fully-dispensed",
+          "note": "Please take a walk daily for patient 254",
+          "dispenseId": "5ec6e76b-8b46-45d8-a5c9-651c0471cde4",
+          "medicineDispensedList": [
+              {
+                  "medReqFhirId": "276",
+                  "dispenseQty": 10,
+                  "category": "prescribed",
+                  "medNote": null,
+                  "isModified": false,
+                  "medFhirId": "34"
+              },
+              {
+                  "medReqFhirId": null,
+                  "dispenseQty": 5,
+                  "category": "OTC",
+                  "medNote": null,
+                  "isModified": false,
+                  "medFhirId": "64"
+              }
+          ]
+      }
+  ]
+}
+
+docs {
+  ### POST Save medicine dispense detail
+  
+  ### API - {{api_endpoint}}/sync/MedicationDispense
+  
+  ### Description
+  This API is used to generate drug dispense records. We can pass multiple dispense records for prescriptionId.
+  
+  ### Options
+  1. **status**
+  Not dispensed - not-dispensed
+  Partially dispensed - partially-dispensed
+  Fully dispensed - fully-dispensed
+  
+  2. **category**
+  OTC - OTC
+  medicine prescribed by doctor - prescribed
+  
+  3. **modificationType**
+  FP - formulation change
+  OS - quantity changed
+  
+  
+  ### JSON Description
+  ```
+   [{
+      "prescriptionFhirId": "<string>" FHIR id for prescripiton,  
+      "patientId": "<string>" patient FHIR id,
+      "generatedOn": "<date and time>" Date of generating dispense record,
+      "status": "<string>" dispense record status, 
+      "note": "<string>" this is main dispsense note,
+      "dispenseId": "<uuid>", for dispense id
+      "medicineDispensedList": [
+          {
+              "medReqFhirId": "<string>" receieved from prescription for each medicine prescribed
+              "medFhirId": "<string>" medicine FHIR id to be dispensed can be different from one prescribed in case of modified due to FP,
+              "dispenseQty": <integer> quantity to be dispensed,
+              "category": "<string>", category can be prescribed or OTC,
+              "isModified": <boolean> true if formulation or quantity is changed else false,
+              "modificationType": "FP", FP => formulation change OS => quantity change
+              "medNote": "<string>" note for specific medicine dispensed
+          }
+      ]
+  }
+  ]
+  ```
+  ### Request Headers
+  **x-access-token**          Bearer...
+  
+  
+}

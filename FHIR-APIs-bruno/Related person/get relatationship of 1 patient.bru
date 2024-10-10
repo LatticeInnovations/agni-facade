@@ -1,0 +1,19 @@
+meta {
+  name: get relatationship of 1 patient
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{api_endpoint}}RelatedPerson?patientId=23214
+  body: none
+  auth: none
+}
+
+query {
+  patientId: 23214
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

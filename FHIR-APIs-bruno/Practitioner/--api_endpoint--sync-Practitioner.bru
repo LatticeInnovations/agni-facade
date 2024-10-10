@@ -1,0 +1,43 @@
+meta {
+  name: --api_endpoint--sync-Practitioner
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_endpoint}}sync/Practitioner
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  [
+      {
+          "firstName": "Tulika",
+          "lastName": "P two",
+          "identifier": [
+              {
+                  "identifierType": "https://www.passportindia.gov.in",
+                  "identifierNumber": "1334343435436"
+              }
+          ],
+          "gender": "female",
+          "active": true,
+          "birthDate": "1997-12-11",
+          "address": {
+              "addressLine1": "P 356-A7, near c complex",
+              "district": "South West Delhi",
+              "city": "New Delhi",
+              "state": "Delhi",
+              "postalCode": "110020",
+              "country": "India"
+          },
+          "email": "tulika312@gmail.com",
+          "mobileNumber": "8709135849"
+      }
+  ]
+}

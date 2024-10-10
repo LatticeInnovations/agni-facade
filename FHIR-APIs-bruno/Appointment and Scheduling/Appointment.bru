@@ -1,0 +1,63 @@
+meta {
+  name: Appointment
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{api_endpoint}}sync/Appointment
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  [
+      {
+          "appointmentId": "23391",
+          "status": {
+              "operation": "replace",
+              "value": "scheduled"
+          },
+          "slot": {
+              "operation": "replace",
+              "value": {
+                  "start": "2023-08-05T09:15:00+05:30",
+                  "end": "2023-08-05T09:20:00+05:30"
+              }
+          },
+          "scheduleId": {
+              "operation": "replace",
+              "value": "23370"
+          },
+          "createdOn" : {
+                         "operation" : "replace",
+                         "value" : "2023-08-01T10:40:00+05:30"
+                       }
+      },
+      {
+          "appointmentId": "23232",
+          "status": {
+              "operation": "replace",
+              "value": "arrived"
+          }
+      },
+      {
+          "appointmentId": "23393",
+          "status": {
+              "operation": "replace",
+              "value": "completed"
+          }
+      },
+      {
+          "appointmentId": "23411",
+          "status": {
+              "operation": "replace",
+              "value": "cancelled"
+          }
+      }
+  ]
+}

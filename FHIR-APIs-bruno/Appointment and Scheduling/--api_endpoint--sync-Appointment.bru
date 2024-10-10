@@ -1,0 +1,27 @@
+meta {
+  name: --api_endpoint--sync-Appointment
+  type: http
+  seq: 12
+}
+
+patch {
+  url: {{api_endpoint}}sync/Appointment
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  [
+      {
+          "appointmentId": "149",
+          "status": {
+              "operation": "replace",
+              "value": "arrived"
+          }
+      }
+  ]
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Related person post api
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_endpoint}}sync/RelatedPerson
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  [
+      {
+          "id": "23212",              
+          "relationship": [        
+                                                         
+              {
+                  "relativeId": "23214",
+                  "patientIs": "DAUT"
+              }
+              
+          ]
+      }
+  ]
+}

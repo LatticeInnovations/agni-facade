@@ -1,0 +1,20 @@
+meta {
+  name: Medicine dispense
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_endpoint}}/MedicationDispense?prescriptionId=267,269,271&_count=2000
+  body: json
+  auth: none
+}
+
+query {
+  prescriptionId: 267,269,271
+  _count: 2000
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

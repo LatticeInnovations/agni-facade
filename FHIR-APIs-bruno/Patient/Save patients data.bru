@@ -1,0 +1,152 @@
+meta {
+  name: Save patients data
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_endpoint}}sync/Patient
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  [
+      {
+          "id": "6ea821ad-0f05-4542-a91a-872b41e41d08",
+          "firstName": "Patient uat test 1",
+          "lastName": "dispense1",
+          "identifier": [
+              {
+                  "identifierType": "https://www.passportindia.gov.in",
+                  "identifierNumber": "9087688765"
+              }
+          ],
+          "gender": "female",
+          "active": true,
+          "birthDate": "1994-05-28",
+          "permanentAddress": {
+              "addressLine1": "P 111-D4, near c complex",
+              "addressLine2": "Shankar Vihar",
+              "district": "South West Delhi",
+              "city": "New Delhi",
+              "state": "Delhi",
+              "postalCode": "110010",
+              "country": "India"
+          },
+          "tempAddress": {
+              "addressLine1": "P 111-D4, near c complex",
+              "district": "South West Delhi",
+              "city": "New Delhi",
+              "state": "Delhi",
+              "postalCode": "110020",
+              "country": "India"
+          },
+          "email": "tulika312@gmail.com",
+          "mobileNumber": "8347053779"
+      },
+      {
+          "id": "4930ed57-6150-4c06-a48f-ebbb31e47523",
+          "firstName": "Patient uat test 2",
+          "lastName": "Prasad",
+          "identifier": [
+              {
+                  "identifierType": "https://www.passportindia.gov.in",
+                  "identifierNumber": "68765655665"
+              }
+          ],
+          "gender": "female",
+          "active": true,
+          "birthDate": "1977-11-28",
+          "permanentAddress": {
+              "addressLine1": "P 111-D4, near c complex",
+              "addressLine2": "Shankar Vihar",
+              "district": "South West Delhi",
+              "city": "New Delhi",
+              "state": "Delhi",
+              "postalCode": "110010",
+              "country": "India"
+          },
+          "tempAddress": {
+              "addressLine1": "P 111-D4, near c complex",
+              "district": "South West Delhi",
+              "city": "New Delhi",
+              "state": "Delhi",
+              "postalCode": "110020",
+              "country": "India"
+          },
+          "email": "kp10101974@gmail.com",
+          "mobileNumber": "7048465659"
+      },
+       {
+          "id": "36fb0ff4-1619-41bc-8da9-98b878149d2e",
+          "firstName": "Patient uat test 3",
+          "lastName": "dispense1",
+          "identifier": [
+              {
+                  "identifierType": "https://www.passportindia.gov.in",
+                  "identifierNumber": "9087688765"
+              }
+          ],
+          "gender": "female",
+          "active": true,
+          "birthDate": "1994-05-28",
+          "permanentAddress": {
+              "addressLine1": "P 111-D4, near c complex",
+              "addressLine2": "Shankar Vihar",
+              "district": "South West Delhi",
+              "city": "New Delhi",
+              "state": "Delhi",
+              "postalCode": "110010",
+              "country": "India"
+          },
+          "tempAddress": {
+              "addressLine1": "P 111-D4, near c complex",
+              "district": "South West Delhi",
+              "city": "New Delhi",
+              "state": "Delhi",
+              "postalCode": "110020",
+              "country": "India"
+          },
+          "email": "tulika312@gmail.com",
+          "mobileNumber": "8347053779"
+      },
+      {
+          "id": "259f4faf-8557-4911-b553-c2bde8ec55e2",
+          "firstName": "Patient uat test 4",
+          "lastName": "Prasad",
+          "identifier": [
+              {
+                  "identifierType": "https://www.passportindia.gov.in",
+                  "identifierNumber": "68765655665"
+              }
+          ],
+          "gender": "female",
+          "active": true,
+          "birthDate": "1977-11-28",
+          "permanentAddress": {
+              "addressLine1": "P 111-D4, near c complex",
+              "addressLine2": "Shankar Vihar",
+              "district": "South West Delhi",
+              "city": "New Delhi",
+              "state": "Delhi",
+              "postalCode": "110010",
+              "country": "India"
+          },
+          "tempAddress": {
+              "addressLine1": "P 111-D4, near c complex",
+              "district": "South West Delhi",
+              "city": "New Delhi",
+              "state": "Delhi",
+              "postalCode": "110020",
+              "country": "India"
+          },
+          "email": "kp10101974@gmail.com",
+          "mobileNumber": "7048465659"
+      }
+  ]
+}

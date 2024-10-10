@@ -1,0 +1,51 @@
+meta {
+  name: http---64-227-182-172-8081-fhir-MedicationRequest-encounter-87
+  type: http
+  seq: 5
+}
+
+put {
+  url: http://64.227.182.172:8081/fhir/Encounter/203
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+                  "resourceType": "Encounter",
+                  "id": "203",
+                  "meta": {
+                      "versionId": "1",
+                      "lastUpdated": "2024-09-30T07:34:14.668+00:00",
+                      "source": "#MeSV5TCXlVNXgn3G"
+                  },
+                  "identifier": [
+                      {
+                          "system": "http://hl7.org/fhir/sid/sn",
+                          "value": "1f6a6628-1968-4965-afcb-077fbe504565"
+                      }
+                  ],
+                  "status": "finished",
+                  "type": [
+                      {
+                          "coding": [
+                              {
+                                  "system": "http://your-custom-coding-system",
+                                  "code": "pharmacy-service",
+                                  "display": "Pharmacy service"
+                              }
+                          ]
+                      }
+                  ],
+                  "subject": {
+                      "reference": "Patient/179"
+                  },
+                  "period": {
+                      "start": "2024-09-29T17:35:00+05:30",
+                      "end": "2024-09-29T17:35:00+05:30"
+                  },
+                  "partOf": {
+                      "reference": "Encounter/194"
+                  }
+              }
+}

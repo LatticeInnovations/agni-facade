@@ -1,0 +1,58 @@
+meta {
+  name: Bulk patch related person
+  type: http
+  seq: 1
+}
+
+patch {
+  url: {{api_endpoint}}sync/RelatedPerson
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  [
+      {
+          "id": "672",
+          "relationship": [
+              {
+                  "operation": "remove",
+                  "value": {
+                      "relativeId": "688",
+                      "patientIs": "SIS"
+                  }
+              },
+              {
+                  "operation": "replace",
+                  "value": {
+                      "relativeId": "670",
+                      "patientIs": "SIS"
+                  }
+              }
+          ]
+      },
+       {
+          "id": "688",
+          "relationship": [
+              {
+                  "operation": "remove",
+                  "value": {
+                      "relativeId": "672",
+                      "patientIs": "BRO"
+                  }
+              },
+              {
+                  "operation": "replace",
+                  "value": {
+                      "relativeId": "670",
+                      "patientIs": "BRO"
+                  }
+              }
+          ]
+      }
+  ]
+}

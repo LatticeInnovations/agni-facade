@@ -1,0 +1,19 @@
+meta {
+  name: get practitioner role
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_endpoint}}PractitionerRole?practitionerId=2219
+  body: none
+  auth: none
+}
+
+query {
+  practitionerId: 2219
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

@@ -1,0 +1,20 @@
+meta {
+  name: --api_endpoint--Appointment-_offset-0-_count-100-_sort--_id
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{api_endpoint}}Appointment?status=cancelled&_count=100
+  body: none
+  auth: none
+}
+
+query {
+  status: cancelled
+  _count: 100
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

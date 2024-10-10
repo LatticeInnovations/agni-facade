@@ -1,0 +1,68 @@
+meta {
+  name: Create Appointment
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_endpoint}}sync/Appointment
+  body: json
+  auth: none
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}
+
+body:json {
+  [
+      {
+          "uuid": "a0a97402-a48f-4b0e-9e16-3b25082c40e5",
+          "patientId": "252",
+          "scheduleId": "261",
+          "slot": {
+               "start": "2024-10-08T16:00:00+05:30",
+               "end": "2024-10-08T16:05:00+05:30"
+          },
+          "orgId": "9",
+          "createdOn": "2024-09-29T12:35:00+05:30",
+          "status": "scheduled"
+      },
+      {
+          "uuid": "aad36cd6-b504-4800-9929-aa5fc278b9a4",
+          "patientId": "254",
+          "scheduleId": "261",
+          "slot": {
+               "start": "2024-10-08T16:10:00+05:30",
+               "end": "2024-10-08T16:15:00+05:30"
+          },
+          "orgId": "9",
+          "createdOn": "2024-09-29T12:36:00+05:30",
+          "status": "scheduled"
+      },
+      {
+          "uuid": "01d10013-3d40-4605-be05-ce57b298cf39",
+          "patientId": "256",
+          "scheduleId": "261",
+          "slot": {
+               "start": "2024-10-08T16:15:00+05:30",
+               "end": "2024-10-08T16:20:00+05:30"
+          },
+          "orgId": "9",
+          "createdOn": "2024-09-29T12:35:00+05:30",
+          "status": "scheduled"
+      },
+      {
+          "uuid": "fb66b533-2d22-4aaf-975b-1072b12b40fe",
+          "patientId": "258",
+          "scheduleId": "261",
+          "slot": {
+               "start": "2024-10-08T16:20:00+05:30",
+               "end": "2024-10-08T16:25:00+05:30"
+          },
+          "orgId": "9",
+          "createdOn": "2024-09-29T12:36:00+05:30",
+          "status": "scheduled"
+      }
+  ]
+}
