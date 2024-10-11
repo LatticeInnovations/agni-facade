@@ -5,206 +5,3072 @@ meta {
 }
 
 post {
-  url: http://64.227.182.172:8081/fhir/
+  url: {{fhir_api_endpoint}}
   body: json
   auth: none
 }
 
+headers {
+  Authorization: {{x-access-token}}
+}
+
 body:json {
   {
-     "resourceType":"Bundle",
-     "type":"transaction",
-     "entry":[
-        {
-           "fullUrl":"urn:uuid:11a272c7-a67d-4d74-a9c7-f500bbf99087",
-           "resource":{
-              "resourceType":"Encounter",
-              "identifier":[
-                 {
-                    "system":"http://hl7.org/fhir/sid/sn",
-                    "value":"428a99bb-566d-49e8-978a-e9db9d5f71ab"
-                 }
-              ],
-              "subject":{
-                 "reference":"Patient/81"
-              },
-              "note":[
-                 {
-                    "authorReference":{
-                       "reference":"Practitioner/77"
-                    },
-                    "text":"this is encounter dispsense note"
-                 }
-              ],
-              "partOf":{
-                 "reference":"Encounter/87"
-              },
-              "type":[
-                 {
-                    "coding":[
-                       {
-                          "system":"http://your-custom-coding-system",
-                          "code":"dispensing-encounter",
-                          "display":"Dispensing encounter"
-                       }
-                    ]
-                 }
-              ],
-              "period":{
-                 "start":"2024-09-25T19:35:00+05:30",
-                 "end":"2024-09-25T19:35:00+05:30"
-              },
-              "status":"in-progress"
-           },
-           "request":{
-              "method":"POST",
-              "url":"Encounter",
-              "ifNoneExist":"identifier=http://hl7.org/fhir/sid/sn|11a272c7-a67d-4d74-a9c7-f500bbf99087"
-           }
-        },
-        {
-           "fullUrl":"urn:uuid:428a99bb-566d-49e8-978a-e9db9d5f71ab",
-           "resource":{
-              "resourceType":"Encounter",
-              "identifier":[
-                 {
-                    "system":"http://hl7.org/fhir/sid/sn",
-                    "value":"428a99bb-566d-49e8-978a-e9db9d5f71ab"
-                 }
-              ],
-              "subject":{
-                 "reference":"Patient/81"
-              },
-              "note":[
-                 {
-                    "authorReference":{
-                       "reference":"Practitioner/77"
-                    },
-                    "text":"this is encounter dispsense note"
-                 }
-              ],
-              "partOf":{
-                 "reference":"urn:uuid:11a272c7-a67d-4d74-a9c7-f500bbf99087"
-              },
-              "type":[
-                 {
-                    "coding":[
-                       {
-                          "system":"http://your-custom-coding-system",
-                          "code":"dispensing-encounter",
-                          "display":"Dispensing encounter"
-                       }
-                    ]
-                 }
-              ],
-              "period":{
-                 "start":"2024-09-25T19:35:00+05:30",
-                 "end":"2024-09-25T19:35:00+05:30"
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+      {
+        "fullUrl": "urn:uuid:8e31a25e-b092-4c2d-b1d1-52858ba980b0",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "370416004",
+                "display": "Ampicillin 1 g Powder for solution for injection"
               }
-           },
-           "request":{
-              "method":"POST",
-              "url":"Encounter",
-              "ifNoneExist":"identifier=http://hl7.org/fhir/sid/sn|428a99bb-566d-49e8-978a-e9db9d5f71ab"
-           }
-        },
-        {
-           "fullUrl":"urn:uuid:b99be180-197f-4ea8-83f8-a82dbbbf0c27",
-           "resource":{
-              "resourceType":"MedicationDispense",
-              "medicationReference":{
-                 "reference":"Medication/29"
-              },
-              "subject":{
-                 "reference":"Patient/81"
-              },
-              "context":{
-                 "reference":"urn:uuid:428a99bb-566d-49e8-978a-e9db9d5f71ab"
-              },
-              "identifier":[
-                 {
-                    "type":{
-                       "coding":[
-                          {
-                             "system":"http://terminology.hl7.org/CodeSystem/v2-0203",
-                             "code":"MR"
-                          }
-                       ]
-                    },
-                    "system":"https://www.thelattice.in/",
-                    "value":"b99be180-197f-4ea8-83f8-a82dbbbf0c27"
-                 }
-              ],
-              "quantity":{
-                 "value":7
-              },
-              "authorizingPrescription":[
-                 {
-                    "reference":"MedicationRequest/88"
-                 }
-              ],
-              "whenHandedOver":"2024-09-25T19:35:00+05:30",
-              "category":{
-                 "coding":[
-                    {
-                       "system":"http://your-custom-coding-system",
-                       "code":"prescribed"
-                    }
-                 ]
+            ],
+            "text": "Ampicillin 1 g Powder for solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385223009",
+                "display": "Powder for solution for injection"
               }
-           },
-           "request":{
-              "method":"POST",
-              "url":"MedicationDispense",
-              "ifNoneExist":"identifier=https://www.thelattice.in/|b99be180-197f-4ea8-83f8-a82dbbbf0c27"
-           }
-        },
-        {
-           "fullUrl":"urn:uuid:96da92f0-b356-4b36-aa0f-96b9d39fe3b8",
-           "resource":{
-              "resourceType":"MedicationDispense",
-              "medicationReference":{
-                 "reference":"Medication/65"
+            ],
+            "text": "Powder for solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387170002",
+                    "display": "ampicillin"
+                  }
+                ]
               },
-              "subject":{
-                 "reference":"Patient/81"
-              },
-              "context":{
-                 "reference":"urn:uuid:428a99bb-566d-49e8-978a-e9db9d5f71ab"
-              },
-              "identifier":[
-                 {
-                    "type":{
-                       "coding":[
-                          {
-                             "system":"http://terminology.hl7.org/CodeSystem/v2-0203",
-                             "code":"MR"
-                          }
-                       ]
-                    },
-                    "system":"https://www.thelattice.in/",
-                    "value":"96da92f0-b356-4b36-aa0f-96b9d39fe3b8"
-                 }
-              ],
-              "quantity":{
-                 "value":7
-              },
-              "whenHandedOver":"2024-09-25T19:35:00+05:30",
-              "category":{
-                 "coding":[
-                    {
-                       "system":"http://your-custom-coding-system",
-                       "code":"OTC"
-                    }
-                 ]
+              "strength": {
+                "numerator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "g"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "vial"
+                }
               }
-           },
-           "request":{
-              "method":"POST",
-              "url":"MedicationDispense",
-              "ifNoneExist":"identifier=https://www.thelattice.in/|96da92f0-b356-4b36-aa0f-96b9d39fe3b8"
-           }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|370416004"
         }
-     ]
+      },
+      {
+        "fullUrl": "urn:uuid:707a56fb-8bd4-4dc2-af7e-2fa69512852a",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1197170008",
+                "display": "Benzathine benzylpenicillin 1.2 million unit Powder for solution for injection"
+              }
+            ],
+            "text": "Benzathine benzylpenicillin 1.2 million unit Powder for solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385223009",
+                "display": "Powder for solution for injection"
+              }
+            ],
+            "text": "Powder for solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "75247008",
+                    "display": "benzathine benzylpenicillin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 1.2,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "million IU"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "vial"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1197170008"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:181e4570-6324-40dd-8064-8162d2910548",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1197171007",
+                "display": "Benzathine benzylpenicillin 2.4 million unit Powder for solution for injection"
+              }
+            ],
+            "text": "Benzathine benzylpenicillin 2.4 million unit Powder for solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385223009",
+                "display": "Powder for solution for injection"
+              }
+            ],
+            "text": "Powder for solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "75247008",
+                    "display": "benzathine benzylpenicillin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 2.4,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "million IU"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "vial"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1197171007"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:3b1432d5-b09f-4772-9e60-1617f098b9b5",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "890327003",
+                "display": "Benzylpenicillin 5 million unit Powder for solution for injection"
+              }
+            ],
+            "text": "Benzylpenicillin 5 million unit Powder for solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385223009",
+                "display": "Powder for solution for injection"
+              }
+            ],
+            "text": "Powder for solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "323389000",
+                    "display": "benzylpenicillin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 3,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "g"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "vial"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|890327003"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:2c1d43b6-54c1-4230-baf2-ddc78d3c727c",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "323936009",
+                "display": "Cefazolin sodium 1 gm/1 vial Powder for solution for injection"
+              }
+            ],
+            "text": "Cefazolin sodium 1 gm/1 vial Powder for solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385223009",
+                "display": "Powder for solution for injection"
+              }
+            ],
+            "text": "Powder for solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387470007",
+                    "display": "cefazolin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "million IU"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "vial"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|323936009"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:e02898ae-e662-49c8-8938-07de4c029f61",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "786005005",
+                "display": "Cefalexin anhydrous 25 mg/1 ml oral suspension"
+              }
+            ],
+            "text": "Cefalexin anhydrous 25 mg/1 ml oral suspension"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385024007",
+                "display": "Oral suspension"
+              }
+            ],
+            "text": "Oral suspension"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387304003",
+                    "display": "cefalexin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 25,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ml"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|786005005"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:6ddafca1-bb13-45d4-bf57-b3f41212d3b9",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "786006006",
+                "display": "Cefalexin anhydrous 50 mg/1 ml oral suspension"
+              }
+            ],
+            "text": "Cefalexin anhydrous 50 mg/1 ml oral suspension"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385024007",
+                "display": "Oral suspension"
+              }
+            ],
+            "text": "Oral suspension"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387304003",
+                    "display": "cefalexin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 50,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ml"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|786006006"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:4ec94a0c-8c42-4027-b391-e9d382bfca84",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1148452003",
+                "display": "Cefalexin 250 mg capsule"
+              }
+            ],
+            "text": "Cefalexin 250 mg capsule"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "420692007",
+                "display": "Capsule"
+              }
+            ],
+            "text": "Capsule"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387304003",
+                    "display": "cefalexin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 250,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "capsule"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1148452003"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:c3ab7b63-410c-4368-9430-96fb21d208f9",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1148454002",
+                "display": "Cefalexin 250 mg tablet"
+              }
+            ],
+            "text": "Cefalexin 250 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387304003",
+                    "display": "cefalexin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 250,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1148454002"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:bf826157-30ae-496e-9f93-54a61e777b69",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1148453008",
+                "display": "Cefalexin 500 mg capsule"
+              }
+            ],
+            "text": "Cefalexin 500 mg capsule"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "420692007",
+                "display": "Capsule"
+              }
+            ],
+            "text": "Capsule"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387304003",
+                    "display": "cefalexin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 500,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "capsule"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1148453008"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:8780448a-82bd-490a-89e1-5aed48aa8811",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "783072003",
+                "display": "Cefalexin 500 mg tablet"
+              }
+            ],
+            "text": "Cefalexin 500 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387304003",
+                    "display": "cefalexin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 500,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|783072003"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:4d2e2b1b-cea8-4cff-8d85-ce6cdfd3dd32",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "781908005",
+                "display": "Gentamicin sulfate 40 mg/1 ml solution for injection"
+              }
+            ],
+            "text": "Gentamicin sulfate 40 mg/1 ml solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385219001",
+                "display": "Solution for injection"
+              }
+            ],
+            "text": "Solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387321007",
+                    "display": "gentamicin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 40,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ml"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|781908005"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:1e6f17f7-0900-48fc-8172-640f03eb18c1",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "324559003",
+                "display": "Nitrofurantoin 100 mg tablet"
+              }
+            ],
+            "text": "Nitrofurantoin 100 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "373543005",
+                    "display": "nitrofurantoin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 100,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|324559003"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:ba8183fb-1e08-496f-be75-75bbeb1f4419",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "324466004",
+                "display": "Ethambutol hydrochloride 100 mg tablet"
+              }
+            ],
+            "text": "Ethambutol hydrochloride 100 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387129004",
+                    "display": "ethambutol"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 100,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|324466004"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:7f4a8c32-a407-4386-a407-e7817b7aa782",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "324467008",
+                "display": "Ethambutol hydrochloride 400 mg tablet"
+              }
+            ],
+            "text": "Ethambutol hydrochloride 400 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387129004",
+                    "display": "ethambutol"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 400,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|324467008"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:0a61d2e3-9cd4-4280-909e-5bf87c6a48dd",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1197500004",
+                "display": "Ethambutol 100 mg dispersible tablet"
+              }
+            ],
+            "text": "Ethambutol 100 mg dispersible tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421366001",
+                "display": "Dispersible tablet"
+              }
+            ],
+            "text": "Dispersible tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387129004",
+                    "display": "ethambutol"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 100,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1197500004"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:95dfecc3-798e-4c61-986d-042dbe433e4b",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "324479008",
+                "display": "Rifampicin 150 mg capsule"
+              }
+            ],
+            "text": "Rifampicin 150 mg capsule"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "420692007",
+                "display": "Capsule"
+              }
+            ],
+            "text": "Capsule"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387159009",
+                    "display": "rifampicin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 150,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "piece"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|324479008"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:697fc8b1-4c69-4425-8db9-52b22c23ba77",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "324480006",
+                "display": "Rifampicin 300 mg capsule"
+              }
+            ],
+            "text": "Rifampicin 300 mg capsule"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "420692007",
+                "display": "Capsule"
+              }
+            ],
+            "text": "Capsule"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387159009",
+                    "display": "rifampicin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 300,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "piece"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|324480006"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:32181c5b-d8ac-4918-b95b-c99a0f364a2f",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1193664002",
+                "display": "Amlodipine maleate 5 mg tablet"
+              }
+            ],
+            "text": "Amlodipine maleate 5 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386864001",
+                    "display": "amlodipine"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1193664002"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:49605b39-d14c-4712-ab30-0273f9f4d2b4",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1193665001",
+                "display": "Amlodipine maleate 5 mg tablet"
+              }
+            ],
+            "text": "Amlodipine maleate 5 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386864001",
+                    "display": "amlodipine"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1193665001"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:c288a70b-ae4e-49fc-9ae6-533a40b3ce31",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "318590006",
+                "display": "Bisoprolol fumarate 5 mg tablet"
+              }
+            ],
+            "text": "Bisoprolol fumarate 5 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386868003",
+                    "display": "bisoprolol"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|318590006"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:27da6096-1930-43e0-a5a6-de7877a79a71",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "318851002",
+                "display": "Enalapril maleate 5 mg tablet"
+              }
+            ],
+            "text": "Enalapril maleate 5 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "372658000",
+                    "display": "enalapril"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|318851002"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:03618bdc-2bae-40fe-9b58-4d71eb1640fb",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1230172000",
+                "display": "Amlodipine 5 mg + lisinopril 5 mg tablet"
+              }
+            ],
+            "text": "Amlodipine 5 mg + lisinopril 5 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386864001",
+                    "display": "amlodipine"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            },
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386873009",
+                    "display": "lisinopril"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1230172000"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:0c19688e-a908-4b47-ac13-f4f0f41afa82",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1193824004",
+                "display": "Amlodipine besilate 5 mg + lisinopril 20 mg/1 tablet"
+              }
+            ],
+            "text": "Amlodipine besilate 5 mg + lisinopril 20 mg/1 tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386864001",
+                    "display": "amlodipine"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            },
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386873009",
+                    "display": "lisinopril"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 20,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1193824004"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:47059dca-29a3-4ff3-b6d8-d316a2583441",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1193825003",
+                "display": "Amlodipine 10 mg + lisinopril 20 mg tablet"
+              }
+            ],
+            "text": "Amlodipine 10 mg + lisinopril 20 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386864001",
+                    "display": "amlodipine"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 10,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            },
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386873009",
+                    "display": "lisinopril"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 20,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1193825003"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:24c69bed-4a93-40a8-911e-aa105d53a772",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "703896005",
+                "display": "Empagliflozin 10 mg tablet"
+              }
+            ],
+            "text": "Empagliflozin 10 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "703894008",
+                    "display": "empagliflozin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 10,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|703896005"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:639e822b-296c-4969-8ae3-24dd1e7546d6",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "703897001",
+                "display": "Empagliflozin 25 mg oral tablet"
+              }
+            ],
+            "text": "Empagliflozin 25 mg oral tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "703894008",
+                    "display": "empagliflozin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 25,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|703897001"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:4df060f4-e515-449b-9d35-67684c4209bc",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "765721008",
+                "display": "Gliclazide 30 mg prolonged-release tablet"
+              }
+            ],
+            "text": "Gliclazide 30 mg prolonged-release tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "395731001",
+                    "display": "gliclazide"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 30,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|765721008"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:8fe18579-d385-44b0-90d3-c6c7122d91cf",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1193811004",
+                "display": "Gliclazide 60 mg prolonged-release tablet"
+              }
+            ],
+            "text": "Gliclazide 60 mg prolonged-release tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "395731001",
+                    "display": "gliclazide"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 60,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1193811004"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:b7d465a2-9322-4e2a-8b48-a93de468aab0",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "325242002",
+                "display": "Gliclazide 60 mg prolonged-release tablet"
+              }
+            ],
+            "text": "Gliclazide 60 mg prolonged-release tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "395731001",
+                    "display": "gliclazide"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 80,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|325242002"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:cf9231c3-b295-4439-a1af-2a5132fcdee3",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "325278007",
+                "display": "Metformin hydrochloride 500 mg oral tablet"
+              }
+            ],
+            "text": "Metformin hydrochloride 500 mg oral tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "372567009",
+                    "display": "metformin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 500,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|325278007"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:80fbe445-77e3-44df-ba22-5b7bffba35ea",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "766466006",
+                "display": "Chlorpromazine hydrochloride 5 mg/1 mL solution"
+              }
+            ],
+            "text": "Chlorpromazine hydrochloride 5 mg/1 mL solution"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385023001",
+                "display": "Oral solution"
+              }
+            ],
+            "text": "Oral solution"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387258005",
+                    "display": "chlorpromazine"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ml"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|766466006"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:b8d2141a-f3af-414d-a26a-bc7a7a5bf8ec",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "321368001",
+                "display": "Chlorpromazine hydrochloride 100 mg/1 tablet"
+              }
+            ],
+            "text": "Chlorpromazine hydrochloride 100 mg/1 tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387258005",
+                    "display": "chlorpromazine"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 100,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|321368001"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:e1b8429d-2b81-42af-9035-2918314b3f7a",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "785052006",
+                "display": "Budesonide 200 mg/1 actuation solution for inhalation"
+              }
+            ],
+            "text": "Budesonide 200 mg/1 actuation solution for inhalation"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "420641004",
+                "display": "Solution for inhalation"
+              }
+            ],
+            "text": "Solution for inhalation"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "SCTID: 395726003",
+                    "display": "budesonide"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 200,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mcg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|785052006"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:e6120414-b662-4a83-9cf1-d28cdd760bce",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "770300007",
+                "display": "Salbutamol sulfate 100 mg/1 actuation pressurised suspension for inhalation"
+              }
+            ],
+            "text": "Salbutamol sulfate 100 mg/1 actuation pressurised suspension for inhalation"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421221008",
+                "display": "Suspension for inhalation"
+              }
+            ],
+            "text": "Suspension for inhalation"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "372897005",
+                    "display": "salbutamol"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 100,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mcg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|770300007"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:eda20979-56e9-4450-9c86-785372a890bd",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1197460000",
+                "display": "Salbutamol 5 mg/mL solution for inhalation"
+              }
+            ],
+            "text": "Salbutamol 5 mg/mL solution for inhalation"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "display": "Solution"
+              }
+            ],
+            "text": "Solution"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "372897005",
+                    "display": "salbutamol"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ml"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1197460000"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:6162f899-1685-4f85-b96b-fbd681a758fc",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1197459005",
+                "display": "Tiotropium bromide 1.25 mg/1 actuation solution for inhalation"
+              }
+            ],
+            "text": "Tiotropium bromide 1.25 mg/1 actuation solution for inhalation"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "420641004",
+                "display": "Solution for inhalation"
+              }
+            ],
+            "text": "Solution for inhalation"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "409169006",
+                    "display": "tiotropium"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 1.25,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mcg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1197459005"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:8516e010-5462-4c65-b830-6a4eead492e2",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "1197458002",
+                "display": "Tiotropium bromide 2.5 mg/1 actuation solution for inhalation"
+              }
+            ],
+            "text": "Tiotropium bromide 2.5 mg/1 actuation solution for inhalation"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "420641004",
+                "display": "Solution for inhalation"
+              }
+            ],
+            "text": "Solution for inhalation"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "409169006",
+                    "display": "tiotropium"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 2.5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mcg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|1197458002"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:a9a53bc6-cd79-423f-a44d-bdfee674eb17",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "323584006",
+                "display": "Ampicillin sodium 500 milligram/1 vial Powder for solution for injection"
+              }
+            ],
+            "text": "Ampicillin sodium 500 milligram/1 vial Powder for solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385223009",
+                "display": "Powder for solution for injection"
+              }
+            ],
+            "text": "Powder for solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387170002",
+                    "display": "ampicillin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 500,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "vial"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|323584006"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:f73459d8-04ed-4314-8ec6-bd4a7aa96840",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "323398002",
+                "display": "Benzylpenicillin sodium 600 mg/1 vial Powder for solution for injection"
+              }
+            ],
+            "text": "Benzylpenicillin sodium 600 mg/1 vial Powder for solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385223009",
+                "display": "Powder for solution for injection"
+              }
+            ],
+            "text": "Powder for solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "323389000",
+                    "display": "benzylpenicillin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 600,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "vial"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|323398002"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:76181ef9-a84e-4a16-acf0-bcf40d7d8707",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "781909002",
+                "display": "Gentamicin sulfate 10 mg/1 ml solution for injection"
+              }
+            ],
+            "text": "Gentamicin sulfate 10 mg/1 ml solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385219001",
+                "display": "Solution for injection"
+              }
+            ],
+            "text": "Solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387321007",
+                    "display": "gentamicin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 10,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ml"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|781909002"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:880a714c-aa92-4097-bcb6-c53172725baf",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "375489004",
+                "display": "Nitrofurantoin 5 mg/1 ml suspension"
+              }
+            ],
+            "text": "Nitrofurantoin 5 mg/1 ml suspension"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385024007",
+                "display": "Oral suspension"
+              }
+            ],
+            "text": "Oral suspension"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "373543005",
+                    "display": "nitrofurantoin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ml"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|375489004"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:eb27eed1-1869-4293-9fb6-174481eb2b1b",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "769135007",
+                "display": "Rifampicin 20 mg/1 ml oral suspension"
+              }
+            ],
+            "text": "Rifampicin 20 mg/1 ml oral suspension"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385024007",
+                "display": "Oral suspension"
+              }
+            ],
+            "text": "Oral suspension"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387159009",
+                    "display": "rifampicin"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 20,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ml"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|769135007"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:073be287-5b6a-45da-be70-327e9dbdcc47",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "783049000",
+                "display": "Amlodipine besilate 5 milligram/1 tablet"
+              }
+            ],
+            "text": "Amlodipine besilate 5 milligram/1 tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386864001",
+                    "display": "amlodipine"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|783049000"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:834a6eac-ceba-494f-bdee-25d161212728",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "318604001",
+                "display": "Bisoprolol fumarate 1.25 mg tablet"
+              }
+            ],
+            "text": "Bisoprolol fumarate 1.25 mg tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386868003",
+                    "display": "bisoprolol"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 1.25,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|318604001"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:7b4fb3c8-3d6c-49e8-98d6-0927701c4557",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "781803000",
+                "display": "Chlorpromazine hydrochloride 25 mg/1 mL solution for injection"
+              }
+            ],
+            "text": "Chlorpromazine hydrochloride 25 mg/1 mL solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385219001",
+                "display": "Solution for injection"
+              }
+            ],
+            "text": "Solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387258005",
+                    "display": "chlorpromazine"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 25,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ml"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|781803000"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:65473cce-b18f-4788-9c72-8ee47802bfe5",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "770295005",
+                "display": "Ipratropium bromide 20 mg/1 actuation pressurised solution for inhalation"
+              }
+            ],
+            "text": "Ipratropium bromide 20 mg/1 actuation pressurised solution for inhalation"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "420641004",
+                "display": "Solution for inhalation"
+              }
+            ],
+            "text": "Solution for inhalation"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "386881005",
+                    "display": "ipratropium bromide"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 20,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mcg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|770295005"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:cf0acaed-8be4-4675-8435-ab17a329bf54",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "770299004",
+                "display": "Salbutamol sulfate 100 mg/1 actuation powder for inhalation"
+              }
+            ],
+            "text": "Salbutamol sulfate 100 mg/1 actuation powder for inhalation"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385207009",
+                "display": "Powder for inhalation"
+              }
+            ],
+            "text": "Powder for inhalation"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "372897005",
+                    "display": "salbutamol"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 100,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mcg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|770299004"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:8133693e-0fe0-4808-a916-7b72a788afce",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "785983008",
+                "display": "Tiotropium bromide 18 microgram/1 actuation powder for inhalation"
+              }
+            ],
+            "text": "Tiotropium bromide 18 microgram/1 actuation powder for inhalation"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385207009",
+                "display": "Powder for inhalation"
+              }
+            ],
+            "text": "Powder for inhalation"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "409169006",
+                    "display": "tiotropium"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 18,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mcg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|785983008"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:d3094983-5540-4b1a-a769-2a16aea99a22",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "407856001",
+                "display": "Hydrochlorothiazide 12.5 mg + telmisartan 80 mg/1 tablet"
+              }
+            ],
+            "text": "Hydrochlorothiazide 12.5 mg + telmisartan 80 mg/1 tablet"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "421026006",
+                "display": "Tablet"
+              }
+            ],
+            "text": "Tablet"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387069000",
+                    "display": "telmisartan"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 12.5,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            },
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387525002",
+                    "display": "hydrochlorothiazide"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 80,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "tablet"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|407856001"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:2c023423-b6e2-4acc-8734-bca9f518e4e0",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "770280008",
+                "display": "Budesonide 100 mg + formoterol fumarate dihydrate 6 mg/1 actuation powder for inhalation"
+              }
+            ],
+            "text": "Budesonide 100 mg + formoterol fumarate dihydrate 6 mg/1 actuation powder for inhalation"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385207009",
+                "display": "Powder for inhalation"
+              }
+            ],
+            "text": "Powder for inhalation"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "SCTID: 395726003",
+                    "display": "budesonide"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 100,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mcg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            },
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "414289007",
+                    "display": "formoterol"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 6,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|770280008"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:38bc9b01-2799-40af-a91e-a10cb0ba7ba3",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "770284004",
+                "display": "Budesonide 200 mg + formoterol fumarate dihydrate 6 mg/1 actuation powder for inhalation"
+              }
+            ],
+            "text": "Budesonide 200 mg + formoterol fumarate dihydrate 6 mg/1 actuation powder for inhalation"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385207009",
+                "display": "Powder for inhalation"
+              }
+            ],
+            "text": "Powder for inhalation"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "SCTID: 395726003",
+                    "display": "budesonide"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 200,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mcg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            },
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "414289007",
+                    "display": "formoterol"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 6,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "actuation"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|770284004"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:738e30c7-8853-472e-83dd-8585542a1185",
+        "resource": {
+          "resourceType": "Medication",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "781862008",
+                "display": "Epinephrine 1 mg/1 mL solution for injection"
+              }
+            ],
+            "text": "Epinephrine 1 mg/1 mL solution for injection"
+          },
+          "form": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "385219001",
+                "display": "Solution for injection"
+              }
+            ],
+            "text": "Solution for injection"
+          },
+          "ingredient": [
+            {
+              "itemCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "387362001",
+                    "display": "epinephrine (adrenaline)"
+                  }
+                ]
+              },
+              "strength": {
+                "numerator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                },
+                "denominator": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ml"
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Medication?code=http://snomed.info/sct|781862008"
+        }
+      }
+    ]
   }
 }

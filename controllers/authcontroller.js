@@ -10,7 +10,9 @@ let { validationResult } = require('express-validator');
 let bundleOp = require("../services/bundleOperation");
 const crypto = require('crypto');
 let { client } = require('../services/redisConnect');
- 
+const sequelize = require("sequelize");
+
+
 // login by using email or mobile number to send OTP
 let login = async function (req, res) {
     try {
@@ -19,8 +21,8 @@ let login = async function (req, res) {
             return response.sendInvalidDataError(res, errors);
         }
         let isEmail = checkIsEmail(req.body.userContact);
-        let contact = isEmail ? 'email' : 'phone';
-        let userDetail = await getUserDetail(req, contact);
+        let contactType = isEmail ? 'email' : 'phone';
+        let userDetail = await getUserDetail(req, contactType);
         console.log(userDetail)
         let loginAttempts = 0, otp = 0;
         let OTPGenerateAttempt = 1;
@@ -188,28 +190,33 @@ async function sendOTP(isEmail, userDetail, otp) {
 
 }
 // get user and his/her OTP details using sequelize
-async function getUserDetail(req, contact) {
+async function getUserDetail(req, contactType) {
     try {
-        let queryParam ={"_total": "accurate", "_revinclude": "PractitionerRole:practitioner"};
-        queryParam[contact] = contact == "email" ? req.body.userContact.toLowerCase() : req.body.userContact;
-        let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam);
-        if (existingPractioner.data.total == 0 || !existingPractioner?.data?.entry) {
+        
+        const userContact = contactType == "email" ? req.body.userContact.toLowerCase() : req.body.userContact ;
+        let practitionerData = await getUserData(userContact, contactType);
+        console.log("existing practitioner: ", practitionerData)
+        if (practitionerData.length == 0 ) {
             return null;
         }
         else {
-            let user_id = existingPractioner.data.entry[0].resource.id;
-            let user_name = existingPractioner.data.entry[0].resource.name[0].given.join(' ');
-            // user_name += " " + existingPractioner?.data?.entry?.[0]?.resource?.name?.[0]?.family || '';
-            let email = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "email");
-            let phone = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "phone");
-            let orgId = existingPractioner.data.entry[1].resource.organization.reference.split('/')[1];
+            
+            let user_id = practitionerData[0].res_id;
+            let existingPractitioner = JSON.parse(practitionerData[0].res_text_vc)
+            let user_name = existingPractitioner.name[0].given.join(' ');
+            // user_name += " " + existingPractitioner?.data?.entry?.[0]?.resource?.name?.[0]?.family || '';
+            let email = existingPractitioner.telecom.filter(e => e.system == "email");
+            let phone = existingPractitioner.telecom.filter(e => e.system == "phone");
+            let roleData = JSON.parse(practitionerData[1].res_text_vc);
+            let roleList = roleData.code[0].coding.map(element => element.code) || [];
             let userDetail = {}; userDetail.dataValues = {
                 "user_name": user_name,
-                "user_email" : email[0].value,
-                "mobile_number" : phone[0].value,
-                "is_active":  existingPractioner.data.entry[0].resource.active,
+                "user_email" : email[0]?.value || null,
+                "mobile_number" : phone[0]?.value || null,
+                "is_active":  existingPractitioner.active,
                 "user_id": user_id,
-                "org_id": orgId
+                "org_id": roleData.organization.reference.split("/")[1],
+                "roles": roleList,
             }
             let userData = await db.authentication_detail.findOne({
                 attributes:['auth_id', 'user_id', 'otp', 'expire_time', 'createdOn', 'login_attempts', 'otp_generate_attempt'],
@@ -223,6 +230,37 @@ async function getUserDetail(req, contact) {
     catch (e) {
         return Promise.reject(e);
     }
+}
+
+// get practitioner role and details from db
+async function getUserData(userContact, contactType) {
+    const practitionerQuery = `SELECT res_id, res_type, res_text_vc FROM hfj_res_ver where res_id = (SELECT distinct res_id FROM hfj_spidx_token where res_type = 'Practitioner' and (sp_value='${userContact}' and sp_name='${contactType}') and res_type='Practitioner') order by res_ver desc limit 1;`
+    console.log("check here: ", practitionerQuery)
+    const practitionerResource = await db.sequelize.query(practitionerQuery,{type: sequelize.QueryTypes.SELECT});
+    console.log("practitionerResource: ", practitionerResource)
+    if(practitionerResource.length != 1) {
+        return [];
+    }    
+    const roleResource = await db.sequelize.query(`select res_id, res_type, res_text_vc FROM hfj_res_ver where res_type = 'PractitionerRole' and res_id = 
+    (SELECT src_resource_id FROM public.hfj_res_link where source_resource_type = 'PractitionerRole' and target_resource_id=${practitionerResource[0].res_id} order by pId limit 1)  order by res_ver desc limit 1;`,{type: sequelize.QueryTypes.SELECT});
+    
+    return [practitionerResource[0], roleResource[0]];
+    
+}
+
+async function getUserById(user_id) {
+    try {
+        let userData = await db.authentication_detail.findOne({
+            attributes: ['auth_id', 'user_id', 'password', 'salt', 'updatedOn', 'login_attempts', 'forceSetPassword', 'attempt_timestamp', 'is_active', "otp", "otp_check_attempts", "otp_generate_attempt", "otp_gen_time", "otpVerified", "sessionCount"],
+            where: { "user_id": user_id }
+        });
+    
+        return userData;
+    }
+    catch(e) {
+        return Promise.reject(e);
+    }
+   
 }
 
 /// check if provided contact is an email or not
@@ -262,7 +300,7 @@ async function upsertOTP(otp, userDetail, currentTime, expireTime, loginAttempts
 
 }
 
-const userVerification = async (req, res, next) => {
+const userVerification = async (req, res) => {
     try{
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -348,7 +386,7 @@ const userVerification = async (req, res, next) => {
     }
 }
 
-const userVerificationVerifyOTP = async (req, res, next) => {
+const userVerificationVerifyOTP = async (req, res) => {
     try{
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

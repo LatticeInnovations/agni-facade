@@ -12,7 +12,7 @@ let apptPatchValidation =
 let apptStatus = require("../utils/appointmentStatus.json");
 
 // postMessage, update and get app data handling function
-let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
+let setApptData = async function (resType, reqInput, FHIRData, reqMethod, reqQuery, token) {
   try {
     let resourceResult = [],
       errData = [];
@@ -29,6 +29,8 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
           };
           return Promise.reject(errData);
         }
+
+        console.log("check the token here: ", token)
         // get location id of the organization sent by app and map it to the appointments
         let locationResource = await bundleOp.searchData(
           config.baseUrl + "Location",
@@ -36,7 +38,8 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
             organization: "Organization/" + apptData.orgId,
             _elements: "id",
             _total: "accurate",
-          }
+          },
+          token
         );
         let locationId = locationResource.data.entry[0].resource.id;
         apptData.locationId = locationId;
@@ -111,10 +114,10 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
         let link = config.baseUrl + resType;
         let resourceSavedData = await bundleFun.searchData(link, {
           _id: inputData.appointmentId,
-        });
+        }, token);
         let encounterSavedData = await bundleFun.searchData(
           config.baseUrl + "Encounter",
-          { appointment: inputData.appointmentId }
+          { appointment: inputData.appointmentId }, token
         );
         if (resourceSavedData.data.total != 1) {
           let e = {
@@ -210,7 +213,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
         _elements: "managingOrganization",
         _id: [...locationIds].join(","),
         _count: locationIds.size,
-      });
+      }, token);
       //  through Location resource fetch the organization id of the resource
       let locationOrg = orgResource.data.entry.map((e) => {
         return {
@@ -230,7 +233,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
       let slotList = await bundleOp.searchData(config.baseUrl + "Slot", {
         _id: [...slotIds].join(","),
         _count: 5000,
-      });
+      }, token);
       let slotAppt = slotList.data.entry.map((e) => {
         return {
           slotId: e.resource.id,
@@ -242,7 +245,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
       //  get encounter list of the appointment
       let encounterList = await bundleOp.searchData(
         config.baseUrl + "Encounter",
-        { appointment: [...apptIds].join(","), _count: 5000 }
+        { appointment: [...apptIds].join(","), _count: 5000 }, token
       );
       // map encounter status with appointment id
       let apptEncounter = encounterList.data.entry.map((e) => {

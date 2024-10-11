@@ -9,6 +9,7 @@ let secretKey = require('../config/nodeConfig').jwtSecretKey;
 router.use(function (req, res, next) {
     // check header or url parameters or post parameters for token
     let tokenData = req.headers['x-access-token'];
+    console.log(tokenData)
 
     // decode token
     if (tokenData) {
@@ -25,7 +26,9 @@ router.use(function (req, res, next) {
             } else {
                 // if everything is good, save to request for use in other routes
                 req.decoded = decoded;
-                req.token = {"userId": decoded.userId, "orgId": decoded.orgId, "type": decoded?.type || null};
+                console.log("check for userId: ", decoded)
+                req.encodedToken = token
+                req.token = {"userId": decoded?.user_id, "orgId": decoded.orgId, "type": decoded?.type, "encodedToken": token || null};
                 console.info(req.token)
                 next();
             }

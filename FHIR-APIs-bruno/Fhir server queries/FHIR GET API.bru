@@ -1,17 +1,17 @@
 meta {
-  name: http---64-227-182-172-8080-fhir-MedicationRequest-2304
+  name: FHIR GET API
   type: http
   seq: 4
 }
 
 get {
-  url: http://64.227.182.172:8081/fhir/MedicationRequest?_id=224
+  url: {{fhir_api_endpoint}}Location
   body: json
   auth: none
 }
 
-query {
-  _id: 224
+headers {
+  Authorization: {{x-access-token}}
 }
 
 body:json {

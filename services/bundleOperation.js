@@ -92,11 +92,13 @@ let setBundleDelete = async function (resourceType, id) {
 }
 }
 
-let searchData = async function (link, reqQuery) {
+let searchData = async function (link, reqQuery, token) {
     const url = (new URL(link));
+    console.log("check here: ", token)
     if (schemaList.includes(url.protocol) && domainsList.includes(url.hostname)) {
         try {
-            let responseData = await axios.get(url, { params: reqQuery });
+            let responseData = await axios.get(url, { params: reqQuery, headers: {"Authorization": "Bearer " + token.encodedToken} });
+            console.log(responseData)
             return responseData;
         } catch (e) {
             let eData = { status: 0, code: "ERR", e: e, statusCode: 500 }

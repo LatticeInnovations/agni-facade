@@ -3,7 +3,7 @@ let bundleFun = require("./bundleOperation");
 let bundleOp = require("./bundleOperation");
 let config = require("../config/nodeConfig");
 let scheduleValid = require("../utils/Validator/scheduleAppointment").scheduleValidation
-let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
+let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod, token) {
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
@@ -14,7 +14,7 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                     let errData = { code: "ERR", statusCode: 422, response: { data: response.error.details[0] }, message: "Invalid input" }
                     return Promise.reject(errData);
                 }
-                let locationResource = await bundleOp.searchData(config.baseUrl + "Location", { organization: "Organization/" + scheduleData.orgId, _elements: "id", _total: "accurate" });
+                let locationResource = await bundleOp.searchData(config.baseUrl + "Location", { organization: "Organization/" + scheduleData.orgId, _elements: "id", _total: "accurate" }, token);
                 let locationId = locationResource.data.entry[0].resource.id;
                 scheduleData.locationId = locationId;
                     console.info("this is a check for data")
@@ -24,8 +24,8 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                     scheduleResource = { ...schedule.getResource() };
                     scheduleResource.resourceType = resType;
                     let noneExistData = [
-                        { "key": "date", "value": "ge" + scheduleData.planningHorizon.start },
-                        { "key": "date", "value": "le" + scheduleData.planningHorizon.end },
+                        { "key": "date", "value": "ge" + encodeURIComponent(scheduleData.planningHorizon.start) },
+                        { "key": "date", "value": "le" + encodeURIComponent(scheduleData.planningHorizon.end) },
                         { "key": "actor", "value": 'Location/' + locationId }
                     ];
                     let scheduleBundle = await bundleFun.setBundlePost(scheduleResource, noneExistData, scheduleData.uuid, "POST", "object");
@@ -46,8 +46,9 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
                 scheduleResponse.bookedSlots = 0;
                 scheduleResult.push(scheduleResponse);
             }
+            console.log("=================>", token)
             // to get organization id from location of the schedule and join it with schedule data
-            let orgResource = await bundleOp.searchData(config.baseUrl + "Location", { _elements: "managingOrganization", _id: [...locationIds].join(","), _count: locationIds.size });
+            let orgResource = await bundleOp.searchData(config.baseUrl + "Location", { _elements: "managingOrganization", _id: [...locationIds].join(","), _count: locationIds.size }, token);
 
             let locationOrg = orgResource.data.entry.map(e => { return { locationId: e.resource.id, orgId: e.resource.managingOrganization.reference.split("/")[1] } });
             resourceSlotResult = scheduleResult.map(obj1 => {
@@ -56,7 +57,7 @@ let setScheduleData = async function (resType, reqInput, FHIRData, reqMethod) {
             });
             // booked slots count
 
-            let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { _elements: "schedule", "_has:Appointment:slot:slot.schedule": [...scheduleIds].join(","), _count: 5000, "_has:Appointment:slot:status": "proposed,arrived,noshow" });
+            let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { _elements: "schedule", "_has:Appointment:slot:slot.schedule": [...scheduleIds].join(","), _count: 5000, "_has:Appointment:slot:status": "proposed,arrived,noshow" }, token);
             let resData = []; let resourceResult1 = null;
             if (slotList.data.total > 0) {
                 resData = slotList.data.entry.reduce((acc, { resource }) => {

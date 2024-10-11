@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{api_endpoint}}/MedicationDispense?prescriptionId=267,269,271&_count=2000
+  url: {{api_endpoint}}/MedicationDispense?patientId=108&_count=2000
   body: json
   auth: none
 }
 
-query {
-  prescriptionId: 267,269,271
+params:query {
+  patientId: 108
   _count: 2000
 }
 

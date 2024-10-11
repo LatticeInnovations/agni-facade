@@ -9,7 +9,7 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
   try {
     let resourceResult = [], errData = [];
     if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
-      let existingMainEncountersList = await  getMainEncountersForPrescription(reqInput)
+      let existingMainEncountersList = await  getMainEncountersForPrescription(reqInput, token)
       console.log("existingMainEncountersList: =======>", existingMainEncountersList)
       let bundleResources = []
       for (let reqData of reqInput) {
@@ -22,7 +22,7 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
         existingMainEncountersList[mainEncounterIndex].resource.status = statusData?.encounter;
         const mainEncounter = existingMainEncountersList[mainEncounterIndex]
         reqData.mainEnounterId = mainEncounter.resource.id ? "Encounter/" + mainEncounter.resource.id : "urn:uuid:" + mainEncounter.resource.identifier[0].value
-        const newRecord = await addNewRecord(resType, reqData)
+        const newRecord = await addNewRecord(resType, reqData, token)
         console.log("new record: ", newRecord)
         bundleResources.push(...newRecord);
       }
@@ -38,7 +38,7 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
       console.log("get data section", mainEncounters);
       const mainEncounterFhirIds = mainEncounters.map((e) => e.id).join(",");
       // Fetch medication list and sub encounter from main encounter
-      const medDispenseWithEncounter = await fetchMedDispenseList(mainEncounterFhirIds)   
+      const medDispenseWithEncounter = await fetchMedDispenseList(mainEncounterFhirIds, token)   
       resourceResult = await mapEncounterAndMedDispense(mainEncounters, medDispenseWithEncounter)
     }
     return { resourceResult, errData };
@@ -47,7 +47,7 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
   }
 };
 
-const getMainEncountersForPrescription = async function(reqInput) {
+const getMainEncountersForPrescription = async function(reqInput, token) {
   try {
     //  fetch prescription Ids
     const uniquePrescriptions = Array.from(
@@ -62,7 +62,7 @@ const getMainEncountersForPrescription = async function(reqInput) {
     };
     const existingMainEncounters = await bundleOp.searchData(
       config.baseUrl + "Encounter",
-      mainEncounterQuery
+      mainEncounterQuery, token
     );
     console.log(existingMainEncounters)
     let existingMainEncountersList = []
@@ -130,10 +130,10 @@ const mapEncounterAndMedDispense= async function(mainEncounters, medDispenseWith
 }
 
 // Fetch medicine dispense list with their sub encounters combined
-const fetchMedDispenseList = async function(ids) {
+const fetchMedDispenseList = async function(ids, token) {
   try {
     let subEncountersMedDispense = await bundleOp.searchData( config.baseUrl + "Encounter",
-      { "part-of": ids, type: "dispensing-encounter", _revinclude: "MedicationDispense:context:Encounter",  _count: 2000}
+      { "part-of": ids, type: "dispensing-encounter", _revinclude: "MedicationDispense:context:Encounter",  _count: 2000}, token
     );
     const medResources = subEncountersMedDispense.data.entry;
     //  filter sub encounter resource from fetched resources
@@ -156,13 +156,13 @@ const fetchMedDispenseList = async function(ids) {
   }
 
 }
-const addNewRecord = async function (resType, reqInput) {
+const addNewRecord = async function (resType, reqInput, token) {
   try {
     let bundleResources = []
     // get encounter id of the prescription from which it is attached
     let prescriptionEncounterId = reqInput.prescriptionFhirId;
     // Matching MedicationRequest list to be fetched to further link it to medicationDispense
-    let combinedMedReqResource = await combineMedReqAndInput(prescriptionEncounterId, reqInput);
+    let combinedMedReqResource = await combineMedReqAndInput(prescriptionEncounterId, reqInput, token);
 
      // create sub-encounter to maintain notes and date time
     const subEncounter = await getEncounterResource(reqInput, {}, false, {});
@@ -195,7 +195,7 @@ const getMedicationDispenseResources = async function(combinedMedReqResource) {
     }
 }
 
-const combineMedReqAndInput = async function ( prescriptionEncounterId, reqInput) {
+const combineMedReqAndInput = async function ( prescriptionEncounterId, reqInput, token) {
   try {
     console.log(" ==========>", reqInput)
     const medicineDispensedList = reqInput.medicineDispensedList
@@ -204,7 +204,7 @@ const combineMedReqAndInput = async function ( prescriptionEncounterId, reqInput
       .join(",");
     //  get medReqFhirId to fetch MedicationRequest data for that prescriptionId
     let medicationRequestResources = await bundleOp.searchData(
-      config.baseUrl + "MedicationRequest",{encounter: prescriptionEncounterId,  _id: dispenseListMedReqIds,  _count: 2000}
+      config.baseUrl + "MedicationRequest",{encounter: prescriptionEncounterId,  _id: dispenseListMedReqIds,  _count: 2000}, token
     );
     // create lookup of medicines to be dispensed list
     const medDispenseLookup = new Map(

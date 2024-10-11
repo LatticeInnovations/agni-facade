@@ -4,7 +4,7 @@ let config = require("../config/nodeConfig");
 const { v4: uuidv4 } = require('uuid');
 let bundleOp = require("./bundleOperation");
 
-let setPractitionerData = async function (resType, reqInput, FHIRData, reqMethod) {
+let setPractitionerData = async function (resType, reqInput, FHIRData, reqMethod, token) {
     try {
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
@@ -17,7 +17,7 @@ let setPractitionerData = async function (resType, reqInput, FHIRData, reqMethod
                  }
                  if(practitionerData.mobileNumber) 
                     queryParam.phone = practitionerData.mobileNumber;
-                 let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam);
+                 let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam, token);
                  if (+existingPractioner.data.total != 0) {
                      let e = { status: 0, code: "ERR", message: "Practitioner data already exists." , statusCode: 500}
                      return Promise.reject(e);
@@ -38,7 +38,7 @@ let setPractitionerData = async function (resType, reqInput, FHIRData, reqMethod
             for (let inputData of reqInput) {
                 let practitioner = new Practitioner(inputData, []);
                 let link = config.baseUrl + resType;
-                let resourceSavedData = await bundleFun.searchData(link, { "_id": inputData.id });
+                let resourceSavedData = await bundleFun.searchData(link, { "_id": inputData.id }, token);
                 if (resourceSavedData.data.total != 1) {
                     let e = { status: 0, code: "ERR", message: "Practitioner Id " + inputData.id + " does not exist.", statusCode: 500}
                    return Promise.reject(e);

@@ -5,16 +5,16 @@ meta {
 }
 
 get {
-  url: {{api_endpoint}}Schedule?_count=100&_offset=0&_sort=_id&orgId=22344
+  url: {{api_endpoint}}Schedule?_count=100&_offset=0&_sort=_id&orgId=2
   body: none
   auth: none
 }
 
-query {
+params:query {
   _count: 100
   _offset: 0
   _sort: _id
-  orgId: 22344
+  orgId: 2
 }
 
 headers {

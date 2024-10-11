@@ -103,6 +103,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
 let searchResourceData = async function (req, res) {
     try {
         let token = req.token;
+        console.log("check if token is received: ", token)
         let response = resourceValid(req.params);
         if (response.error) {
             console.error(response.error.details)
@@ -111,7 +112,7 @@ let searchResourceData = async function (req, res) {
         }
         const resourceType = req.params.resourceType;
         let resourceUrl = await getResourceUrl(resourceType, req.query, token);
-        let responseData = await bundleFun.searchData(resourceUrl.link, resourceUrl.reqQuery);
+        let responseData = await bundleFun.searchData(resourceUrl.link, resourceUrl.reqQuery, token);
         let reqUrl = url.parse(req.originalUrl, true)
         let reqQuery = reqUrl.query;
         // console.info(responseData.data.link)
@@ -122,7 +123,7 @@ let searchResourceData = async function (req, res) {
             return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
         }
         else if (resourceUrl.nestedResource == 1) {
-            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, reqQuery, 0);
+            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, reqQuery, token);
             result = result.concat(res_data.resourceResult);
             if(resourceUrl.specialOffset) {
                 let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
@@ -150,7 +151,7 @@ let searchResourceData = async function (req, res) {
                 }           
             }
             for (let i = 0; i < responseData.data.entry.length; i++) {
-                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0, token);
+                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, token);
                 result = result.concat(res_data.resourceResult);
             }
              res.status(200).json({ status: resStatus, message: "Data fetched successfully.", total: result.length,"offset": +reqQuery._offset, data: result  })

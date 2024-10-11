@@ -28,5 +28,10 @@
         "system" : "http://snomed.info/sct",
         "code": "397897005",
         "display": "Paramedics"
+    },
+    {
+        "system" : "http://snomed.info/sct",
+        "code": "6868009",
+        "display": "Admin"
     }
 ]

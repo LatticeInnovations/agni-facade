@@ -13,20 +13,21 @@ let Queue = require('bull');
 const deleteUserDataQueue =  new Queue('userQueue');
 // { redis: {port: '6379', host: 'localhost'}}
 // Get user profile
-let getUserProfile = async function (req, res, next) {
+let getUserProfile = async function (req, res) {
     try {
+        const token = req.token
         let resourceType = "PractitionerRole";
         req.params.resourceType = resourceType;
         req.query = {practitionerId: req.decoded.userId};
         let resouceUrl = await manageResource.getResourceUrl(resourceType, req.query);
-        let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery, token);
         let result = [];
         let data = {};
         if( !responseData.data.entry || responseData.data.total == 0) {
             return res.status(200).json({ status: 1, message: "Profile detail fetched", total: 0, data: data})
         }
         else {
-            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
+            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, token);
             result = result.concat(res_data);
             result = result[0].resourceResult;
             console.info(result)

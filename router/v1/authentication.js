@@ -20,7 +20,7 @@ let { check, oneOf, checkIf, body } = require('express-validator');
  */
 
 router.post("/login", [oneOf([
-    check("userContact").notEmpty().isEmail().isLength({max: 70}), check("userContact").notEmpty().isNumeric().isLength({min: 10, max: 10})
+    check("userContact").notEmpty().isEmail().isLength({max: 70}), check("userContact").notEmpty().isLength({min: 10, max: 13})
 ])], authController.login);
 
 /**

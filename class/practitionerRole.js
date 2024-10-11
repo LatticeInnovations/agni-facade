@@ -15,7 +15,7 @@ class PractitionerRole {
     getOrganizationRole() {
         let result = roleJson.find(a => a.code === this.fhirResource.code[0].coding[0].code);
             this.roleObj.roleId =  this.fhirResource.code[0].coding[0].code;
-            this.roleObj.role = result.display
+            this.roleObj.role = result?.display || null
     }
     setPractitionerReference() {
         this.fhirResource.practitioner.reference = "Practitioner/"+this.roleObj.practitionerId;
