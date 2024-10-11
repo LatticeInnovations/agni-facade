@@ -33,8 +33,7 @@ let login = async function (req, res) {
             return res.status(401).json({ status: 0, message: "we received a delete request for your account, you can signup again after deletion" });
         }
             
-        let authentication_detail = userDetail.dataValues.authentication_detail;
-        console.log(authentication_detail.dataValues)
+        let authentication_detail = userDetail?.dataValues?.authentication_detail;
         let timeData = await calculateTime(authentication_detail);
         // if user comes back after >= 5 mins reset every value 
         if (timeData.lastAttemptTimeDiff > config.lockTimeInMin) {
