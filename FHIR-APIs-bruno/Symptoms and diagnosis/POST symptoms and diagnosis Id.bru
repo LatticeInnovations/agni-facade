@@ -1,0 +1,36 @@
+meta {
+  name: POST symptoms and diagnosis Id
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_endpoint}}Condition
+  body: json
+  auth: none
+}
+
+body:json {
+  [
+    {
+      "appointmentId": 123,
+      "symDiagUuid": "ksdjsh8skdjsdu9sudisjdksiusuc",
+      "symptoms" : [
+        "R00", "R01"
+      ],
+      "diagnosis": [
+        "R00", "R01"
+      ]
+    },
+    {
+      "appointmentId": 124,
+      "symDiagUuid": "ssdjsh8skdjsdu9sudisjdksiusuc",
+      "symptoms" : [
+        "noSymptoms"
+      ],
+      "diagnosis": [
+        "A0109", "A1810"
+      ]
+    }
+  ]
+}

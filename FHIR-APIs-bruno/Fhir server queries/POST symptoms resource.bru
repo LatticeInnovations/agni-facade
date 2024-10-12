@@ -1,0 +1,283 @@
+meta {
+  name: POST symptoms resource
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{fhir_api_endpoint}}ValueSet
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "resourceType": "ValueSet",
+    "id": "symptoms-list",
+    "name": "symptomsList",
+    "url": "http://www.lattice.in/fhir/ValueSet/symptoms",
+    "title": "List of symptoms",
+    "status": "active",
+    "compose": {
+      "include": [
+        {
+          "system": "http://snomed.info/sct",
+          "concept": [
+            {
+              "code": "R00",
+              "display": "Abnormalities of heart beat"
+            },
+            {
+              "code": "R01",
+              "display": "Cardiac murmurs and other cardiac sounds"
+            },
+            {
+              "code": "R03",
+              "display": "Abnormal blood-pressure reading, without diagnosis"
+            },
+            {
+              "code": "R04",
+              "display": "Hemorrhage from respiratory passages"
+            },
+            {
+              "code": "R05",
+              "display": "Cough"
+            },
+            {
+              "code": "R06",
+              "display": "Abnormalities of breathing"
+            },
+            {
+              "code": "R07",
+              "display": "Pain in throat and chest"
+            },
+            {
+              "code": "R09",
+              "display": "Other symptoms and signs involving the circulatory and respiratory system"
+            },
+            {
+              "code": "R10 ",
+              "display": "Abdominal and pelvic pain"
+            },
+            {
+              "code": "R11",
+              "display": "Nausea and vomiting"
+            },
+            {
+              "code": "R12",
+              "display": "Heartburn"
+            },
+            {
+              "code": "R13",
+              "display": "Aphagia and dysphagia"
+            },
+            {
+              "code": "R14",
+              "display": "Flatulence and related conditions"
+            },
+            {
+              "code": "R15",
+              "display": "Fecal incontinence"
+            },
+            {
+              "code": "R16",
+              "display": "Hepatomegaly and splenomegaly, not elsewhere classified"
+            },
+            {
+              "code": "R17",
+              "display": "Unspecified jaundice"
+            },
+            {
+              "code": "R18",
+              "display": "Ascites"
+            },
+            {
+              "code": "R19",
+              "display": "Other symptoms and signs involving the digestive system and abdomen"
+            },
+            {
+              "code": "R20",
+              "display": "Disturbances of skin sensation"
+            },
+            {
+              "code": "R21",
+              "display": "Rash and other nonspecific skin eruption"
+            },
+            {
+              "code": "R22",
+              "display": "Localized swelling, mass and lump of skin and subcutaneous tissue"
+            },
+            {
+              "code": "R23",
+              "display": "Other skin changes"
+            },
+            {
+              "code": "R25",
+              "display": "Abnormal involuntary movements"
+            },
+            {
+              "code": "R26",
+              "display": "Abnormalities of gait and mobility"
+            },
+            {
+              "code": "R27",
+              "display": "Other lack of coordination"
+            },
+            {
+              "code": "R29",
+              "display": " Other symptoms and signs involving the nervous and musculoskeletal"
+            },
+            {
+              "code": "R30",
+              "display": "Pain associated with micturition"
+            },
+            {
+              "code": "R31",
+              "display": "Hematuria"
+            },
+            {
+              "code": "R32",
+              "display": "Unspecified urinary incontinence"
+            },
+            {
+              "code": "R33",
+              "display": "Retention of urine"
+            },
+            {
+              "code": "R34",
+              "display": "Anuria and oliguria"
+            },
+            {
+              "code": "R35",
+              "display": "Polyuria"
+            },
+            {
+              "code": "R36",
+              "display": "Urethral discharge"
+            },
+            {
+              "code": "R37",
+              "display": "Sexual dysfunction, unspecified"
+            },
+            {
+              "code": "R39",
+              "display": "Other and unspecified symptoms and signs involving the genitourinary"
+            },
+            {
+              "code": "R40",
+              "display": "Somnolence, stupor and coma"
+            },
+            {
+              "code": "R41",
+              "display": "Other symptoms and signs involving cognitive functions and awareness"
+            },
+            {
+              "code": "R42",
+              "display": "Dizziness and giddiness"
+            },
+            {
+              "code": "R43",
+              "display": "Disturbances of smell and taste"
+            },
+            {
+              "code": "R44",
+              "display": "Other symptoms and signs involving general sensations and perceptions"
+            },
+            {
+              "code": "R45",
+              "display": "Symptoms and signs involving emotional state"
+            },
+            {
+              "code": "R46",
+              "display": "Symptoms and signs involving appearance and behavior"
+            },
+            {
+              "code": "R47",
+              "display": "Speech disturbances, not elsewhere classified"
+            },
+            {
+              "code": "R48",
+              "display": "Dyslexia and other symbolic dysfunctions, not elsewhere classified"
+            },
+            {
+              "code": "R49",
+              "display": "Voice and resonance disorders"
+            },
+            {
+              "code": "R50",
+              "display": "Fever of other and unknown origin"
+            },
+            {
+              "code": "R51",
+              "display": "Headache"
+            },
+            {
+              "code": "R52",
+              "display": "Pain, unspecified"
+            },
+            {
+              "code": "R53",
+              "display": "Malaise and fatigue"
+            },
+            {
+              "code": "R54",
+              "display": "Age-related physical debility"
+            },
+            {
+              "code": "R55",
+              "display": "Syncope and collapse"
+            },
+            {
+              "code": "R56",
+              "display": "Convulsions, not elsewhere classified"
+            },
+            {
+              "code": "R57",
+              "display": "Shock, not elsewhere classified"
+            },
+            {
+              "code": "R58",
+              "display": "Hemorrhage, not elsewhere classified"
+            },
+            {
+              "code": "R59",
+              "display": "Enlarged lymph nodes"
+            },
+            {
+              "code": "R60",
+              "display": "Edema, not elsewhere classified"
+            },
+            {
+              "code": "R61",
+              "display": "Generalized hyperhidrosis"
+            },
+            {
+              "code": "R62",
+              "display": "Lack of expected normal physiological development in childhood and adults"
+            },
+            {
+              "code": "R63",
+              "display": "Symptoms and signs concerning food and fluid intake"
+            },
+            {
+              "code": "R64",
+              "display": "Cachexia"
+            },
+            {
+              "code": "R65",
+              "display": "Symptoms and signs specifically associated with systemic inflammation and infection"
+            },
+            {
+              "code": "R68",
+              "display": "Other general symptoms and signs"
+            },
+            {
+              "code": "R69",
+              "display": "Illness, unspecified"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
