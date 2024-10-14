@@ -1,0 +1,19 @@
+meta {
+  name: Symptoms list
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_endpoint}}ValueSet?name=symptomsList
+  body: none
+  auth: none
+}
+
+params:query {
+  name: symptomsList
+}
+
+headers {
+  x-access-token: {{x-access-token}}
+}

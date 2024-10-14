@@ -8,6 +8,7 @@ let practitionerRole = require("./managePractitionerRole");
 let schedule= require("./manageSchedule")
 let appointment = require("./manageAppointment");
 let medDispense = require("./manageMedicineDispense")
+let symDiag = require("./manageSymptomsAndDiagnosis")
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
@@ -19,21 +20,24 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
                 bundleData = await relatedPerson.setRelatedPersonData(inputData, FHIRData, reqMethod, token);
                 break;
             case "Medication":  bundleData =await medication.setMedicationData(resType, inputData, FHIRData, reqMethod, token);
-            break;
+                break;
             case "MedicationRequest": bundleData = await medRequest.setMedicationRequestData(resType, inputData, FHIRData, reqMethod, token);
-            break;
+                break;
             case "Organization": bundleData = await organization.setOrganizationData(resType, inputData, FHIRData, reqMethod, token);  
-            break;
+                break;
             case "Practitioner" : bundleData = await practitioner.setPractitionerData(resType, inputData, FHIRData, reqMethod, token);  
-            break;
+                break;
             case "PractitionerRole": bundleData = await practitionerRole.setPractitionerRoleData(resType, inputData, FHIRData, reqMethod, token); 
-            break; 
+                break; 
             case "Schedule" : bundleData = await schedule.setScheduleData(resType, inputData, FHIRData, reqMethod, token);
-            break;
+                break;
             case "Appointment" : bundleData = await appointment.setApptData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
-            break;
-             case "MedicationDispense" : bundleData = await medDispense.setMedicationDispenseData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
-             break;
+                break;
+            case "MedicationDispense" : bundleData = await medDispense.setMedicationDispenseData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+                break;
+            case "ValueSet" : bundleData = await symDiag.manageValueSetData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+                break;
+
         }
 
         return bundleData;

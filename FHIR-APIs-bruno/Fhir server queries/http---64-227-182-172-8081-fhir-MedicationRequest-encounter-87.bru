@@ -4,10 +4,14 @@ meta {
   seq: 5
 }
 
-put {
-  url: {{fhir_api_endpoint}}Practitioner/1
+get {
+  url: {{fhir_api_endpoint}}ValueSet?name=symptomsList
   body: json
   auth: none
+}
+
+params:query {
+  name: symptomsList
 }
 
 headers {

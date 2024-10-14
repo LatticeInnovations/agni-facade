@@ -14,6 +14,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             break;
         case "Medication" :
         case "Practitioner" :
+        case "ValueSet":
              queryParams._total = "accurate"
              url = config.baseUrl + resourceType;
             break;
