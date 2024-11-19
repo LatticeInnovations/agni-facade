@@ -65,6 +65,7 @@ let createBundle = async function (req, res) {
 
 let patchBundle = async function (req, res) {
     try {
+        let token = req.token;
         let response = resourceValid(req.params);
         if (response.error) {
             console.error(response.error.details)
@@ -75,9 +76,9 @@ let patchBundle = async function (req, res) {
         const reqInput = req.body;
         let bundle;
         let fhirResource = [];
-        let bundlePatchJSON = await getBundleJSON(reqInput, resourceType, fhirResource, "PATCH");
+        let bundlePatchJSON = await getBundleJSON(reqInput, resourceType, fhirResource, "PATCH", token);
         bundle = bundlePatchJSON.bundle;
-        //res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
+        // return res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
         if (bundle.entry.length > 0) {
         let response = await axios.post(config.baseUrl, bundle);
             if (response.status == 200 || response.status == 201) {            
