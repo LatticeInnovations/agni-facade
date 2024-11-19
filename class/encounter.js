@@ -17,6 +17,7 @@ class Encounter {
     }
 
     setStatus() {
+        //  changed for anni for school planned apptStatus
         let statusData = apptStatus.find(e => e.uiStatus == this.prescriptionObj.status);
         this.fhirResource.status = statusData.encounter;
     }
@@ -41,7 +42,7 @@ class Encounter {
     }
 
     getAppointmentReference() {
-        this.prescriptionObj.appointmentId = this.fhirResource.appointment[0].reference.split("/")[1];
+        this.prescriptionObj.appointmentId = this?.fhirResource?.appointment?.[0]?.reference?.split("/")[1] || null;
     }
 
     setEncounterTime() {
@@ -89,6 +90,131 @@ class Encounter {
         this.fhirResource.appointment = {};
     }
 
+    getUserInputToFhirForVitals() {
+        this.fhirResource.resourceType = "Encounter";
+        this.fhirResource.id = this.prescriptionObj.id;
+        this.fhirResource.identifier = [];
+        this.fhirResource.subject = {};
+        this.setPatientReference();
+        this.fhirResource.type = [
+            {
+                "coding": [
+                            {
+                                "system": "http://your-custom-coding-system",
+                                "code": "vital-encounter",
+                                "display": "Vital encounter"
+                            }
+                        ]
+            }
+        ];
+        this.fhirResource.period = {
+            "start": this.prescriptionObj.createdOn,
+            "end": this.prescriptionObj.createdOn
+        }
+        this.fhirResource.partOf = {
+            "reference": "Encounter/" + this.prescriptionObj.encounterId,
+            "display": "Primary Encounter"
+        }
+
+        this.fhirResource.identifier.push({
+            "system": config.snUrl + '/vital',
+            "value": this.prescriptionObj.vitalUuid
+        });
+        this.fhirResource.participant = [{
+            "individual" : {
+                "reference": "Practitioner/" + this.prescriptionObj.practitionerId
+            }
+        }];
+        this.fhirResource.length = {
+            "value": new Date().valueOf(),
+            "unit": "millisecond",
+            "system": "http://unitsofmeasure.org",
+            "code": "ms"
+        };
+        return this.fhirResource;
+    }
+
+    getVitalUuid() {
+        this.prescriptionObj.vitalUuid = this?.fhirResource?.identifier?.[this?.fhirResource?.identifier?.length - 1]?.value || null;
+    }
+
+    getCVDUuid() {
+        this.prescriptionObj.cvdUuid = this?.fhirResource?.identifier?.[this?.fhirResource?.identifier?.length - 1]?.value || null;
+    }
+
+    getFhirToJsonForVitals() {
+        this.getId();
+        this.getAppointmentReference();
+        this.getPatientReference();
+        this.getEncounterTime();
+        this.getPractitionerReference();
+        this.getPrimaryEncounterReference();
+        this.getVitalUuid();
+    }
+
+    getFhirToJsonForCVD() {
+        this.getId();
+        this.getAppointmentReference();
+        this.getPatientReference();
+        this.getEncounterTime();
+        this.getPractitionerReference();
+        this.getPrimaryEncounterReference();
+        this.getCVDUuid();
+    }
+
+
+    getPractitionerReference() {
+        this.prescriptionObj.practitionerId = this?.fhirResource?.participant?.[0]?.individual?.reference?.split('/')[1] || null;
+    }
+
+    getPrimaryEncounterReference() {
+        this.prescriptionObj.primaryEncounterId = this?.fhirResource?.partOf?.reference?.split('/')[1] || null;
+    }
+
+    getUserInputToFhirForCVD() {
+        this.fhirResource.resourceType = "Encounter";
+        this.fhirResource.id = this.prescriptionObj.id;
+        this.fhirResource.identifier = [];
+        this.fhirResource.subject = {};
+        this.setPatientReference();
+        this.fhirResource.type = [
+            {
+                "coding": [
+                            {
+                                "system": "http://your-custom-coding-system",
+                                "code": "cvd-encounter",
+                                "display": "CVD encounter"
+                            }
+                        ]
+            }
+        ];
+        this.fhirResource.period = {
+            "start": this.prescriptionObj.createdOn,
+            "end": this.prescriptionObj.createdOn
+        }
+        this.fhirResource.partOf = {
+            "reference": "Encounter/" + this.prescriptionObj.encounterId,
+            "display": "Primary Encounter"
+        }
+
+        this.fhirResource.identifier.push({
+            "system": config.snUrl + '/CVD',
+            "value": this.prescriptionObj.vitalUuid
+        });
+        this.fhirResource.participant = [{
+            "individual" : {
+                "reference": "Practitioner/" + this.prescriptionObj.practitionerId
+            }
+        }];
+        this.fhirResource.length = {
+            "value": new Date().valueOf(),
+            "unit": "millisecond",
+            "system": "http://unitsofmeasure.org",
+            "code": "ms"
+        };
+        return this.fhirResource;
+    }
+    
 }
 
 
