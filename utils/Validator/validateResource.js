@@ -5,7 +5,7 @@ const Joi = require("joi");
 
 function resourceValidation(userInput) {
   let JoiSchema = Joi.object({
-    resourceType: Joi.string().valid("Patient", "Medication", "Practitioner", "PractitionerRole", "RelatedPerson", "MedicationRequest", "Organization", "PractitionerRole", "Schedule", "Appointment", "MedicationDispense").required()
+    resourceType: Joi.string().valid("Patient", "Medication", "Practitioner", "PractitionerRole", "RelatedPerson", "MedicationRequest", "Organization", "PractitionerRole", "Schedule", "Appointment", "MedicationDispense", "CVD").required()
   });
   return JoiSchema.validate(userInput);
 }
