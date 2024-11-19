@@ -79,6 +79,12 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             nestedResource = 1;
             specialOffset = 1;
             break;
+            case "CVD":
+                url = config.baseUrl + "Encounter";
+                queryParams.type="cvd-encounter"
+                queryParams["subject.organization"] = token.orgId
+                nestedResource = 1;
+                break;
 
     }
 

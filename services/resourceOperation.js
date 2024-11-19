@@ -7,6 +7,7 @@ let practitioner = require("./managePractitioner");
 let practitionerRole = require("./managePractitionerRole");
 let schedule= require("./manageSchedule")
 let appointment = require("./manageAppointment");
+let cvd = require('./manageCVD');
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
@@ -31,6 +32,7 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
             break;
             case "Appointment" : bundleData = await appointment.setApptData(resType, inputData, FHIRData, reqMethod, reqQuery);
              break;
+            case "CVD": bundleData = await cvd.setCVDData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
         }
 
         return bundleData;
@@ -52,6 +54,12 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
         }
         else if(["patch", "PATCH"].includes(reqMethod) && resType == "Appointment")
             filtereredData = mergedArray.filter(e => e.fullUrl.split("/")[0] == resType);
+        else if(["post", "POST"].includes(reqMethod) && resType == "CVD"){
+            filtereredData = mergedArray.filter(e => e.resource.resourceType == "Encounter" && e.resource?.type?.[0]?.coding?.[0]?.code == "cvd-encounter");
+        }
+        else if(["patch", "PATCH"].includes(reqMethod) && resType == "CVD"){
+            filtereredData = mergedArray.filter(e => e.fullUrl.split("/")[0] == "Observation");
+        }
         else
             filtereredData = mergedArray;
             console.info("filetered Data")
@@ -60,6 +68,14 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             let id = (fullUrl.includes("uuid:")) ? fullUrl.split("uuid:")[1] : fullUrl;
             if(resType == "MedicationRequest") {
                 id = element?.resource?.identifier?.[1]?.value;
+            }
+            else if(resType == "CVD" && ["post", "POST"].includes(reqMethod)){
+                id = element?.resource?.identifier?.[element?.resource?.identifier?.length - 1]?.value || null
+            }
+            else if(resType == "CVD" && ["patch", "PATCH"].includes(reqMethod)){
+                let decode = Buffer.from(element.resource.data, 'base64').toString('utf-8');
+                decode = JSON.parse(decode);
+                id = decode[0].encounterId;
             }
             // need to see the or statment to be removed
             
