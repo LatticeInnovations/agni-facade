@@ -94,6 +94,10 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             }
             let fhirid = element.response.status == "200 OK" || element.response.status == "201 Created" ? element.response.location.substring(element.response.location.indexOf("/") + 1, element.response.location.indexOf("/_history")) : (reqMethod == "PATCH" ? fullUrl : null)
                 data.fhirId = fhirid
+            
+            if(resType == "CVD" && reqMethod == "PATCH"){
+                data.fhirId = id;
+            }
             response.push(data);
         });
 
