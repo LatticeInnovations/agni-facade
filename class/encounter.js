@@ -199,7 +199,7 @@ class Encounter {
 
         this.fhirResource.identifier.push({
             "system": config.snUrl + '/CVD',
-            "value": this.prescriptionObj.vitalUuid
+            "value": this.prescriptionObj.cvdUuid
         });
         this.fhirResource.participant = [{
             "individual" : {
