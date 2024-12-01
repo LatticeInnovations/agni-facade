@@ -85,6 +85,12 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 queryParams["subject.organization"] = token.orgId
                 nestedResource = 1;
                 break;
+            case "Observation":
+                url = config.baseUrl + "Encounter";
+                queryParams.type="vital-encounter"
+                queryParams["subject.organization"] = token.orgId
+                nestedResource = 1;
+                break;
 
     }
 
