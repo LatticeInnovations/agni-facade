@@ -24,7 +24,8 @@ let config = function () {
             orgType : process.env.orgType,
             fhirCodeUrl : process.env.fhirCodeUrl,
             roleCodeUrl : process.env.roleCodeUrl,
-            facadeUrl : process.env.facadeUrl 
+            facadeUrl : process.env.facadeUrl,
+            medReqUuidUrl: "http://lattice.in/sid/medRequest"
         };
 };
 module.exports = new config();
