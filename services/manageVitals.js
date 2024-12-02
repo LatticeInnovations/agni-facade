@@ -31,6 +31,7 @@ const setVitalsData = async (resType, reqInput, FHIRData, reqMethod, reqQuery, t
                 let bpObservation = new Observation(vital, {}).getUserInputToFhirBloodPressure();
                 let bloodGlucoseObservation = new Observation(vital, {}).getUserInputToFhirBloodGlucose();
                 let eyeTestObservation = new Observation(vital, {}).getUserInputToFhirEyeTest();
+                let cholesterolObservation = new Observation(vital, {}).getUserInputToFhirCholesterol();
                 heightObservation.id = uuidv4();
                 weightObservation.id = uuidv4();
                 heartRateObservation.id = uuidv4();
@@ -40,6 +41,7 @@ const setVitalsData = async (resType, reqInput, FHIRData, reqMethod, reqQuery, t
                 bpObservation.id = uuidv4();
                 bloodGlucoseObservation.id = uuidv4();
                 eyeTestObservation.id = uuidv4();
+                cholesterolObservation.id = uuidv4();
                 
                 let encounterBundle = await bundleFun.setBundlePost(encounter, null, encounter.id, "POST", "identifier");
                 heightObservation = await bundleFun.setBundlePost(heightObservation, null, heightObservation.id, "POST", "identifier");
@@ -51,7 +53,8 @@ const setVitalsData = async (resType, reqInput, FHIRData, reqMethod, reqQuery, t
                 bpObservation = await bundleFun.setBundlePost(bpObservation, null, bpObservation.id, "POST", "identifier");
                 bloodGlucoseObservation = await bundleFun.setBundlePost(bloodGlucoseObservation, null, bloodGlucoseObservation.id, "POST", "identifier");
                 eyeTestObservation = await bundleFun.setBundlePost(eyeTestObservation, null, eyeTestObservation.id, "POST", "identifier");
-                resourceResult.push(encounterBundle, heightObservation, weightObservation, heartRateObservation, respRateObservation, spo2Observation, temperatureObservation, bpObservation, bloodGlucoseObservation, eyeTestObservation);
+                cholesterolObservation = await bundleFun.setBundlePost(cholesterolObservation, null,cholesterolObservation.id, "POST", "identifier");
+                resourceResult.push(encounterBundle, heightObservation, weightObservation, heartRateObservation, respRateObservation, spo2Observation, temperatureObservation, bpObservation, bloodGlucoseObservation, eyeTestObservation, cholesterolObservation);
             }
         }
         else if (["PATCH", "patch"].includes(reqMethod)) {
@@ -158,6 +161,7 @@ const getObservationData = (FHIRData, observation) => {
         case 'Blood Pressure': return new Observation(observation, FHIRData).getBloodPressure();
         case 'Blood Glucose': return new Observation(observation, FHIRData).getBloodGlucose();
         case 'Eye Test': return new Observation(observation, FHIRData).getEyeTest();
+        case 'Cholesterol': return new Observation(observation, FHIRData).getCholesterolData();
     }
 }
 
