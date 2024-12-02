@@ -5,6 +5,7 @@ let resourceValid = require("../utils/Validator/validateRsource").resourceValida
 let createBundle = async function (req, res) {
     try {
         let token = req.token;
+        
         let response = resourceValid(req.params);
         if (response.error) {
             console.error(response.error.details)
@@ -22,7 +23,7 @@ let createBundle = async function (req, res) {
         if (bundle.entry.length > 0) {
             let response = await axios.post(config.baseUrl, bundle);
             if (response.status == 200) {
-                let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType);
+                let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType, reqInput);
                 responseData = [...responseData, ...resourceData.errData];
                 res.status(201).json({ status: 1, message: "Data saved successfully.", data: responseData })
             }
@@ -81,7 +82,7 @@ let patchBundle = async function (req, res) {
         if (bundle.entry.length > 0) {
         let response = await axios.post(config.baseUrl, bundle);
             if (response.status == 200 || response.status == 201) {            
-                let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType);
+                let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType, reqInput);
                 responseData = [...responseData, ...bundlePatchJSON.errData]
                 return res.status(201).json({ status: 1, message: "Data updated successfully.", data: responseData })
             }

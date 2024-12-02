@@ -1,0 +1,17 @@
+[
+    {
+        "uiStatus": "Not dispensed",
+        "statusId": "not-dispensed",
+        "encounter": "planned"
+    },
+    {
+        "uiStatus": "Partially dispensed",
+        "statusId": "partially-dispensed",
+        "encounter": "in-progress"
+    },
+    {
+        "uiStatus": "Fully dispensed",
+        "statusId": "fully-dispensed",
+        "encounter": "finished"
+    }
+]
