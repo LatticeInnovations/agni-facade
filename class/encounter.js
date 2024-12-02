@@ -1,55 +1,55 @@
 let apptStatus = require("../utils/appointmentStatus.json");
 const config = require("../config/nodeConfig")
 class Encounter {
-    prescriptionObj;
+    encounterObj;
     fhirResource;
 
     constructor(prescription_obj, fhir_resource) {
-        this.prescriptionObj = prescription_obj;
+        this.encounterObj = prescription_obj;
         this.fhirResource = fhir_resource;
     }
 
     setuuid() {
         this.fhirResource.identifier.push({
                "system": config.snUrl,
-               "value": this.prescriptionObj.uuid
+               "value": this.encounterObj.uuid
         });
     }
 
     setStatus() {
         //  changed for anni for school planned apptStatus
-        let statusData = apptStatus.find(e => e.uiStatus == this.prescriptionObj.status);
+        let statusData = apptStatus.find(e => e.uiStatus == this.encounterObj.status);
         this.fhirResource.status = statusData.encounter;
     }
     
     getId() {
         console.info(this.fhirResource.id);
-        this.prescriptionObj.appointmentUuid = this.fhirResource?.identifier[0]?.value;
-        this.prescriptionObj.prescriptionId =  this.fhirResource?.identifier[1]?.value;
-        this.prescriptionObj.prescriptionFhirId = this.fhirResource?.id;
+        this.encounterObj.appointmentUuid = this.fhirResource?.identifier[0]?.value;
+        this.encounterObj.prescriptionId =  this.fhirResource?.identifier[1]?.value;
+        this.encounterObj.prescriptionFhirId = this.fhirResource?.id;
     }
 
     setPatientReference() {
-        this.fhirResource.subject.reference = "Patient/" + this.prescriptionObj.patientId
+        this.fhirResource.subject.reference = "Patient/" + this.encounterObj.patientId
     }
 
     getPatientReference() {
-        this.prescriptionObj.patientId = this.fhirResource.subject.reference.split("/")[1];
+        this.encounterObj.patientId = this.fhirResource.subject.reference.split("/")[1];
     }
 
     setAppointmentReference() {
-        this.fhirResource.appointment.reference = "urn:uuid:" + this.prescriptionObj.uuid;
+        this.fhirResource.appointment.reference = "urn:uuid:" + this.encounterObj.uuid;
     }
 
     getAppointmentReference() {
-        this.prescriptionObj.appointmentId = this?.fhirResource?.appointment?.[0]?.reference?.split("/")[1] || null;
+        this.encounterObj.appointmentId = this?.fhirResource?.appointment?.[0]?.reference?.split("/")[1] || null;
     }
 
     setEncounterTime() {
-        if(this.prescriptionObj.generatedOn) {
+        if(this.encounterObj.generatedOn) {
             this.fhirResource.period = {
-                "start": this.prescriptionObj.generatedOn,
-                "end": this.prescriptionObj.generatedOn
+                "start": this.encounterObj.generatedOn,
+                "end": this.encounterObj.generatedOn
             }
         }
 
@@ -57,7 +57,7 @@ class Encounter {
 
     getEncounterTime() {
         if(this.fhirResource.period)
-        this.prescriptionObj.generatedOn = this.fhirResource.period.start;
+        this.encounterObj.generatedOn = this.fhirResource.period.start;
     }
 
     getUserInputToFhir() {
@@ -77,7 +77,7 @@ class Encounter {
     }
 
     getEncounterResource() {
-        return this.prescriptionObj;
+        return this.encounterObj;
     }
 
     getFHIRResource() {
@@ -92,7 +92,7 @@ class Encounter {
 
     getUserInputToFhirForVitals() {
         this.fhirResource.resourceType = "Encounter";
-        this.fhirResource.id = this.prescriptionObj.id;
+        this.fhirResource.id = this.encounterObj.id;
         this.fhirResource.identifier = [];
         this.fhirResource.subject = {};
         this.setPatientReference();
@@ -108,21 +108,21 @@ class Encounter {
             }
         ];
         this.fhirResource.period = {
-            "start": this.prescriptionObj.createdOn,
-            "end": this.prescriptionObj.createdOn
+            "start": this.encounterObj.createdOn,
+            "end": this.encounterObj.createdOn
         }
         this.fhirResource.partOf = {
-            "reference": "Encounter/" + this.prescriptionObj.encounterId,
+            "reference": "Encounter/" + this.encounterObj.encounterId,
             "display": "Primary Encounter"
         }
 
         this.fhirResource.identifier.push({
             "system": config.snUrl + '/vital',
-            "value": this.prescriptionObj.vitalUuid
+            "value": this.encounterObj.vitalUuid
         });
         this.fhirResource.participant = [{
             "individual" : {
-                "reference": "Practitioner/" + this.prescriptionObj.practitionerId
+                "reference": "Practitioner/" + this.encounterObj.practitionerId
             }
         }];
         this.fhirResource.length = {
@@ -135,11 +135,11 @@ class Encounter {
     }
 
     getVitalUuid() {
-        this.prescriptionObj.vitalUuid = this?.fhirResource?.identifier?.[this?.fhirResource?.identifier?.length - 1]?.value || null;
+        this.encounterObj.vitalUuid = this?.fhirResource?.identifier?.[this?.fhirResource?.identifier?.length - 1]?.value || null;
     }
 
     getCVDUuid() {
-        this.prescriptionObj.cvdUuid = this?.fhirResource?.identifier?.[this?.fhirResource?.identifier?.length - 1]?.value || null;
+        this.encounterObj.cvdUuid = this?.fhirResource?.identifier?.[this?.fhirResource?.identifier?.length - 1]?.value || null;
     }
 
     getFhirToJsonForVitals() {
@@ -164,16 +164,16 @@ class Encounter {
 
 
     getPractitionerReference() {
-        this.prescriptionObj.practitionerId = this?.fhirResource?.participant?.[0]?.individual?.reference?.split('/')[1] || null;
+        this.encounterObj.practitionerId = this?.fhirResource?.participant?.[0]?.individual?.reference?.split('/')[1] || null;
     }
 
     getPrimaryEncounterReference() {
-        this.prescriptionObj.primaryEncounterId = this?.fhirResource?.partOf?.reference?.split('/')[1] || null;
+        this.encounterObj.primaryEncounterId = this?.fhirResource?.partOf?.reference?.split('/')[1] || null;
     }
 
     getUserInputToFhirForCVD() {
         this.fhirResource.resourceType = "Encounter";
-        this.fhirResource.id = this.prescriptionObj.id;
+        this.fhirResource.id = this.encounterObj.id;
         this.fhirResource.identifier = [];
         this.fhirResource.subject = {};
         this.setPatientReference();
@@ -189,21 +189,21 @@ class Encounter {
             }
         ];
         this.fhirResource.period = {
-            "start": this.prescriptionObj.createdOn,
-            "end": this.prescriptionObj.createdOn
+            "start": this.encounterObj.createdOn,
+            "end": this.encounterObj.createdOn
         }
         this.fhirResource.partOf = {
-            "reference": "Encounter/" + this.prescriptionObj.encounterId,
+            "reference": "Encounter/" + this.encounterObj.encounterId,
             "display": "Primary Encounter"
         }
 
         this.fhirResource.identifier.push({
             "system": config.snUrl + '/CVD',
-            "value": this.prescriptionObj.cvdUuid
+            "value": this.encounterObj.cvdUuid
         });
         this.fhirResource.participant = [{
             "individual" : {
-                "reference": "Practitioner/" + this.prescriptionObj.practitionerId
+                "reference": "Practitioner/" + this.encounterObj.practitionerId
             }
         }];
         this.fhirResource.length = {
