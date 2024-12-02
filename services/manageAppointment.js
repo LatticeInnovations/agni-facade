@@ -82,8 +82,17 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
                     })
                 }
                 else {
+                    if(inputData.status.value == "in-progress" && encounterSavedData.data.entry) {
+                        encounterSavedData.data.entry[0].resource.status = "in-progress";
+                        encounterSavedData.data.entry[0].resource.period = {
+                            "start": inputData.generatedOn,
+                            "end": inputData.generatedOn
+                        }
+                        let encounterBundle = await bundleFun.setBundlePost(encounterSavedData.data.entry[0].resource, encounterSavedData.data.entry[0].resource.identifier, encounterSavedData.data.entry[0].resource.id, "PUT", "identifier");  
+                        resourceResult.push(encounterBundle);
+                    }
                     // update appointment details 
-                    if((inputData.status.value == "completed" || inputData.status.value == "in-progress") && encounterSavedData.data.entry) {
+                    else if((inputData.status.value == "completed") && encounterSavedData.data.entry) {
                         encounterSavedData.data.entry[0].resource.status = "finished";
                         let encounterBundle = await bundleFun.setBundlePost(encounterSavedData.data.entry[0].resource, encounterSavedData.data.entry[0].resource.identifier, encounterSavedData.data.entry[0].resource.id, "PUT", "identifier");                   
                         resourceResult.push(encounterBundle);

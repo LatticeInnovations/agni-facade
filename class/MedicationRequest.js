@@ -2,7 +2,7 @@ let { checkEmptyData } = require("../services/CheckEmpty");
 let timing = require("../utils/medtime.json");
 const doseFormList = require("../utils/dosForm.json")
 const config = require("../config/nodeConfig");
-class MedicationRquest {
+class MedicationRequest {
     medReqObj;
     fhirResource;
 
@@ -18,9 +18,20 @@ class MedicationRquest {
     this.medReqObj.identifier = this.fhirResource.identifier;
    }
 
-    getId() {
-        this.medReqObj.medFhirId = this.fhirResource.medicationReference.reference.split("/")[1];
+
+   getMedFhirId() {
+    this.medReqObj.medFhirId = this.fhirResource?.medicationReference?.reference.split("/")[1];
+}
+
+
+ 
+getId() {
+    this.medReqObj.medReqFhirId = this.fhirResource.id
+    if(this.fhirResource.identifier) {        
+        this.medReqObj.medReqUuid = this.fhirResource.identifier[0].value
     }
+
+   }
 
 
     setIntent() {
@@ -28,7 +39,10 @@ class MedicationRquest {
     }
 
     setMedication() {
-        this.fhirResource.medicationReference.reference = "Medication/" + this.medReqObj.medFhirId
+        if(this.medReqObj.medFhirId) {
+            this.fhirResource.medicationReference.reference = "Medication/" + this.medReqObj.medFhirId
+        }
+        
     }
 
     setGroupIdentifier() {      
@@ -48,7 +62,7 @@ class MedicationRquest {
     }
 
     setEncounter() {
-        this.fhirResource.encounter.reference = "Encounter/" +this.medReqObj.encounterId;
+        this.fhirResource.encounter.reference = "urn:uuid:" +this.medReqObj.encounterId;
     }
 
     setNote() {
@@ -77,61 +91,67 @@ class MedicationRquest {
     }
 
     getDoseInstruction() {
-        this.medReqObj.qtyPerDose = this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.value;
-        this.medReqObj.frequency = this.fhirResource.dosageInstruction[0].timing.repeat.frequency;
-        this.medReqObj.doseForm = this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.unit;
-        this.medReqObj.doseFormCode = doseFormList[this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.unit];
-        this.medReqObj.duration = this.fhirResource.dosageInstruction[0].timing.repeat.period;
-        console.log()
-        if(this.fhirResource.dosageInstruction[0].additionalInstruction) {
-            this.medReqObj.timing = this.fhirResource.dosageInstruction[0].additionalInstruction[0].coding[0].code;
+        if(this.fhirResource.dosageInstruction) {
+            this.medReqObj.qtyPerDose = this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.value;
+            this.medReqObj.frequency = this.fhirResource.dosageInstruction[0].timing.repeat.frequency;
+            this.medReqObj.doseForm = this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.unit;
+            this.medReqObj.doseFormCode = doseFormList[this.fhirResource.dosageInstruction[0].doseAndRate[0].doseQuantity.unit];
+            this.medReqObj.duration = this.fhirResource.dosageInstruction[0].timing.repeat.period;
+            console.log()
+            if(this.fhirResource.dosageInstruction[0].additionalInstruction) {
+                this.medReqObj.timing = this.fhirResource.dosageInstruction[0].additionalInstruction[0].coding[0].code;
+            }
+            else {
+                this.medReqObj.timing = null;
+            }
         }
-        else {
-            this.medReqObj.timing = null;
-        }
+
     }
 
     setDosageInstruction() {
-        let data = {
-            "timing" : {
-                "repeat": {
-                    "boundsDuration" : {
-                           "unit":"days",
-                           "system":config.measureUrl,
-                           "code":"d"
-
-                    },
-                    "frequency": this.medReqObj.frequency,
-                    "period": this.medReqObj.duration,
-                    "periodUnit": "d"
-                }
-            },
-            "doseAndRate": [
-                {
-                    "doseQuantity":{
-                        "value":this.medReqObj.qtyPerDose,
-                        "unit":this.medReqObj.doseForm,
-                        "system":config.sctCodeUr,
-                        "code": doseFormList[this.medReqObj.doseForm]
-                     }
-
-                }
-            ]
-        }
-        if(!checkEmptyData(this.medReqObj.timing)){
-           data.additionalInstruction = [
-            {
-                "coding": [
+        if(this.medReqObj.medFhirId) {
+            let data = {
+                "timing" : {
+                    "repeat": {
+                        "boundsDuration" : {
+                               "unit":"days",
+                               "system":config.measureUrl,
+                               "code":"d"
+    
+                        },
+                        "frequency": this.medReqObj.frequency,
+                        "period": this.medReqObj.duration,
+                        "periodUnit": "d"
+                    }
+                },
+                "doseAndRate": [
                     {
-                        "system":config.sctCodeUr,
-                        "code":this.medReqObj.timing,
-                        "display": timing.filter(e => e.medinstructionCode == this.medReqObj.timing).map(e => e.medinstructionVal)[0]
+                        "doseQuantity":{
+                            "value":this.medReqObj.qtyPerDose,
+                            "unit":this.medReqObj.doseForm,
+                            "system":config.sctCodeUr,
+                            "code": doseFormList[this.medReqObj.doseForm]
+                         }
+    
                     }
                 ]
             }
-           ]
+            if(!checkEmptyData(this.medReqObj.timing)){
+               data.additionalInstruction = [
+                {
+                    "coding": [
+                        {
+                            "system":config.sctCodeUr,
+                            "code":this.medReqObj.timing,
+                            "display": timing.filter(e => e.medinstructionCode == this.medReqObj.timing).map(e => e.medinstructionVal)[0]
+                        }
+                    ]
+                }
+               ]
+            }
+            this.fhirResource.dosageInstruction.push(data);
         }
-        this.fhirResource.dosageInstruction.push(data);
+        
         
     }
 
@@ -144,19 +164,20 @@ class MedicationRquest {
         this.setBasicStructure();
         this.setIdentifier();
         this.setIntent();
-        // this.setMedication();
+        this.setMedication();
         this.setGroupIdentifier();
         this.setPatientReference();
         this.setEncounter();
         this.setNote();
-        // this.setDosageInstruction();
+        this.setDosageInstruction();
         // this.setDocument();
     }
 
     getFhirToJson() {
-        // this.getId();
-        // this.getNote();
-        // this.getDoseInstruction();
+        this.getId();
+        this.getMedFhirId();
+        this.getNote();
+        this.getDoseInstruction();
     }
 
     getMedReqResource() {
@@ -168,8 +189,8 @@ class MedicationRquest {
     }
 
     setBasicStructure() {
-        // this.fhirResource.dosageInstruction = [];
-        // this.fhirResource.medicationReference = {};
+        this.fhirResource.dosageInstruction = [];
+        this.fhirResource.medicationReference = {};
         this.fhirResource.subject = {};
         this.fhirResource.encounter = {};
         this.fhirResource.note = [];
@@ -180,4 +201,4 @@ class MedicationRquest {
 }
 
 
-module.exports = MedicationRquest;
+module.exports = MedicationRequest;

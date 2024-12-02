@@ -65,7 +65,7 @@ getEncounterTime() {
   }
 
   setPartOf() {
-    if(this.groupEncounterObj.prescriptionFhirId || this.groupEncounterObj.mainEnounterId )
+    if(this.groupEncounterObj.appointmentId)
         this.fhirResource.partOf = {
           reference: "Encounter/" + this.groupEncounterObj.appointmentId
         };
@@ -73,7 +73,7 @@ getEncounterTime() {
 
   getPartOf() {
     if(this.isMain && this.fhirResource?.partOf)
-      this.groupEncounterObj.prescriptionFhirId = this.fhirResource?.partOf?.reference.split("/")[1]
+      this.groupEncounterObj.appointmentId = this.fhirResource?.partOf?.reference.split("/")[1]
   }
 
   getPatientReference() {
@@ -86,7 +86,7 @@ getEncounterTime() {
     this.setBasicStructure();
     this.setIdentifier();
     this.setPatientReference();
-    this.setPartOf()
+    this.setPartOf();
     this.setType()
     this.setEncounterTime();
     return this.fhirResource;
@@ -111,9 +111,11 @@ getEncounterTime() {
   setBasicStructure() {
     this.fhirResource.identifier = [];
     this.fhirResource.subject = {};
-    this.fhirResource.note = [];
-    this.fhirResource.extension = []
+    // this.fhirResource.note = [];
+    // this.fhirResource.extension = []
   }
+
+ 
 }
 
 module.exports = GroupEncounter;
