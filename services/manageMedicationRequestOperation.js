@@ -8,6 +8,7 @@ let bundleOp = require("./bundleOperation");
 
 let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqMethod, token) {
     try {
+        
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
             for (let patPres of reqInput) {
@@ -48,16 +49,15 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
             }
         }
         else {
-            console.info("FHIr data: ", FHIRData) 
+            // Fetch the encounter that links to appointment resource to get appointment id and uuid
             const prescriptionFormEncounter = FHIRData.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource)
             let appointmentEncounterIds = [... new Set(prescriptionFormEncounter.map(e =>  parseInt(e.partOf.reference.split("/")[1])))]
             let appointmentEncounters = await bundleOp.searchData(config.baseUrl + "Encounter", { "_id": appointmentEncounterIds.join(","), _count: 5000}, token);
             appointmentEncounters = appointmentEncounters.data.entry.map(e=> e.resource)
-            console.info(appointmentEncounters[0].identifier)
             
             for(let encData of prescriptionFormEncounter) {
+                // map the encounter from the list to sub encounter of prescription
                 let apptEncounter = appointmentEncounters.filter( e=> e.id == encData.partOf.reference.split("/")[1])
-
                 apptEncounter = new AppointmentEncounter({}, apptEncounter[0]);
                 apptEncounter = apptEncounter.getFhirToJson();
                 console.info("apptEncounter: ", apptEncounter)
