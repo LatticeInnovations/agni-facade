@@ -23,10 +23,8 @@ class Encounter {
     }
     
     getId() {
-        console.info(this.fhirResource.id);
+        console.info(this.fhirResource);
         this.encounterObj.appointmentUuid = this.fhirResource?.identifier[0]?.value;
-        this.encounterObj.prescriptionId =  this.fhirResource?.identifier[1]?.value;
-        this.encounterObj.prescriptionFhirId = this.fhirResource?.id;
     }
 
     setPatientReference() {
@@ -74,6 +72,7 @@ class Encounter {
         this.getAppointmentReference();
         this.getPatientReference();
         this.getEncounterTime();
+        return this.encounterObj
     }
 
     getEncounterResource() {

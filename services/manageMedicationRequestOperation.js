@@ -1,6 +1,7 @@
 let bundleFun = require("./bundleOperation");
 const MedicationRequest = require("../class/MedicationRequest");
 const Encounter = require("../class/GroupEncounter")
+const AppointmentEncounter = require("../class/encounter")
 let config = require("../config/nodeConfig");
 let bundleOp = require("./bundleOperation");
 
@@ -47,24 +48,36 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
             }
         }
         else {
-            let encounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter" && (e.resource.status == "in-progress" || e.resource.status == "finished")).map(e => e.resource);
-            console.info("check encounter length: ", encounterList.length)
-            for(let encData of encounterList) {
-                let encounter = new Encounter({}, encData);
-                encounter.getFhirToJson();
-                let encounterData = encounter.getUserResponseFormat();
-            let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);         
-             encounterData.prescription = [];
+            console.info("FHIr data: ", FHIRData) 
+            const prescriptionFormEncounter = FHIRData.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource)
+            let appointmentEncounterIds = [... new Set(prescriptionFormEncounter.map(e =>  parseInt(e.partOf.reference.split("/")[1])))]
+            let appointmentEncounters = await bundleOp.searchData(config.baseUrl + "Encounter", { "_id": appointmentEncounterIds.join(","), _count: 5000}, token);
+            appointmentEncounters = appointmentEncounters.data.entry.map(e=> e.resource)
+            console.info(appointmentEncounters[0].identifier)
+            
+            for(let encData of prescriptionFormEncounter) {
+                let apptEncounter = appointmentEncounters.filter( e=> e.id == encData.partOf.reference.split("/")[1])
+
+                apptEncounter = new AppointmentEncounter({}, apptEncounter[0]);
+                apptEncounter = apptEncounter.getFhirToJson();
+                console.info("apptEncounter: ", apptEncounter)
+                let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);    
+                let prescriptionData = {
+                    "prescriptionId": encData.identifier[0].value,
+                    "prescriptionFhirId": encData.id,
+                }   
+                prescriptionData = {...prescriptionData, ...apptEncounter}  
+                prescriptionData.prescription = [];
             //  let insert = false;
                     for(let medReq of medReqList) {                     
                             let medReqData = new MedicationRequest({}, medReq);
                             medReqData.getFhirToJson();
                             let medData = medReqData.getMedReqResource();
                             medData.qtyPrescribed = medData.qtyPerDose * medData.frequency * medData.duration;
-                            encounterData.prescription.push(medData);
+                            prescriptionData.prescription.push(medData);
                     }
-                if(encounterData.prescription.length > 0)
-                    resourceResult.push(encounterData)
+                if(prescriptionData.prescription.length > 0)
+                    resourceResult.push(prescriptionData)
             }
 
         }
