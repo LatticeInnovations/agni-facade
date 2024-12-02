@@ -1,5 +1,5 @@
 let bundleFun = require("./bundleOperation");
-const MedicationRquest = require("../class/MedicationRequest");
+const MedicationRequest = require("../class/MedicationRequest");
 const Encounter = require("../class/GroupEncounter")
 let config = require("../config/nodeConfig");
 let bundleOp = require("./bundleOperation");
@@ -10,13 +10,15 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
             for (let patPres of reqInput) {
+                let appointmentEncounter = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": patPres.appointmentId, _count: 5000 , "_include": "Encounter:appointment"}, token);
+                let apptData = appointmentEncounter.data.entry[0].resource
                 patPres.uuid = patPres.prescriptionId;
-                patPres.code = "prescription-encounter";
+                patPres.code = "prescription-encounter-form";
                 patPres.display  = "Prescription managemment";
+                patPres.appointmentId = apptData.id;
                 let encounter = new Encounter(patPres, {})
                 const encounterData = encounter.getUserInputToFhir()
-                console.info("encounter data: ", encounterData)
-                let encounterBundle = await bundleFun.setBundlePost(encounterData, encounterData.identifier, reqInput.uuid, "POST", "identifier"); 
+                let encounterBundle = await bundleFun.setBundlePost(encounterData, encounterData.identifier, patPres.uuid, "POST", "identifier"); 
                 resourceResult.push(encounterBundle)
                 patPres.id = patPres.prescriptionId;
                 let medList = patPres.prescription;
@@ -28,13 +30,13 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                     prescription.patientId = patPres.patientId;
                     prescription.generatedOn = patPres.generatedOn;
                     prescription.prescriptionId = patPres.prescriptionId;
-                    prescription.encounterId = reqInput.uuid
+                    prescription.encounterId = patPres.uuid
                     prescription.grpIdentify = grpIdentify;
                     prescription.identifier = [{
                         "system": config.medReqUuidUrl,
                         "value": prescription.medReqUuid
                     }]
-                    let medRequest = new MedicationRquest(prescription, {});
+                    let medRequest = new MedicationRequest(prescription, {});
                     medRequest.getJSONtoFhir();
                     let medReqData = {...medRequest.getFhirResource()};
                     medReqData.resourceType = "MedicationRequest";
@@ -50,12 +52,12 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
             for(let encData of encounterList) {
                 let encounter = new Encounter({}, encData);
                 encounter.getFhirToJson();
-                let encounterData = encounter.getEncounterResource();
+                let encounterData = encounter.getUserResponseFormat();
             let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);         
              encounterData.prescription = [];
             //  let insert = false;
                     for(let medReq of medReqList) {                     
-                            let medReqData = new MedicationRquest({}, medReq);
+                            let medReqData = new MedicationRequest({}, medReq);
                             medReqData.getFhirToJson();
                             let medData = medReqData.getMedReqResource();
                             medData.qtyPrescribed = medData.qtyPerDose * medData.frequency * medData.duration;
@@ -66,7 +68,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
             }
 
         }
-        resourceResult = []
+        console.info("resourceResult", resourceResult)
         return {resourceResult, errData};
     }
     catch (e) {

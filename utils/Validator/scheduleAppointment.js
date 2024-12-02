@@ -38,6 +38,7 @@ function apptValidation(userInput) {
 function apptPatchValidation(userInput) {
   let JoiSchema = Joi.object({
     "appointmentId": Joi.string().required(),
+    "generatedOn": Joi.date().optional(),
     status: Joi.object({
       "operation": Joi.string().valid('replace').required(),
       "value": Joi.string().valid('arrived', 'scheduled', 'noshow', 'cancelled', 'in-progress', 'completed').required()
