@@ -91,6 +91,33 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 queryParams["subject.organization"] = token.orgId
                 nestedResource = 1;
                 break;
+                case "MedicationDispense": 
+                queryParams._total = "accurate"
+                if(queryParams.prescriptionId) {
+                   queryParams["part-of"]= queryParams.prescriptionId;
+                   delete queryParams.prescriptionId;
+                }
+                if(queryParams.patientId) {
+                   queryParams["subject"] = queryParams.patientId;
+                   delete queryParams.patientId;
+   
+                }
+                queryParams["type"]="pharmacy-service";
+                url = config.baseUrl + "Encounter";
+                nestedResource = 1;
+               //  specialOffset = 1;
+                break;
+           case "DispenseLog": 
+                queryParams._total = "accurate"
+                if(queryParams.patientId) {
+                   queryParams["subject"] = queryParams.patientId;
+                   delete queryParams.patientId;
+                }
+                queryParams["type"]="dispensing-encounter";
+                url = config.baseUrl + "Encounter";
+                nestedResource = 1;
+               //  specialOffset = 1;
+                break;
 
     }
 

@@ -17,6 +17,10 @@ class Medication {
             this.medicine_obj.medName = this.fhirResource.code.coding[0].display;
         }
     }
+
+    getIsOTC() {
+        this.medicine_obj.isOTC = this.fhirResource.extension && this.fhirResource.extension[0].valueBoolean == true ? true : false
+    }
     getDoseForm() {
         if (!checkEmptyData(this.fhirResource.form) && this.fhirResource.form.coding) {
             if(!this.fhirResource.form.coding[0].code || !this.fhirResource.form.coding[0].display) {
@@ -46,14 +50,21 @@ class Medication {
                     return e.itemCodeableConcept.coding[0].code})
                 .join("+");
             if(this.fhirResource.ingredient[0].strength) {
-                this.medicine_obj.medUnit = this.fhirResource.ingredient[0].strength.denominator.code;
-                this.medicine_obj.medNumeratorVal = this.fhirResource.ingredient[0].strength.denominator.value;
+                this.medicine_obj.medUnit = this.fhirResource.ingredient[0].strength.numerator.code;
+                this.medicine_obj.medNumeratorVal = this.fhirResource.ingredient[0].strength.numerator.value;
+                this.medicine_obj.strength = this.fhirResource.ingredient.map(e => {
+                   const medName = e.itemCodeableConcept.coding[0].display;
+                   const unitMeasureValue = e.strength.numerator.value;
+                   const medMeasureCode = e.strength.numerator.code;
+                   return {medName, unitMeasureValue, medMeasureCode}
+                })
             }
         }
     }
 
     getFHIRToUserInput() {
         this.getCode();
+        this.getIsOTC();
         this.getDoseForm();
         this.getIngredientData();       
     }
