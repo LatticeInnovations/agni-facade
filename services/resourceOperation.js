@@ -8,6 +8,7 @@ let practitionerRole = require("./managePractitionerRole");
 let schedule= require("./manageSchedule")
 let appointment = require("./manageAppointment");
 let cvd = require('./manageCVD');
+let vitals = require("./manageVitals");
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
@@ -31,8 +32,11 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
             case "Schedule" : bundleData = await schedule.setScheduleData(resType, inputData, FHIRData, reqMethod);
             break;
             case "Appointment" : bundleData = await appointment.setApptData(resType, inputData, FHIRData, reqMethod, reqQuery);
-             break;
+            break;
             case "CVD": bundleData = await cvd.setCVDData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+            break;
+            case "Observation" : bundleData = await vitals.setVitalsData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+            break;
         }
 
         return bundleData;
@@ -60,6 +64,12 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
         else if(["patch", "PATCH"].includes(reqMethod) && resType == "CVD"){
             filtereredData = mergedArray.filter(e => e.fullUrl.split("/")[0] == "Observation");
         }
+        else if(["post", "POST"].includes(reqMethod) && resType == "Observation"){
+            filtereredData = mergedArray.filter(e => e.resource.resourceType == "Encounter" && e.resource?.type?.[0]?.coding?.[0]?.code == "vital-encounter");
+        }
+        else if(["patch", "PATCH"].includes(reqMethod) && resType == "Observation"){
+            filtereredData = mergedArray.filter(e => e.fullUrl.split("/")[0] == "Observation");
+        }
         else
             filtereredData = mergedArray;
             console.info("filetered Data")
@@ -72,10 +82,13 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             else if(resType == "CVD" && ["post", "POST"].includes(reqMethod)){
                 id = element?.resource?.identifier?.[element?.resource?.identifier?.length - 1]?.value || null
             }
-            else if(resType == "CVD" && ["patch", "PATCH"].includes(reqMethod)){
+            else if((resType == "CVD" || resType == "Observation") && ["patch", "PATCH"].includes(reqMethod)){
                 let decode = Buffer.from(element.resource.data, 'base64').toString('utf-8');
                 decode = JSON.parse(decode);
                 id = decode[0].encounterId;
+            }
+            else if(resType == "Observation" && ["post", "POST"].includes(reqMethod)){
+                id = element?.resource?.identifier?.[element?.resource?.identifier?.length - 1]?.value || null
             }
             // need to see the or statment to be removed
             
@@ -95,7 +108,7 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             let fhirid = element.response.status == "200 OK" || element.response.status == "201 Created" ? element.response.location.substring(element.response.location.indexOf("/") + 1, element.response.location.indexOf("/_history")) : (reqMethod == "PATCH" ? fullUrl : null)
                 data.fhirId = fhirid
             
-            if(resType == "CVD" && reqMethod == "PATCH"){
+            if((resType == "CVD" || resType == "Observation") && reqMethod == "PATCH"){
                 data.fhirId = id;
             }
             response.push(data);

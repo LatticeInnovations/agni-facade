@@ -473,7 +473,7 @@ class Observation {
             "coding": [
               {
                 "system": "http://loinc.org",
-                "code": "2339-0",
+                "code": "74774-1",
                 "display": "glucose"
               }
             ],
@@ -531,8 +531,8 @@ class Observation {
             "coding": [
               {
                 "system": "http://loinc.org",
-                "code": "85354-9",
-                "display": "bloodPressure"
+                "code": "35094-2",
+                "display": "Blood Pressure"
               }
             ],
             "text": "Blood Pressure"
@@ -737,7 +737,7 @@ class Observation {
               {
                 "system": "http://loinc.org",
                 "code": "8867-4",
-                "display": "heartRate"
+                "display": "Heart Rate"
               }
             ],
             "text": "Heart Rate"
@@ -757,7 +757,7 @@ class Observation {
                     {
                       "system": "http://loinc.org",
                       "code": "8302-2",
-                      "display": "feet"
+                      "display": "height"
                     }
                   ],
                   "text": "Height in feet"
@@ -778,7 +778,7 @@ class Observation {
                     {
                       "system": "http://loinc.org",
                       "code": "8302-2",
-                      "display": "inches"
+                      "display": "height"
                     }
                   ],
                   "text": "Height in inches"
@@ -799,7 +799,7 @@ class Observation {
                     {
                       "system": "http://loinc.org",
                       "code": "8302-2",
-                      "display": "Centimeter"
+                      "display": "height"
                     }
                   ],
                   "text": "Height in centimeter"
@@ -832,7 +832,7 @@ class Observation {
             "coding": [
               {
                 "system": "http://loinc.org",
-                "code": "44069-8",
+                "code": "33248-6",
                 "display": "Diabetic status"
               }
             ],
@@ -848,7 +848,7 @@ class Observation {
                   "coding": [
                     {
                       "system": "http://loinc.org",
-                      "code": "44069-8",
+                      "code": "33248-6",
                       "display": "Diabetic status"
                     }
                   ],
