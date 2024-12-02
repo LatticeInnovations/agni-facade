@@ -37,7 +37,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                     prescription.identifier = [{
                         "system": config.medReqUuidUrl,
                         "value": prescription.medReqUuid
-                    }]
+                    }, ... encounterData.identifier]
                     let medRequest = new MedicationRequest(prescription, {});
                     medRequest.getJSONtoFhir();
                     let medReqData = {...medRequest.getFhirResource()};
@@ -69,7 +69,8 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 prescriptionData = {...prescriptionData, ...apptEncounter}  
                 prescriptionData.prescription = [];
             //  let insert = false;
-                    for(let medReq of medReqList) {                     
+                    for(let medReq of medReqList) {   
+                            medReq.prescriptionId = encData.prescriptionId                  
                             let medReqData = new MedicationRequest({}, medReq);
                             medReqData.getFhirToJson();
                             let medData = medReqData.getMedReqResource();
