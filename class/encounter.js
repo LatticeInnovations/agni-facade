@@ -213,6 +213,44 @@ class Encounter {
         };
         return this.fhirResource;
     }
+
+    getUserInputToFhirForPrescriptionDocument() {
+        this.fhirResource.resourceType = "Encounter";
+        this.fhirResource.id = this.encounterObj.id;
+        this.fhirResource.identifier = [];
+        this.fhirResource.subject = {};
+        this.setPatientReference();
+        this.fhirResource.type = [
+            {
+                "coding": [
+                            {
+                                "system": "http://your-custom-coding-system",
+                                "code": "prescription-encounter-document",
+                                "display": "Prescription document encounter"
+                            }
+                        ]
+            }
+        ];
+        this.fhirResource.period = {
+            "start": this.encounterObj.createdOn,
+            "end": this.encounterObj.createdOn
+        }
+        this.fhirResource.partOf = {
+            "reference": "Encounter/" + this.encounterObj.encounterId,
+            "display": "Primary Encounter"
+        }
+
+        this.fhirResource.identifier.push({
+            "system": config.snUrl + '/prescriptionDocument',
+            "value": this.encounterObj.prescriptionId
+        });
+        this.fhirResource.participant = [{
+            "individual" : {
+                "reference": "Practitioner/" + this.encounterObj.practitionerId
+            }
+        }];
+        return this.fhirResource;
+    }
     
 }
 

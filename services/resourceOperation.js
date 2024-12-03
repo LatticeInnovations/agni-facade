@@ -9,7 +9,9 @@ let schedule= require("./manageSchedule")
 let appointment = require("./manageAppointment");
 let cvd = require('./manageCVD');
 let vitals = require("./manageVitals");
-let medDispense = require("./manageMedicineDispense")
+let medDispense = require("./manageMedicineDispense");
+let prescriptionFile = require("./managePrescriptionDocument"); 
+let documentReference = require("./manageDocuments");
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
@@ -40,6 +42,10 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
             break;
             case "MedicationDispense" :
             case "DispenseLog":  bundleData = await medDispense.setMedicationDispenseData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+            break;
+            case "PrescriptionFile" : bundleData = await prescriptionFile.setPrescriptionDocument(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+            break;
+            case "DocumentReference" : bundleData = await documentReference.setDocumentReference(resType, inputData, FHIRData, reqMethod, reqQuery, token);
             break;
         }
 
@@ -87,6 +93,9 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
         else if(["patch", "PATCH"].includes(reqMethod) && resType == "Observation"){
             filtereredData = mergedArray.filter(e => e.fullUrl.split("/")[0] == "Observation");
         }
+        else if(["post", "POST"].includes(reqMethod) && resType == "PrescriptionFile"){
+            filtereredData = mergedArray.filter(e => e.resource.resourceType == "Encounter" || e.resource.resourceType == "DocumentReference");
+        }
         else if(["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "MedicationDispense") {
             // console.log("mergedArray: ", mergedArray, "--------------------------------------------------")
             filtereredData = mergedArray.filter(e => e.resource.resourceType == "Encounter" && e.resource.type && e.resource.type[0].coding[0].code == "dispensing-encounter")
@@ -127,6 +136,9 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
                 id = decode[0].encounterId;
             }
             else if(resType == "Observation" && ["post", "POST"].includes(reqMethod)){
+                id = element?.resource?.identifier?.[element?.resource?.identifier?.length - 1]?.value || null
+            }
+            else if(resType == "PrescriptionFile" && element.resource.resourceType == "Encounter"){
                 id = element?.resource?.identifier?.[element?.resource?.identifier?.length - 1]?.value || null
             }
             // need to see the or statment to be removed

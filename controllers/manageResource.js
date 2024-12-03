@@ -39,6 +39,15 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             queryParams["type"] = "prescription-encounter-form";
             nestedResource = 1;
             break;
+        case "PrescriptionFile":
+            url = config.baseUrl + "Encounter";
+            queryParams.patient = queryParams.patientId;
+            delete queryParams.patientId;
+            queryParams._count= 3000;
+            queryParams._revinclude = "MedicationRequest:encounter:Encounter";
+            queryParams["type"] = "prescription-encounter-document";
+            nestedResource = 1;
+            break;
         case "Organization" : 
             url = config.baseUrl + resourceType;
             queryParams.Organization = queryParams.orgId;
