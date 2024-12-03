@@ -94,7 +94,22 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             filtereredData = mergedArray.filter(e => e.fullUrl.split("/")[0] == "Observation");
         }
         else if(["post", "POST"].includes(reqMethod) && resType == "PrescriptionFile"){
-            filtereredData = mergedArray.filter(e => e.resource.resourceType == "Encounter" || e.resource.resourceType == "DocumentReference");
+            filtereredData = mergedArray.filter(e => e.resource.resourceType == "Encounter");
+            let medicationRequest = mergedArray.filter(e => e.resource.resourceType == "MedicationRequest");
+            let documentRefs = mergedArray.filter(e => e.resource.resourceType == "DocumentReference");
+            filtereredData = filtereredData.map((e) => {
+                e.documents = [];
+                let med = medicationRequest.find((m) => {return m.resource.encounter.reference.split(':')[2] == e.resource.id });
+                
+                med.resource.supportingInformation.forEach((m) => {
+                    let doc = documentRefs.find((d) => { return d.resource.id == m.reference.split(':')[2] });
+                    e.documents.push({
+                        documentfhirId: doc.response.location.split('/')[1],
+                        documentUuid: doc.resource.id,
+                    });
+                });
+                return e;
+            });
         }
         else if(["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "MedicationDispense") {
             // console.log("mergedArray: ", mergedArray, "--------------------------------------------------")
@@ -120,7 +135,7 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
         }
         else
             filtereredData = mergedArray;
-            console.info("filetered Data")
+            console.info("filetered Data", JSON.stringify(filtereredData))
         filtereredData.forEach(element => {
             let fullUrl = element.fullUrl.substring(element.fullUrl.indexOf("/") + 1, element.fullUrl.length);
             let id = (fullUrl.includes("uuid:")) ? fullUrl.split("uuid:")[1] : fullUrl;
@@ -152,6 +167,9 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             }
             if(resType == "MedicationDispense") {
                 data.medicineDispensedList = element?.medicineDispensedList || []
+            }
+            if(resType == "PrescriptionFile"){
+                data.prescriptionFiles = element.documents;
             }
             if(element.response.status == "200 OK" && resType == "Schedule") {
                 data.err = "Schedule already exists"

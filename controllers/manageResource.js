@@ -127,6 +127,12 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 nestedResource = 1;
                //  specialOffset = 1;
                 break;
+            case "DiagnosticReport":
+                url = config.baseUrl + "Encounter";
+                queryParams._revinclude = "DiagnosticReport:encounter:Encounter";
+                queryParams["subject.organization"] = token.orgId
+                nestedResource = 1;
+                break;
 
     }
 
