@@ -13,6 +13,7 @@ let medDispense = require("./manageMedicineDispense");
 let prescriptionFile = require("./managePrescriptionDocument"); 
 let documentReference = require("./manageDocuments");
 let labReports = require('./manageLabReports');
+let medicalRecord = require('./manageMedicalRecord');
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
@@ -50,8 +51,9 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
             break;
             case "DiagnosticReport": bundleData = await labReports.setLabReportData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
             break;
+            case "DocumentManifest": bundleData = await medicalRecord.setMedicalRecordData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+            break;
         }
-
         return bundleData;
     }
     catch (e) {
@@ -139,7 +141,7 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             })
             console.log("medDispenseData filtereredData: ", filtereredData)
         }
-        else if(["post", "POST"].includes(reqMethod) && (resType == "DiagnosticReport" || resType == "DocumentManifest")){
+        else if(["post", "POST"].includes(reqMethod) && (resType == "DiagnosticReport")){
             filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
             let documentRefs = mergedArray.filter(e => e.resource.resourceType == "DocumentReference");
             filtereredData = filtereredData.map((e) => {
@@ -149,6 +151,21 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
                     e.documents.push({
                         labDocumentfhirId: doc.response.location.split('/')[1],
                         labDocumentUuid: doc.resource.id,
+                    });
+                });
+                return e;
+            });
+        }
+        else if(["post", "POST"].includes(reqMethod) && (resType == "DocumentManifest")){
+            filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
+            let documentRefs = mergedArray.filter(e => e.resource.resourceType == "DocumentReference");
+            filtereredData = filtereredData.map((e) => {
+                e.documents = [];
+                e?.resource?.content?.forEach((m) => {
+                    let doc = documentRefs.find((d) => { return d.resource.id == m.reference.split('/')[1].split(':')[2] });
+                    e.documents.push({
+                        "medicalDocumentfhirId": doc.response.location.split('/')[1],
+                        "medicalDocumentUuid": doc.resource.id,
                     });
                 });
                 return e;
@@ -192,7 +209,7 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             if(resType == "PrescriptionFile"){
                 data.prescriptionFiles = element.documents;
             }
-            if(resType == "DiagnosticReport"){
+            if(resType == "DiagnosticReport" || resType == "DocumentManifest"){
                 data.files = element.documents;
             }
             if(element.response.status == "200 OK" && resType == "Schedule") {
@@ -227,7 +244,29 @@ let getDeleteBundleResponse = async (bundleResponse, reqData, reqMethod, resType
         console.info("mergedarray", JSON.stringify(mergedArray));
         switch(resType){
             case "PrescriptionFile": filtereredData = mergedArray.filter(e => e.request.url.split('/')[0] == "Encounter");
-            console.info("filteredArray", JSON.stringify(filtereredData));
+                console.info("filteredArray", JSON.stringify(filtereredData));
+                filtereredData.forEach((element) => {
+                    response.push({
+                        status: element.response.status,
+                        id: null,
+                        err: null,
+                        fhirId: element.response.location.split('/')[1]
+                    });
+                });
+                break;
+            case "DocumentManifest": filtereredData = mergedArray.filter(e => e.request.url.split('/')[0] == "DocumentManifest");
+                console.info("filteredArray", JSON.stringify(filtereredData));
+                filtereredData.forEach((element) => {
+                    response.push({
+                        status: element.response.status,
+                        id: null,
+                        err: null,
+                        fhirId: element.response.location.split('/')[1]
+                    });
+                });
+                break;
+            case "DiagnosticReport": filtereredData = mergedArray.filter(e => e.request.url.split('/')[0] == "DiagnosticReport");
+                console.info("filteredArray", JSON.stringify(filtereredData));
                 filtereredData.forEach((element) => {
                     response.push({
                         status: element.response.status,

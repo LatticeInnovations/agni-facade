@@ -1,24 +1,24 @@
 let bundleOp = require("./bundleOperation");
 let config = require("../config/nodeConfig");
-const DiagnosticReport = require("../class/DiagnosticReport");
+const DocumentManifest = require("../class/DocumentManifest");
 const DocumentReference = require("../class/DocumentReference");
 const Encounter = require("../class/encounter");
 let bundleFun = require("./bundleOperation");
 const { v4: uuidv4 } = require('uuid');
 
-const setLabReportData = async (resType, reqInput, FHIRData, reqMethod, reqQuery, token) => {
+const setMedicalRecordData = async (resType, reqInput, FHIRData, reqMethod, reqQuery, token) => {
     try{
         let resourceResult = [], errData = [];
         if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
-            console.log("create lab report section");
-            for(let labReport of reqInput){ 
-                let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": labReport.appointmentId, _count: 5000 , "_include": "Encounter:appointment" }, token);
-                
-                labReport.encounterId = encounterData.data.entry[0].resource.id;
+            console.log("create medical record section");
+            for(let medicalRecord of reqInput){ 
+                let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": medicalRecord.appointmentId, _count: 5000 , "_include": "Encounter:appointment" }, token);
+
+                medicalRecord.encounterId = encounterData.data.entry[0].resource.id;
                 let documents = [];
-                for(let file of labReport.files) {
+                for(let file of medicalRecord.files) {
                     let document = new DocumentReference({
-                        uuid: file.labDocumentUuid,
+                        uuid: file.medicalDocumentUuid,
                         filename: file.filename, 
                         note: file.note
                     }, {}).getJSONtoFhir();
@@ -26,31 +26,34 @@ const setLabReportData = async (resType, reqInput, FHIRData, reqMethod, reqQuery
                     document = await bundleFun.setBundlePost(document, document.identifier, document.id, "POST", "identifier");
                     resourceResult.push(document);
                 }
-                labReport.documents = documents;
-                let report = new DiagnosticReport(labReport, {}).getUserInputToFhir(); 
-                report = await bundleFun.setBundlePost(report, null, labReport.diagnosticUuid, "POST", "identifier");
+                medicalRecord.documents = documents;
+                medicalRecord.practitionerId = token.userId;
+                medicalRecord.practitionerName = token.userName;
+                let report = new DocumentManifest(medicalRecord, {}).getUserInputToFhir(); 
+                report = await bundleFun.setBundlePost(report, null, medicalRecord.medicalReportUuid, "POST", "identifier");
                 resourceResult.push(report);
             }
         }
         else if (["delete", "DELETE"].includes(reqMethod)){
-            for(let diagReportId of reqInput){
-                let diagReportDeleteBundle = await bundleFun.setBundleDelete("DiagnosticReport", diagReportId); 
-                resourceResult.push(diagReportDeleteBundle);
+            for(let documentManifestId of reqInput){
+                let documentManifestDeleteBundle = await bundleFun.setBundleDelete("DocumentManifest", documentManifestId); 
+                resourceResult.push(documentManifestDeleteBundle);
             }
-            let diagReportIds = reqInput.join(',');
-            let diagReportData = await bundleOp.searchData(config.baseUrl + "DiagnosticReport", { _id: diagReportIds, _count: 5000}, token);
-            diagReportData = diagReportData?.data?.entry?.map((e) => e?.resource) || [];
+            let documentManifestIds = reqInput.join(',');
+            let documentManifestData = await bundleOp.searchData(config.baseUrl + "DocumentManifest", { _id: documentManifestIds, _count: 5000}, token);
+            documentManifestData = documentManifestData?.data?.entry?.map((e) => e?.resource) || [];
             
-            for(let diag of diagReportData){
-                let documents = diag?.extension || []; 
+            for(let med of documentManifestData){
+                let documents = med?.content || []; 
                 for(let doc of documents){
-                    let documentReferenceDeleteBundle = await bundleFun.setBundleDelete("DocumentReference", doc.valueReference.reference.split('/')[1]); 
+                    let documentReferenceDeleteBundle = await bundleFun.setBundleDelete("DocumentReference", doc.reference.split('/')[1]); 
                     resourceResult.push(documentReferenceDeleteBundle);
                 }
             }  
         }
         else {
-            console.log("Fetch lab report section");
+            console.log(FHIRData);
+            console.log("Fetch medical record section");
             let encounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource);
             for(let encounter of encounterList){
                 let report = new Encounter({}, encounter);
@@ -58,26 +61,26 @@ const setLabReportData = async (resType, reqInput, FHIRData, reqMethod, reqQuery
                 let reportData = report.getEncounterResource();
                 delete reportData.prescriptionId;
             
-                let reportList = FHIRData.filter(e => e.resource.resourceType == "DiagnosticReport" && e.resource.encounter.reference == "Encounter/"+encounter.id).map(e => e.resource);
-                reportData.diagnosticReport = [];
-                for(let diagnosticReport of reportList){
-                    let data = new DiagnosticReport(reportData ,diagnosticReport).getFHIRToUserData();
+                let reportList = FHIRData.filter(e => e.resource.resourceType == "DocumentManifest" && e.resource?.related?.[0]?.ref?.reference == "Encounter/"+encounter.id).map(e => e.resource);
+                reportData.medicalRecord = [];
+                for(let medicalRecord of reportList){
+                    let data = new DocumentManifest(reportData ,medicalRecord).getFHIRToUserData();
                     console.log("documentIds", data.documentIds);
                     if(data.documentIds.length > 0){
                         let documentReferenceResponse = await bundleOp.searchData(config.baseUrl + "DocumentReference", { "_id": data.documentIds.join(','), _count: 5000 }, token);
                         let documentReferenceData = documentReferenceResponse.data.entry;
                         data.documents = fetchDocumentData(documentReferenceData);
                         delete data.documentIds;
-                        reportData.diagnosticReport.push(data);
+                        reportData.medicalRecord.push(data);
                     }
                     else {
                         delete data.documentIds;
                         data.documents = [];
-                        reportData.diagnosticReport.push(data);
+                        reportData.medicalRecord.push(data);
                     }
                 }
                 delete reportData.labReport;
-                if(reportData.diagnosticReport.length > 0){
+                if(reportData.medicalRecord.length > 0){
                     resourceResult.push(reportData);
                 }
             }
@@ -92,11 +95,10 @@ const setLabReportData = async (resType, reqInput, FHIRData, reqMethod, reqQuery
 const fetchDocumentData = (documents) => {
     let result = [];
     for(let document of documents){
-        console.info(document.resource)
-        let documentData = new DocumentReference({}, document.resource).getFHIRToJSONForLabReport();
+        let documentData = new DocumentReference({}, document.resource).getFHIRToJSONForMedicalRecord();
         result.push(documentData)
     }
     return result;
 }
 
-module.exports = { setLabReportData };
+module.exports = { setMedicalRecordData };

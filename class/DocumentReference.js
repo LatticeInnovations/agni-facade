@@ -65,6 +65,14 @@ class DocumentReference {
         return this.documentObj;
     }
 
+    getFHIRToJSONForMedicalRecord(){
+        this.documentObj.medicalDocumentfhirId = this.fhirResource.id;
+        this.documentObj.medicalDocumentUuid = this?.fhirResource?.identifier?.[0]?.value;
+        this.documentObj.note = this?.fhirResource?.description || "";
+        this.documentObj.filename = this?.fhirResource?.content?.[0]?.attachment?.title || "";
+        return this.documentObj;
+    }
+
     patchDocumentContent(){
         this.fhirResource.content = [];
         this.fhirResource.content.push(
