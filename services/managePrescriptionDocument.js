@@ -65,7 +65,8 @@ const setPrescriptionDocument = async (resType, reqInput, FHIRData, reqMethod, r
             for(let med of medicationRequestData){
                 let medRequestDeleteBundle = await bundleFun.setBundleDelete("MedicationRequest", med.id); 
                 resourceResult.push(medRequestDeleteBundle);
-                for(let doc of med.supportingInformation){
+                let documents = med?.supportingInformation || []; 
+                for(let doc of documents){
                     let documentReferenceDeleteBundle = await bundleFun.setBundleDelete("DocumentReference", doc.reference.split('/')[1]); 
                     resourceResult.push(documentReferenceDeleteBundle);
                 }

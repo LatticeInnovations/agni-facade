@@ -133,6 +133,12 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 queryParams["subject.organization"] = token.orgId
                 nestedResource = 1;
                 break;
+            case "DocumentManifest":
+                url = config.baseUrl + "Encounter";
+                queryParams._revinclude = "DocumentManifest:related-ref:Encounter";
+                queryParams["subject.organization"] = token.orgId
+                nestedResource = 1;
+                break;
 
     }
 
