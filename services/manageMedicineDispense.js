@@ -36,19 +36,18 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
           const newRecord = await addNewRecord(resType, reqData, token)
           console.log("new record: ", newRecord)
           bundleResources.push(...newRecord);
-          
           resourceResult = existingMainEncountersList
         }
         else {
           const newOTCRecord = await addOTCRecord(resType, reqData)
-          
+          console.log("check OTC ENTRY    =============================================")
           bundleResources.push(...newOTCRecord);
+          console.info("bundleResources 2: ", bundleResources)
         }
         
       }
       resourceResult = [...resourceResult, ...bundleResources]
-      resourceResult = []
-      console.log("====================================>", resourceResult)
+     
       // resourceResult = []
     } else if (["PATCH", "patch"].includes(reqMethod)) {
       console.log("patch section");
@@ -56,15 +55,34 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
     } else {
       if(resType == "MedicationDispense") {
         console.log("Medication dispense GET API")     
-        const mainEncounters = FHIRData.map(e => e.resource)
+        let mainEncounters = FHIRData.map(e => e.resource)
+        console.info("mainEncounters: ", mainEncounters)
         console.log("get data section", mainEncounters);
         const mainEncounterFhirIds = mainEncounters.map((e) => e.id).join(",");
+        
+        const prescriptionEncounterIds = mainEncounters.map(e => e.partOf.reference.split("/")[1])
+        console.info("prescriptionEncounterIds: ", prescriptionEncounterIds)
+        let appointmentEncounter = await bundleOp.searchData( config.baseUrl + "Encounter",
+          { _id: prescriptionEncounterIds.join("/"), _include: "Encounter:part-of",  _count: 2000}, token
+        );
+        const prescriptionEncounters = appointmentEncounter.data.entry.filter(e => e.resource.type).map(enc => enc.resource)
+        appointmentEncounter = appointmentEncounter.data.entry.filter(e => !e.resource.type).map(enc => enc.resource)
+        console.info("appointmentEncounter:", appointmentEncounter)
+        mainEncounters = mainEncounters.map(mainEnc => {
+          const mappedPrescriptionEncounter = prescriptionEncounters.filter( e=> e.id == mainEnc.partOf.reference.split("/")[1])
+          console.info("mappedPrescriptionEncounter: ", mappedPrescriptionEncounter);
+          const mappedAppointmentEncounter = appointmentEncounter.filter( e => e.id == mappedPrescriptionEncounter[0].partOf.reference.split("/")[1]);
+          console.info("mappedAppointmentEncounter: ", mappedAppointmentEncounter[0]);
+          mainEnc.mappedPrescriptionEncounter = mappedPrescriptionEncounter[0]
+          mainEnc.mappedAppointmentEncounter = mappedAppointmentEncounter[0];
+          return mainEnc;
+        })
         let subEncountersMedDispense = await bundleOp.searchData( config.baseUrl + "Encounter",
           { "part-of": mainEncounterFhirIds, type: "dispensing-encounter", _revinclude: "MedicationDispense:context:Encounter",  _count: 2000}, token
         );
         const medDispResources = subEncountersMedDispense.data.entry;
         // Fetch medication list and sub encounter from main encounter
-        const medDispenseWithEncounter = await fetchMedDispenseList(medDispResources, token)  
+        const medDispenseWithEncounter = await fetchMedDispenseList(medDispResources, mainEncounters, token)  
         console.log("medDispenseWithEncounter ---------------------", medDispenseWithEncounter, "------------------------")
         resourceResult = await mapEncounterAndMedDispense(mainEncounters, medDispenseWithEncounter)
         
@@ -85,28 +103,29 @@ const getMainEncountersForPrescription = async function(reqInput, token, prescri
   try {
     let existingMainEncountersList = []
     console.info("prescriptionIds: ", prescriptionIds)
-    //   const uniquePrescriptions = prescriptionIds.map((id) => reqInput.find((e) => e.prescriptionFhirId === id));
+    if(prescriptionIds.length > 0) {
           // search existing main encounters
     const mainEncounterQuery = {
-      "part-of": prescriptionIds.join(","),
-      type: "pharmacy-service",
-      _count: 1000,
-    };
-    const existingMainEncounters = await bundleOp.searchData(
-      config.baseUrl + "Encounter",
-      mainEncounterQuery, token
-    );
-    console.info(existingMainEncounters.data)
-    
-    if(existingMainEncounters.data.total > 0) {
-      console.info("yaha aaya: if main exists")
-      existingMainEncountersList = await Promise.all(existingMainEncounters?.data?.entry?.map(
-        async (encounter) => {
-          const mainEncounterResInBundle = await bundleOp.setBundlePost(encounter.resource, encounter.resource.identifier, encounter.resource.id, "PUT", "identifier");  
-          return mainEncounterResInBundle  
-        }
-      )) || [];
+        "part-of": prescriptionIds.join(","),
+        type: "pharmacy-service",
+        _count: 1000,
+      };
+      const existingMainEncounters = await bundleOp.searchData(
+        config.baseUrl + "Encounter",
+        mainEncounterQuery, token
+      );
+      console.info("main encounters list: ", existingMainEncounters.data)
+      
+      if(existingMainEncounters.data.total > 0) {
+        existingMainEncountersList = await Promise.all(existingMainEncounters?.data?.entry?.map(
+          async (encounter) => {
+            const mainEncounterResInBundle = await bundleOp.setBundlePost(encounter.resource, encounter.resource.identifier, encounter.resource.id, "PUT", "identifier");  
+            return mainEncounterResInBundle  
+          }
+        )) || [];
+      }
     }
+
 
     if (existingMainEncountersList.length < prescriptionIds.length) {
       // Find the prescription Ids of main encounter that do not exist already
@@ -199,8 +218,8 @@ const groupMedicationLog= async function(FHIRData, token) {
   const mediCationResourceBundle = await bundleFun.searchData(config.baseUrl + "MedicationDispense", {context: subEncounterIds, _count: 2000}, token)
   
   const subEncounterMedDispense = [...filteredEncounters, ...mediCationResourceBundle.data.entry]
-  console.log("FHIR DATA ==>", subEncounterMedDispense)
-    const medDispenseWithEncounter = await fetchMedDispenseList(subEncounterMedDispense, token)  
+  const mainEncounter = []
+    const medDispenseWithEncounter = await fetchMedDispenseList(subEncounterMedDispense, mainEncounter, token) 
     let subEncounterWithMedDispenseObj = await Promise.all(
       medDispenseWithEncounter.map(async (element) => {
         const {subEncounterObj, medicineDispensedList} = await fetchSubEncounterWithMedDispenseUserOutput(element)
@@ -216,7 +235,7 @@ const groupMedicationLog= async function(FHIRData, token) {
   }
 }
 // Fetch medicine dispense list with their sub encounters combined
-const fetchMedDispenseList = async function(medDispResources, token) {
+const fetchMedDispenseList = async function(medDispResources, mainEncounters, token) {
   try {
 
     let {medReqData, medicationData} = await getMedicationRequestAndMedication(medDispResources, token)
@@ -224,40 +243,11 @@ const fetchMedDispenseList = async function(medDispResources, token) {
     let subEncounters = medDispResources.filter(
       (res) => res.resource.resourceType == "Encounter"
     ).map(e => e.resource);
-    // fetch appointment-encounter ids from this
-    let appointmentEncounterids = subEncounters.map(enc => {
-      console.log("enc =====> ", enc)
-      if(enc.extension) {
-        const appointmentEncounter = enc.extension.filter(element => element.url == "http://hl7.org/fhir/StructureDefinition/encounter-associatedEncounter")
-        if(appointmentEncounter.length > 0) {
-        return appointmentEncounter[0].valueReference.reference.split("/")[1]
-        }
-      } });
-      // Get appointment ids
-
-    console.log("appointmentEncounterids: ", appointmentEncounterids)
-
-    let appointmentEncounters = await bundleOp.searchData( config.baseUrl + "Encounter",
-      { _id: appointmentEncounterids,  _count: 2000}, token
-    );
-    subEncounters = subEncounters.map(element => {
-      let primaryEncounterId = null
-      if(appointmentEncounters.data.entry.length > 0) {
-        if(element.extension) {
-          const primaryEncounterData = element.extension.filter(element => element.url == "http://hl7.org/fhir/StructureDefinition/encounter-associatedEncounter")
-          console.log("primaryEncounterData: ", primaryEncounterData)
-          if(primaryEncounterData.length > 0) {
-            primaryEncounterId = primaryEncounterData[0].valueReference.reference.split("/")[1]
-          }
-        }
-        const appointmentEncounter = appointmentEncounters.data.entry.filter(e => primaryEncounterId != null && e.resource.id == primaryEncounterId)
-        console.log("appointmentEncounter: ", appointmentEncounter, primaryEncounterId)
-        if(appointmentEncounter.length > 0) {
-          element.appointmentId = appointmentEncounter[0].resource.appointment[0].reference.split("/")[1]
-        }
-        else{
-          element.appointmentId = null
-        }
+    subEncounters = subEncounters.map(element => {      
+      if(mainEncounters.length > 0) {
+        let primaryEncounter = mainEncounters.filter(e => e.id == element.partOf.reference.split("/")[1])
+        element.appointmentId = primaryEncounter[0].mappedAppointmentEncounter.appointment[0].reference.split("/")[1]
+        
       }
       else {
         element.appointmentId = null
@@ -313,16 +303,21 @@ const getMedicationRequestAndMedication = async function(medDispResources, token
       }
       return acc; 
     }, { medReqIds: new Set(), medicationIds: new Set() });
+    console.info("medReqIds: ", medReqIds)
     // fetch medication request resource with their data.
-    const medRequestResources = await bundleOp.searchData(config.baseUrl + "MedicationRequest", {_id: Array.from(medReqIds).join(","), _count: 200}, token)
-    let medReqData = medRequestResources.data.entry.map(medReq => {
-      let medReqData = new MedicationRequest({}, medReq.resource);
-      medReqData.getFhirToJson();
-      let medData = medReqData.getMedReqResource();
-      medData.qtyPrescribed = medData.qtyPerDose * medData.frequency * medData.duration;
-      medicationIds.add(medReq.resource.medicationReference.reference.split("/")[1])
-      return medData
-    });
+    let medReqData = []
+    if(medReqIds.size > 0) {
+      const medRequestResources = await bundleOp.searchData(config.baseUrl + "MedicationRequest", {_id: Array.from(medReqIds).join(","), _count: 200}, token)
+        medReqData = medRequestResources.data.entry.map(medReq => {
+          let medReqData = new MedicationRequest({}, medReq.resource);
+          medReqData.getFhirToJson();
+          let medData = medReqData.getMedReqResource();
+          medData.qtyPrescribed = medData.qtyPerDose * medData.frequency * medData.duration;
+          medicationIds.add(medReq.resource.medicationReference.reference.split("/")[1])
+          return medData
+      });
+    }
+
     let medicationResources = await bundleOp.searchData(config.baseUrl + "Medication", {_id: Array.from(medicationIds).join(","), _count: 200}, token)
     let medicationData = medicationResources.data.entry.map(element => {
       let medication = new Medication({}, element.resource);
