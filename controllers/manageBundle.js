@@ -123,6 +123,64 @@ let patchBundle = async function (req, res) {
 
 }
 
+let deleteBundle = async (req, res) => {
+    try {
+        let token = req.token;
+        
+        let response = resourceValid(req.params);
+        if (response.error) {
+            console.error(response.error.details)
+            let errData = { status: 0, response: { data: response.error.details }, message: "Invalid input" }
+            return res.status(422).json(errData);
+        }
+        const resourceType = req.params.resourceType;
+        const reqInput = req.body;
+        let bundle;
+        let fhirResource = {};
+
+        let resourceData = await getBundleJSON(reqInput, resourceType, fhirResource, "DELETE", token);
+            bundle = resourceData.bundle;
+    //   return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
+        if (bundle.entry.length > 0) {
+            let response = await axios.post(config.baseUrl, bundle);
+            if (response.status == 200) {
+                let responseData = await resourceFun.getDeleteBundleResponse(response.data.entry, bundle.entry, "DELETE", req.params.resourceType, reqInput);
+                responseData = [...responseData, ...resourceData.errData];
+                res.status(200).json({ status: 1, message: "Data deleted successfully.", data: responseData })
+            }
+            else {
+                return res.status(500).json({
+                    status: 0, message: "Unable to process. Please try again.", error: response
+                })
+            }
+        }
+        else if(resourceData.errData.length > 0) {
+            return res.status(201).json({ status: 1, message: "Data deleted successfully.", data: resourceData.errData })
+        }
+        else {
+            return res.status(409).json({ status: 0, message: "Data already exists." })
+        }
+
+    }
+    catch (e) {
+        console.error("the error is here:", e);
+        if (e.code && e.code == "ERR") {
+            return res.status(e.statusCode).json({
+                status: 0,
+                message: e.message == null ? "Unable to process. Please try again." : e.message,
+                error: e.response != null ? e.response.data : null
+            })
+        }
+        else {
+            return res.status(500).json({
+                status: 0,
+                message: "Unable to process. Please try again.",
+                error: e.response != null ? e.response.data : null
+            })
+        }
+    }
+}
+
 let getBundleJSON = async function (reqInput, resourceType, fhirResource, reqMethod, token) {
     let bundle = {
         "resourceType": "Bundle",
@@ -138,4 +196,4 @@ let getBundleJSON = async function (reqInput, resourceType, fhirResource, reqMet
 }
 
 
-module.exports = { createBundle, patchBundle }
+module.exports = { createBundle, patchBundle, deleteBundle }

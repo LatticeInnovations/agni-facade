@@ -12,6 +12,7 @@ let vitals = require("./manageVitals");
 let medDispense = require("./manageMedicineDispense");
 let prescriptionFile = require("./managePrescriptionDocument"); 
 let documentReference = require("./manageDocuments");
+let labReports = require('./manageLabReports');
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
@@ -47,6 +48,8 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
             break;
             case "DocumentReference" : bundleData = await documentReference.setDocumentReference(resType, inputData, FHIRData, reqMethod, reqQuery, token);
             break;
+            case "DiagnosticReport": bundleData = await labReports.setLabReportData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+            break;
         }
 
         return bundleData;
@@ -60,7 +63,7 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
     try {
         let response = [], filtereredData = [];
         let mergedArray = bundleResponse.map((data, i) => Object.assign({}, data, reqData[i]));
-        console.info(mergedArray[0].fullUrl.split("/")[0], reqMethod, resType)
+        console.info(mergedArray?.[0]?.fullUrl?.split?.("/")?.[0], reqMethod, resType);
         if (["post", "POST", "put", "PUT"].includes(reqMethod) && (resType == "Patient"|| resType == "Appointment"))
             filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
         else if(["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "MedicationRequest") {
@@ -111,6 +114,9 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
                 return e;
             });
         }
+        else if(["delete", "DELETE"].includes(reqMethod) && resType == "PrescriptionFile"){
+            filtereredData = mergedArray.filter(e => e.request.url.split('/')[0] == "Encounter");
+        }
         else if(["post", "POST", "put", "PUT"].includes(reqMethod) && resType == "MedicationDispense") {
             // console.log("mergedArray: ", mergedArray, "--------------------------------------------------")
             filtereredData = mergedArray.filter(e => e.resource.resourceType == "Encounter" && e.resource.type && e.resource.type[0].coding[0].code == "dispensing-encounter")
@@ -132,6 +138,21 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
                 return subEnc
             })
             console.log("medDispenseData filtereredData: ", filtereredData)
+        }
+        else if(["post", "POST"].includes(reqMethod) && (resType == "DiagnosticReport" || resType == "DocumentManifest")){
+            filtereredData = mergedArray.filter(e => e.resource.resourceType == resType);
+            let documentRefs = mergedArray.filter(e => e.resource.resourceType == "DocumentReference");
+            filtereredData = filtereredData.map((e) => {
+                e.documents = [];
+                e?.resource?.extension?.forEach((m) => {
+                    let doc = documentRefs.find((d) => { return d.resource.id == m.valueReference.reference.split('/')[1].split(':')[2] });
+                    e.documents.push({
+                        labDocumentfhirId: doc.response.location.split('/')[1],
+                        labDocumentUuid: doc.resource.id,
+                    });
+                });
+                return e;
+            });
         }
         else
             filtereredData = mergedArray;
@@ -171,6 +192,9 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
             if(resType == "PrescriptionFile"){
                 data.prescriptionFiles = element.documents;
             }
+            if(resType == "DiagnosticReport"){
+                data.files = element.documents;
+            }
             if(element.response.status == "200 OK" && resType == "Schedule") {
                 data.err = "Schedule already exists"
             }
@@ -196,6 +220,35 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
 }
 
 
+let getDeleteBundleResponse = async (bundleResponse, reqData, reqMethod, resType, reqInput) => {
+    try{
+        let response = [], filtereredData = [];
+        let mergedArray = bundleResponse.map((data, i) => Object.assign({}, data, reqData[i]));
+        console.info("mergedarray", JSON.stringify(mergedArray));
+        switch(resType){
+            case "PrescriptionFile": filtereredData = mergedArray.filter(e => e.request.url.split('/')[0] == "Encounter");
+            console.info("filteredArray", JSON.stringify(filtereredData));
+                filtereredData.forEach((element) => {
+                    response.push({
+                        status: element.response.status,
+                        id: null,
+                        err: null,
+                        fhirId: element.response.location.split('/')[1]
+                    });
+                });
+                break;
+            case "default": filtereredData = mergedArray; 
+                break;
+        }
+        console.info("filetered Data", JSON.stringify(filtereredData));
+        return response;
+    }
+    catch(e){
+        return Promise.reject(e);
+    }
+}
 
 
-module.exports = { getResource, getBundleResponse }
+
+
+module.exports = { getResource, getBundleResponse, getDeleteBundleResponse }

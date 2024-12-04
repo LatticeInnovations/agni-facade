@@ -57,6 +57,14 @@ class DocumentReference {
         return this.documentObj;
     }
 
+    getFHIRToJSONForLabReport(){
+        this.documentObj.labDocumentfhirId = this.fhirResource.id;
+        this.documentObj.labDocumentUuid = this?.fhirResource?.identifier?.[0]?.value;
+        this.documentObj.note = this?.fhirResource?.description || "";
+        this.documentObj.filename = this?.fhirResource?.content?.[0]?.attachment?.title || "";
+        return this.documentObj;
+    }
+
     patchDocumentContent(){
         this.fhirResource.content = [];
         this.fhirResource.content.push(
