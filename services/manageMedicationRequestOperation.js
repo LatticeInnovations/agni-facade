@@ -65,6 +65,7 @@ let setMedicationRequestData = async function (resType, reqInput, FHIRData, reqM
                 let prescriptionData = {
                     "prescriptionId": encData.identifier[0].value,
                     "prescriptionFhirId": encData.id,
+                    "generatedOn": encData.period.start
                 }   
                 prescriptionData = {...prescriptionData, ...apptEncounter}  
                 prescriptionData.prescription = [];
