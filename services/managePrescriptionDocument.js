@@ -54,6 +54,23 @@ const setPrescriptionDocument = async (resType, reqInput, FHIRData, reqMethod, r
                 }
             }
         }
+        else if (["delete", "DELETE"].includes(reqMethod)){
+            for(let encounterId of reqInput){
+                let encounterDeleteBundle = await bundleFun.setBundleDelete("Encounter", encounterId); 
+                resourceResult.push(encounterDeleteBundle);
+            }
+            let encounterIds = reqInput.join(',');
+            let medicationRequestData = await bundleOp.searchData(config.baseUrl + "MedicationRequest", { encounter: encounterIds, _count: 5000}, token);
+            medicationRequestData = medicationRequestData?.data?.entry?.map((e) => e?.resource) || [];
+            for(let med of medicationRequestData){
+                let medRequestDeleteBundle = await bundleFun.setBundleDelete("MedicationRequest", med.id); 
+                resourceResult.push(medRequestDeleteBundle);
+                for(let doc of med.supportingInformation){
+                    let documentReferenceDeleteBundle = await bundleFun.setBundleDelete("DocumentReference", doc.reference.split('/')[1]); 
+                    resourceResult.push(documentReferenceDeleteBundle);
+                }
+            }  
+        }
         else {
             const prescriptionDocumentEncounter = FHIRData.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource);
             let appointmentEncounterIds = [... new Set(prescriptionDocumentEncounter.map(e =>  parseInt(e.partOf.reference.split("/")[1])))];
