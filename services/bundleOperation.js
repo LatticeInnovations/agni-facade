@@ -111,4 +111,4 @@ let searchData = async function (link, reqQuery) {
 
 }
 
-module.exports = {setBundlePatch, setBundlePost, setBundleDelete, searchData};
+module.exports = {setBundlePatch, setBundlePost, setBundleDelete, searchData, setBundlePut};
