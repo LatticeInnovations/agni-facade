@@ -11,15 +11,16 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
   try {
     let resourceResult = [], errData = [];
     if (["post", "POST", "PUT", "put"].includes(reqMethod)) {
+     
       const prescriptionFhirIds = [ ...new Set(reqInput.map(e=> e.prescriptionFhirId).filter(value => value !== undefined))];
-      console.info("prescriptionFhirId: ", prescriptionFhirIds)
         // fetch main encounter using appointment id
       const prescriptionEncounters = await bundleOp.searchData(config.baseUrl + "Encounter", { "_id": prescriptionFhirIds.join(","), _count: 5000}, token);   
       if(prescriptionEncounters.data.entry.length == 0) {
                 return []
       }
+     
       let existingMainEncountersList = await  getMainEncountersForPrescription(reqInput, token, prescriptionFhirIds)
-      console.log("existingMainEncountersList: =======>", existingMainEncountersList)
+      // console.info("existingMainEncountersList: =======>", existingMainEncountersList)
       let bundleResources = []
       for (let reqData of reqInput) {
         reqData.practitionerId = token.userId;
@@ -28,11 +29,12 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
           const mainEncounterIndex = existingMainEncountersList.findIndex(
             (e) => e.resource.partOf.reference.split("/")[1] === reqData.prescriptionFhirId
           );
-          console.log("main encounter index check :", mainEncounterIndex)
+          // console.log("main encounter index check :", mainEncounterIndex)
             // Update the status to "XXX"
           existingMainEncountersList[mainEncounterIndex].resource.status = statusData?.encounter;
           const mainEncounter = existingMainEncountersList[mainEncounterIndex]
           reqData.mainEnounterId = mainEncounter.resource.id ? "Encounter/" + mainEncounter.resource.id : "urn:uuid:" + mainEncounter.resource.identifier[0].value
+          // console.info("check req data ==============> ", reqData)
           const newRecord = await addNewRecord(resType, reqData, token)
           console.log("new record: ", newRecord)
           bundleResources.push(...newRecord);
@@ -57,18 +59,18 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
         console.log("Medication dispense GET API")     
         let mainEncounters = FHIRData.map(e => e.resource)
         console.info("mainEncounters: ", mainEncounters)
-        console.log("get data section", mainEncounters);
         const mainEncounterFhirIds = mainEncounters.map((e) => e.id).join(",");
         
         const prescriptionEncounterIds = mainEncounters.map(e => e.partOf.reference.split("/")[1])
         console.info("prescriptionEncounterIds: ", prescriptionEncounterIds)
         let appointmentEncounter = await bundleOp.searchData( config.baseUrl + "Encounter",
-          { _id: prescriptionEncounterIds.join("/"), _include: "Encounter:part-of",  _count: 2000}, token
+          { _id: prescriptionEncounterIds.join(","), _include: "Encounter:part-of",  _count: 2000}, token
         );
         const prescriptionEncounters = appointmentEncounter.data.entry.filter(e => e.resource.type).map(enc => enc.resource)
         appointmentEncounter = appointmentEncounter.data.entry.filter(e => !e.resource.type).map(enc => enc.resource)
-        console.info("appointmentEncounter:", appointmentEncounter)
-        mainEncounters = mainEncounters.map(mainEnc => {
+        // console.info("appointmentEncounter:", appointmentEncounter)
+        // console.info("prescriptionEncounters:", prescriptionEncounters)
+        mainEncounters = mainEncounters.map((mainEnc) => {
           const mappedPrescriptionEncounter = prescriptionEncounters.filter( e=> e.id == mainEnc.partOf.reference.split("/")[1])
           console.info("mappedPrescriptionEncounter: ", mappedPrescriptionEncounter);
           const mappedAppointmentEncounter = appointmentEncounter.filter( e => e.id == mappedPrescriptionEncounter[0].partOf.reference.split("/")[1]);
@@ -101,6 +103,7 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
 
 const getMainEncountersForPrescription = async function(reqInput, token, prescriptionIds) {
   try {
+    console.info
     let existingMainEncountersList = []
     console.info("prescriptionIds: ", prescriptionIds)
     if(prescriptionIds.length > 0) {
@@ -114,7 +117,7 @@ const getMainEncountersForPrescription = async function(reqInput, token, prescri
         config.baseUrl + "Encounter",
         mainEncounterQuery, token
       );
-      console.info("main encounters list: ", existingMainEncounters.data)
+      // console.info("main encounters list: ", existingMainEncounters.data)
       
       if(existingMainEncounters.data.total > 0) {
         existingMainEncountersList = await Promise.all(existingMainEncounters?.data?.entry?.map(
@@ -132,16 +135,16 @@ const getMainEncountersForPrescription = async function(reqInput, token, prescri
       const existingMainPrescriptionIds = new Set(
         existingMainEncountersList.map((e) => e.resource.partOf.reference.split("/")[1])
       );
-      console.info("existingMainPrescriptionIds: ", existingMainPrescriptionIds, "prescriptionIds: ", prescriptionIds)
+      // console.info("existingMainPrescriptionIds: ", existingMainPrescriptionIds, "prescriptionIds: ", prescriptionIds)
       // filter non existing main encounters
       const leftMainEncounters = prescriptionIds.filter(
         (item) => !existingMainPrescriptionIds.has(item)
       );
-      console.info("check nonexisting", leftMainEncounters)
+      // console.info("check nonexisting", leftMainEncounters)
       // Create new main encounters concurrently using Promise.all
       let newEncounters = await Promise.all(
         leftMainEncounters.map(async (inputId) => {
-            let input = reqInput.filter(e=> e.prescriptionFhirId = inputId)[0]
+            let input = reqInput.filter(e=> e.prescriptionFhirId == inputId)[0]
             input.mainEncounterUuid = uuidv4()
           const mainEncounterResource =  await getEncounterResource(input, {}, true);
           const mainEncounterResInBundle = await bundleOp.setBundlePost(mainEncounterResource, mainEncounterResource.identifier, input.mainEncounterUuid, "POST", "identifier");  
@@ -209,9 +212,11 @@ const fetchSubEncounterWithMedDispenseUserOutput = async function(element) {
 
 const groupMedicationLog= async function(FHIRData, token) {
   try {
+    console.info("FHIRdata: ", FHIRData)
     if(FHIRData.length == 0)
       return [];
    let filteredEncounters = FHIRData.filter(enc => enc.resource.partOf == undefined)
+   console.info("filteredEncounters: ", filteredEncounters)
    if (filteredEncounters.length ==0)
       return [];
    let subEncounterIds = filteredEncounters.map(e=> e.resource.id).join(",")
@@ -346,6 +351,7 @@ const addNewRecord = async function (resType, reqInput, token) {
     let bundleResources = []
     // get encounter id of the prescription from which it is attached
     let prescriptionEncounterId = reqInput.prescriptionFhirId;
+    // console.info(" ======> prescriptionEncounterId: ", prescriptionEncounterId, reqInput)
     // Matching MedicationRequest list to be fetched to further link it to medicationDispense
     let combinedMedReqResource = await combineMedReqAndInput(prescriptionEncounterId, reqInput, token);
 
@@ -411,7 +417,7 @@ const getMedicationDispenseResources = async function(combinedMedReqResource) {
 
 const combineMedReqAndInput = async function ( prescriptionEncounterId, reqInput, token) {
   try {
-    console.log(" ==========>", prescriptionEncounterId)
+    console.info(" ==========>", prescriptionEncounterId)
     const medicineDispensedList = reqInput.medicineDispensedList
     let dispenseListMedReqIds = medicineDispensedList
       .map((e) => e.medReqFhirId)
@@ -424,7 +430,7 @@ const combineMedReqAndInput = async function ( prescriptionEncounterId, reqInput
     const medDispenseLookup = new Map(
       medicineDispensedList.map((dispense) => [dispense.medReqFhirId, dispense])
     );
-    console.log("medicationRequestResources: ", medicationRequestResources)
+    console.info("medicationRequestResources: ", medicationRequestResources)
     // combine both using medReqFhirId
     const combined = medicationRequestResources.data.entry
     .map((obj1) => {
