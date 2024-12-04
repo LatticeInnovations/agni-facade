@@ -155,9 +155,12 @@ getId() {
         
     }
 
-    setDocument(docId){
-        console.info("doc id = ", docId);
-        this.fhirResource.supportingInformation.push({"reference": `DocumentReference/${docId}`});
+    setDocument(){
+        this.medReqObj.prescriptionFiles.forEach((file) => {
+            this.fhirResource.supportingInformation.push({
+                "reference": "urn:uuid:" + file.documentUuid
+            });
+        });
     }
 
     getJSONtoFhir() {
@@ -198,6 +201,17 @@ getId() {
         this.fhirResource.supportingInformation = [];
     }
 
+    getJSONtoFhirForPrescriptionDocument(){
+        this.fhirResource.resourceType = "MedicationRequest";
+        this.setBasicStructure();
+        this.setIdentifier();
+        this.setIntent();
+        this.setGroupIdentifier();
+        this.setPatientReference();
+        this.setEncounter();
+        this.setDocument();
+        return this.fhirResource;
+    }
 }
 
 
