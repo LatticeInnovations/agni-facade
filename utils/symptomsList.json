@@ -1,0 +1,5146 @@
+{
+    "resourceType": "ValueSet",
+    "id": "3255",
+    "meta": {
+      "versionId": "1",
+      "lastUpdated": "2024-10-29T07:03:21.147+00:00",
+      "source": "#Yh92rRvvvrcAfLyI"
+    },
+    "url": "http://www.lattice.in/fhir/ValueSet/symptoms",
+    "name": "symptomsList",
+    "title": "List of symptoms",
+    "status": "active",
+    "compose": {
+      "include": [
+        {
+          "system": "http://snomed.info/sct",
+          "concept": [
+            {
+              "code": "Headache",
+              "display": "Headache",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Face pain",
+              "display": "Face pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Sinus pain or pressure",
+              "display": "Sinus pain or pressure",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Fever",
+              "display": "Fever",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen face",
+              "display": "Swollen face",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "face tingling or numbness",
+              "display": "face tingling or numbness",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Loss of consciousness",
+              "display": "Loss of consciousness",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Impaired memory",
+              "display": "Impaired memory",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Dizzy",
+              "display": "Dizzy",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Feeling sick or queasy",
+              "display": "Feeling sick or queasy",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Hair loss",
+              "display": "Hair loss",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Skin changes on the face",
+              "display": "Skin changes on the face",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Recent head injury",
+              "display": "Recent head injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Head"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Eye pain",
+              "display": "Eye pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red eye",
+              "display": "Red eye",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red and stinging eyes",
+              "display": "Red and stinging eyes",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Itchy eye",
+              "display": "Itchy eye",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Watery eyes",
+              "display": "Watery eyes",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Yellow eyes",
+              "display": "Yellow eyes",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain around or behind eye",
+              "display": "Pain around or behind eye",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Visual impairment",
+              "display": "Visual impairment",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Double vision",
+              "display": "Double vision",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Temporary blindness",
+              "display": "Temporary blindness",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Asymmetric pupils",
+              "display": "Asymmetric pupils",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Skin changes on eylid",
+              "display": "Skin changes on eylid",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swelling around bth eyes",
+              "display": "Swelling around bth eyes",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Drooping eyelids",
+              "display": "Drooping eyelids",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Dry discharge on eylids",
+              "display": "Dry discharge on eylids",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Eye flashes",
+              "display": "Eye flashes",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Light sensitivity",
+              "display": "Light sensitivity",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Serious eye injury",
+              "display": "Serious eye injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Eyes"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Painful nose",
+              "display": "Painful nose",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen nose",
+              "display": "Swollen nose",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Runny nose",
+              "display": "Runny nose",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Blocked nose",
+              "display": "Blocked nose",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Itchy nose or throat",
+              "display": "Itchy nose or throat",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Nasal voice",
+              "display": "Nasal voice",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Hoarse or harsh sounds when sleeping",
+              "display": "Hoarse or harsh sounds when sleeping",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Sneezing",
+              "display": "Sneezing",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Inability to smell properly",
+              "display": "Inability to smell properly",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Sinus pain or pressure",
+              "display": "Sinus pain or pressure",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Bleeding from nose",
+              "display": "Bleeding from nose",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Mucus dripping at the back of the throat",
+              "display": "Mucus dripping at the back of the throat",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Nose injury",
+              "display": "Nose injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nose"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Earache",
+              "display": "Earache",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Ears"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Decreased hearing",
+              "display": "Decreased hearing",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Ears"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Discharge from ear",
+              "display": "Discharge from ear",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Ears"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Clogged ear",
+              "display": "Clogged ear",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Ears"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Itchy inner ear",
+              "display": "Itchy inner ear",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Ears"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Ringing in ears",
+              "display": "Ringing in ears",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Ears"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Ear injury",
+              "display": "Ear injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Ears"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Changes in the mouth",
+              "display": "Changes in the mouth",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Bad breath",
+              "display": "Bad breath",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Dry mouth",
+              "display": "Dry mouth",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Toothache",
+              "display": "Toothache",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Difficulty biting and chewing",
+              "display": "Difficulty biting and chewing",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Gum pain",
+              "display": "Gum pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen gums",
+              "display": "Swollen gums",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Bleeding gums",
+              "display": "Bleeding gums",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Unusually red tongue",
+              "display": "Unusually red tongue",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Burning sensation on tongue",
+              "display": "Burning sensation on tongue",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Cough",
+              "display": "Cough",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Hoarse or harsh sounds when sleeping",
+              "display": "Hoarse or harsh sounds when sleeping",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Vomiting",
+              "display": "Vomiting",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Coughing up blood",
+              "display": "Coughing up blood",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Diminished appetite",
+              "display": "Diminished appetite",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "More thirsty than usual",
+              "display": "More thirsty than usual",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "White spots on tonsils",
+              "display": "White spots on tonsils",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Shortness of breath",
+              "display": "Shortness of breath",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lip injury",
+              "display": "Lip injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Oral cavity "
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Sore throat",
+              "display": "Sore throat",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Painful swallowing",
+              "display": "Painful swallowing",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Difficulty swallowing",
+              "display": "Difficulty swallowing",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red throat",
+              "display": "Red throat",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Cough",
+              "display": "Cough",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Clearing the throat",
+              "display": "Clearing the throat",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Whistling sound made while breathing",
+              "display": "Whistling sound made while breathing",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Mucus dripping at the back of the throat",
+              "display": "Mucus dripping at the back of the throat",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Hoarse voice",
+              "display": "Hoarse voice",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Itchy nose or throat",
+              "display": "Itchy nose or throat",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Shortness of breath",
+              "display": "Shortness of breath",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in the neck",
+              "display": "Pain in the neck",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Enlarged lymph nodes",
+              "display": "Enlarged lymph nodes",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen neck",
+              "display": "Swollen neck",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Stiff neck",
+              "display": "Stiff neck",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen neck veins",
+              "display": "Swollen neck veins",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Neck injury",
+              "display": "Neck injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Neck or throat"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in the neck",
+              "display": "Pain in the neck",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nape of neck"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Neck pain on only one side",
+              "display": "Neck pain on only one side",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nape of neck"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Stiff neck",
+              "display": "Stiff neck",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nape of neck"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Difficulty bending down",
+              "display": "Difficulty bending down",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nape of neck"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen neck",
+              "display": "Swollen neck",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nape of neck"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Neck injury",
+              "display": "Neck injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nape of neck"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Whiplash injury",
+              "display": "Whiplash injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Nape of neck"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in upper limb",
+              "display": "Pain in upper limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Severe pain in upper limb",
+              "display": "Severe pain in upper limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Shoulder pain",
+              "display": "Shoulder pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when moving shoulder",
+              "display": "Pain when moving shoulder",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Joint hard to move",
+              "display": "Joint hard to move",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in both upper limbs",
+              "display": "Pain in both upper limbs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swelling of the upper limb",
+              "display": "Swelling of the upper limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen shoulder",
+              "display": "Swollen shoulder",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Tingling or numbness of one upper limb",
+              "display": "Tingling or numbness of one upper limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Tingling or numbness of both upper limbs",
+              "display": "Tingling or numbness of both upper limbs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Loss of feeling in both arms",
+              "display": "Loss of feeling in both arms",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Spasms in arms or hands",
+              "display": "Spasms in arms or hands",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Arm injury",
+              "display": "Arm injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper arm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in upper limb",
+              "display": "Pain in upper limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in forearm",
+              "display": "Pain in forearm",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in both upper limbs",
+              "display": "Pain in both upper limbs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Severe pain in upper limb",
+              "display": "Severe pain in upper limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swelling of the upper limb",
+              "display": "Swelling of the upper limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen elbow",
+              "display": "Swollen elbow",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen wrist",
+              "display": "Swollen wrist",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Wrist pain",
+              "display": "Wrist pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when moving wrist",
+              "display": "Pain when moving wrist",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Elbow pain",
+              "display": "Elbow pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when moving elbow",
+              "display": "Pain when moving elbow",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Tingling or numbness of both upper limbs",
+              "display": "Tingling or numbness of both upper limbs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Dropping hand",
+              "display": "Dropping hand",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Loss of feeling in both arms",
+              "display": "Loss of feeling in both arms",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Spasms in arms or hands",
+              "display": "Spasms in arms or hands",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Forearm injury",
+              "display": "Forearm injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Forearm"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in upper limb",
+              "display": "Pain in upper limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Elbow"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Severe pain in upper limb",
+              "display": "Severe pain in upper limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Elbow"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Elbow pain",
+              "display": "Elbow pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Elbow"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when moving elbow",
+              "display": "Pain when moving elbow",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Elbow"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen elbow",
+              "display": "Swollen elbow",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Elbow"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Elbow injury",
+              "display": "Elbow injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Elbow"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Joint hard to move",
+              "display": "Joint hard to move",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Elbow"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Wrist pain",
+              "display": "Wrist pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when moving wrist",
+              "display": "Pain when moving wrist",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in hand or fingers",
+              "display": "Pain in hand or fingers",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in one finger",
+              "display": "Pain in one finger",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain of the skin around the nail",
+              "display": "Pain of the skin around the nail",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen hand",
+              "display": "Swollen hand",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen wrist",
+              "display": "Swollen wrist",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen finger",
+              "display": "Swollen finger",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Skin changes on hands",
+              "display": "Skin changes on hands",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red hand",
+              "display": "Red hand",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Grayish-blue fingers",
+              "display": "Grayish-blue fingers",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red skin on palms",
+              "display": "Red skin on palms",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Tingling fingers",
+              "display": "Tingling fingers",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Trembling of both hands",
+              "display": "Trembling of both hands",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Trembling of one hand",
+              "display": "Trembling of one hand",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Loss of muscles in hands",
+              "display": "Loss of muscles in hands",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Stiff hands in the morning",
+              "display": "Stiff hands in the morning",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Cold hands or fingers",
+              "display": "Cold hands or fingers",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Hand injury",
+              "display": "Hand injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Hand"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Breast enlargement in man",
+              "display": "Breast enlargement in man",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "male"
+                }
+              ]
+            },
+            {
+              "code": "Chest pain",
+              "display": "Chest pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Chest pain, spreading to the left uppar limb",
+              "display": "Chest pain, spreading to the left uppar limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pressing chest pain",
+              "display": "Pressing chest pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Heartburn",
+              "display": "Heartburn",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Palpitations",
+              "display": "Palpitations",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Fast heart rate",
+              "display": "Fast heart rate",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Slow heart rate",
+              "display": "Slow heart rate",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Cough",
+              "display": "Cough",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Shortness of breath",
+              "display": "Shortness of breath",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Shallow breathing",
+              "display": "Shallow breathing",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Rapid breathing",
+              "display": "Rapid breathing",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Whistling sound made while breathing",
+              "display": "Whistling sound made while breathing",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Chest injury",
+              "display": "Chest injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Chest"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain or tenderness in both breasts",
+              "display": "Pain or tenderness in both breasts",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Breasts"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Pain or tenderness in only one breast",
+              "display": "Pain or tenderness in only one breast",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Breasts"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Enlarged breasts",
+              "display": "Enlarged breasts",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Breasts"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Lump in the breast",
+              "display": "Lump in the breast",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Breasts"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Milky discharge from the nipple outside of breastfeeding period",
+              "display": "Milky discharge from the nipple outside of breastfeeding period",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Breasts"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Leaking from the nipple discharge that is not milk",
+              "display": "Leaking from the nipple discharge that is not milk",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Breasts"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Ulcer on the nipple",
+              "display": "Ulcer on the nipple",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Breasts"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Change in the nipple",
+              "display": "Change in the nipple",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Breasts"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Wrinkling or dimpling of skin on breast",
+              "display": "Wrinkling or dimpling of skin on breast",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Breasts"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Stomach pain",
+              "display": "Stomach pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Upper central abdominal pain",
+              "display": "Upper central abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Upper left side abdominal pain",
+              "display": "Upper left side abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Upper right side abdominal pain",
+              "display": "Upper right side abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Burning or gnawing stomach pain",
+              "display": "Burning or gnawing stomach pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Colic abdominal pain",
+              "display": "Colic abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Crampy abdominal pain",
+              "display": "Crampy abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Sharp and stabbing abdominal pain",
+              "display": "Sharp and stabbing abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when pressing the abdomen",
+              "display": "Pain when pressing the abdomen",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Heartburn",
+              "display": "Heartburn",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lump in stomach",
+              "display": "Lump in stomach",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Increased abdominal size",
+              "display": "Increased abdominal size",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Bloating",
+              "display": "Bloating",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Vomiting",
+              "display": "Vomiting",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Feeling sick or queasy",
+              "display": "Feeling sick or queasy",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Indigestion",
+              "display": "Indigestion",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Vomiting blood",
+              "display": "Vomiting blood",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Weight loss",
+              "display": "Weight loss",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Recent abdominal injury",
+              "display": "Recent abdominal injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Upper abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Cramps before period",
+              "display": "Cramps before period",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Stomach pain",
+              "display": "Stomach pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Central abdominal pain",
+              "display": "Central abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Burning or gnawing stomach pain",
+              "display": "Burning or gnawing stomach pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Colic abdominal pain",
+              "display": "Colic abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Crampy abdominal pain",
+              "display": "Crampy abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Sharp and stabbing abdominal pain",
+              "display": "Sharp and stabbing abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when pressing the abdomen",
+              "display": "Pain when pressing the abdomen",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lump in stomach",
+              "display": "Lump in stomach",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Increased abdominal size",
+              "display": "Increased abdominal size",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Bloating",
+              "display": "Bloating",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Constipation",
+              "display": "Constipation",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Diarrhea",
+              "display": "Diarrhea",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Vomiting",
+              "display": "Vomiting",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Feeling sick or queasy",
+              "display": "Feeling sick or queasy",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Black stool",
+              "display": "Black stool",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red stool",
+              "display": "Red stool",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Recent abdominal injury",
+              "display": "Recent abdominal injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Middle abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Cramps before period",
+              "display": "Cramps before period",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Stomach pain",
+              "display": "Stomach pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lower left side abdominal pain",
+              "display": "Lower left side abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Colic abdominal pain",
+              "display": "Colic abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Crampy abdominal pain",
+              "display": "Crampy abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lower right side abdominal pain",
+              "display": "Lower right side abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lower abdominal pain",
+              "display": "Lower abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Sharp and stabbing abdominal pain",
+              "display": "Sharp and stabbing abdominal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when pressing the abdomen",
+              "display": "Pain when pressing the abdomen",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Bloating",
+              "display": "Bloating",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Increased abdominal size",
+              "display": "Increased abdominal size",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lump in stomach",
+              "display": "Lump in stomach",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Loss of bowel control",
+              "display": "Loss of bowel control",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Constipation",
+              "display": "Constipation",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Diarrhea",
+              "display": "Diarrhea",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Black stool",
+              "display": "Black stool",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red stool",
+              "display": "Red stool",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Recent abdominal injury",
+              "display": "Recent abdominal injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower abdomen"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Discharge from urethra",
+              "display": "Discharge from urethra",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "male"
+                }
+              ]
+            },
+            {
+              "code": "Intermittent urine flow",
+              "display": "Intermittent urine flow",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "male"
+                }
+              ]
+            },
+            {
+              "code": "Pain in scrotum or testicle",
+              "display": "Pain in scrotum or testicle",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "male"
+                }
+              ]
+            },
+            {
+              "code": "Swollen scrotum",
+              "display": "Swollen scrotum",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "male"
+                }
+              ]
+            },
+            {
+              "code": "Feeling of weight in scrotum",
+              "display": "Feeling of weight in scrotum",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "male"
+                }
+              ]
+            },
+            {
+              "code": "Difference in size of testicles",
+              "display": "Difference in size of testicles",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "male"
+                }
+              ]
+            },
+            {
+              "code": "Lump in scrotum",
+              "display": "Lump in scrotum",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "male"
+                }
+              ]
+            },
+            {
+              "code": "Erectile dysfunction",
+              "display": "Erectile dysfunction",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "male"
+                }
+              ]
+            },
+            {
+              "code": "Abnormal vaginal discharge",
+              "display": "Abnormal vaginal discharge",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Bleeding after intercourse",
+              "display": "Bleeding after intercourse",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Painful sex",
+              "display": "Painful sex",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Reddened vulva",
+              "display": "Reddened vulva",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": "female"
+                }
+              ]
+            },
+            {
+              "code": "Urinating often",
+              "display": "Urinating often",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when urinating ",
+              "display": "Pain when urinating ",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Dark urine",
+              "display": "Dark urine",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red urine",
+              "display": "Red urine",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Leaking urine by accident",
+              "display": "Leaking urine by accident",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Urinating often at night",
+              "display": "Urinating often at night",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in groin or genital area",
+              "display": "Pain in groin or genital area",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Itching in crotch",
+              "display": "Itching in crotch",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Urgent need to urinate",
+              "display": "Urgent need to urinate",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Urination in small amounts",
+              "display": "Urination in small amounts",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Skin changes on or around genitals",
+              "display": "Skin changes on or around genitals",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Sexual organs"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in lower limb",
+              "display": "Pain in lower limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Severe pain in lower limb",
+              "display": "Severe pain in lower limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Thigh pain",
+              "display": "Thigh pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in both lower limbs",
+              "display": "Pain in both lower limbs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Hip pain",
+              "display": "Hip pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when moving up",
+              "display": "Pain when moving up",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lower back pain spreading to the back of the thigh or knee",
+              "display": "Lower back pain spreading to the back of the thigh or knee",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Limping due to pain",
+              "display": "Limping due to pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Acute thigh or buttock pain appearing during exertion and relieving after short rest",
+              "display": "Acute thigh or buttock pain appearing during exertion and relieving after short rest",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when pressing lower limb",
+              "display": "Pain when pressing lower limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen leg",
+              "display": "Swollen leg",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Hip swelling",
+              "display": "Hip swelling",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen legs",
+              "display": "Swollen legs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Tingling or numbness in one lower limb",
+              "display": "Tingling or numbness in one lower limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Tingling or numbness in both lower limbs",
+              "display": "Tingling or numbness in both lower limbs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red stretch marks on stomach, hips, or thighs",
+              "display": "Red stretch marks on stomach, hips, or thighs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Thigh injury",
+              "display": "Thigh injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Thigh"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in lower limb",
+              "display": "Pain in lower limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Severe pain in lower limb",
+              "display": "Severe pain in lower limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in both lower limbs",
+              "display": "Pain in both lower limbs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in one knee",
+              "display": "Pain in one knee",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when moving knee",
+              "display": "Pain when moving knee",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when pressing joint",
+              "display": "Pain when pressing joint",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Stiff joints",
+              "display": "Stiff joints",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Limping due to pain",
+              "display": "Limping due to pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen knee",
+              "display": "Swollen knee",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Slower walk",
+              "display": "Slower walk",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Creaking joints during movement",
+              "display": "Creaking joints during movement",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Knee injury",
+              "display": "Knee injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Knee"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in lower limb",
+              "display": "Pain in lower limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in both lower limbs",
+              "display": "Pain in both lower limbs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Severe pain in lower limb",
+              "display": "Severe pain in lower limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in calf",
+              "display": "Pain in calf",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when pressing calf",
+              "display": "Pain when pressing calf",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Severe pain in calf while walking",
+              "display": "Severe pain in calf while walking",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in one knee",
+              "display": "Pain in one knee",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen leg",
+              "display": "Swollen leg",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen legs",
+              "display": "Swollen legs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Tingling or numbness in one lower limb",
+              "display": "Tingling or numbness in one lower limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Tingling or numbness of both lower limbs",
+              "display": "Tingling or numbness of both lower limbs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lower leg injury",
+              "display": "Lower leg injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Heavy legs at the end of the day",
+              "display": "Heavy legs at the end of the day",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Loss of feeling in one arm or leg",
+              "display": "Loss of feeling in one arm or leg",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower leg"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in one foot",
+              "display": "Pain in one foot",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Toe pain",
+              "display": "Toe pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Sore nail",
+              "display": "Sore nail",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain of the skin around the nail",
+              "display": "Pain of the skin around the nail",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Ankle pain",
+              "display": "Ankle pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Big toe pain",
+              "display": "Big toe pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Feet tingling or numbness",
+              "display": "Feet tingling or numbness",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen feet",
+              "display": "Swollen feet",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Swollen toe",
+              "display": "Swollen toe",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Skin changes on feet",
+              "display": "Skin changes on feet",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Thickened nails",
+              "display": "Thickened nails",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Enlarged fingertips and nails",
+              "display": "Enlarged fingertips and nails",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Brown nail discolouration",
+              "display": "Brown nail discolouration",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "White spots on nail",
+              "display": "White spots on nail",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Yellow nails",
+              "display": "Yellow nails",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Cold feet and toes",
+              "display": "Cold feet and toes",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Dropping the front of the foot",
+              "display": "Dropping the front of the foot",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Toe injury",
+              "display": "Toe injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in both feet",
+              "display": "Pain in both feet",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Foot injury",
+              "display": "Foot injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Foot"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Excessive hair",
+              "display": "Excessive hair",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Back pain",
+              "display": "Back pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Back pain that comes and goes",
+              "display": "Back pain that comes and goes",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Back pain worsening after physical activity",
+              "display": "Back pain worsening after physical activity",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Sudden back pain",
+              "display": "Sudden back pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Severe back pain",
+              "display": "Severe back pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Middle or upper back pain",
+              "display": "Middle or upper back pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Back pain decreases during test",
+              "display": "Back pain decreases during test",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Stiff spine in the morning",
+              "display": "Stiff spine in the morning",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Spine asymmetry",
+              "display": "Spine asymmetry",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Difficulty bending down",
+              "display": "Difficulty bending down",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Back injury",
+              "display": "Back injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Back pain",
+              "display": "Back pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lower back pain",
+              "display": "Lower back pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Back pain that comes and goes",
+              "display": "Back pain that comes and goes",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Sudden back pain",
+              "display": "Sudden back pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Severe back pain",
+              "display": "Severe back pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Back pain worsening after physical activity",
+              "display": "Back pain worsening after physical activity",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lower back pain spreading to the groin",
+              "display": "Lower back pain spreading to the groin",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Back pain decreases during test",
+              "display": "Back pain decreases during test",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lower back pain spreading to the back of the thigh or knee",
+              "display": "Lower back pain spreading to the back of the thigh or knee",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Paraspinal muscle tenderness",
+              "display": "Paraspinal muscle tenderness",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Difficulty bending down",
+              "display": "Difficulty bending down",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Stiff spine in the morning",
+              "display": "Stiff spine in the morning",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Back injury",
+              "display": "Back injury",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Lower back"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Buttocks pain",
+              "display": "Buttocks pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Hip pain",
+              "display": "Hip pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when moving up",
+              "display": "Pain when moving up",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in lower limb",
+              "display": "Pain in lower limb",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain in both lower limbs",
+              "display": "Pain in both lower limbs",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Acute thigh or buttock pain appearing during exertion and relieving after short rest",
+              "display": "Acute thigh or buttock pain appearing during exertion and relieving after short rest",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Lower back pain spreading to the back of the thigh or knee",
+              "display": "Lower back pain spreading to the back of the thigh or knee",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Anorectal pain",
+              "display": "Anorectal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Hip swelling",
+              "display": "Hip swelling",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Bleeding from anus",
+              "display": "Bleeding from anus",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Ulcer, sore, or abscess near the anus",
+              "display": "Ulcer, sore, or abscess near the anus",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Itchy anus",
+              "display": "Itchy anus",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red stool",
+              "display": "Red stool",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Black stool",
+              "display": "Black stool",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Buttocks"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Anorectal pain",
+              "display": "Anorectal pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Buttocks pain",
+              "display": "Buttocks pain",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Pain when passing stool",
+              "display": "Pain when passing stool",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Itchy anus",
+              "display": "Itchy anus",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Ulcer, sore, or abscess near the anus",
+              "display": "Ulcer, sore, or abscess near the anus",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Red stool",
+              "display": "Red stool",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Bleeding from anus",
+              "display": "Bleeding from anus",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Black stool",
+              "display": "Black stool",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Foul-smelling stools",
+              "display": "Foul-smelling stools",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Diarrhea",
+              "display": "Diarrhea",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Diarrhea with more than 6 stools a day",
+              "display": "Diarrhea with more than 6 stools a day",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Constipation",
+              "display": "Constipation",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Loss of bowel control",
+              "display": "Loss of bowel control",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            },
+            {
+              "code": "Worms in stool or around anus",
+              "display": "Worms in stool or around anus",
+              "extension": [
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/symptom-section",
+                  "valueString": "Anus"
+                },
+                {
+                  "url": "http://www.lattice.in/fhir/StructureDefinition/gender",
+                  "valueCode": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+}

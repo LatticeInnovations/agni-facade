@@ -14,6 +14,7 @@ let prescriptionFile = require("./managePrescriptionDocument");
 let documentReference = require("./manageDocuments");
 let labReports = require('./manageLabReports');
 let medicalRecord = require('./manageMedicalRecord');
+let symDiag = require("./manageSymptomsAndDiagnosis");
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
@@ -52,6 +53,10 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
             case "DiagnosticReport": bundleData = await labReports.setLabReportData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
             break;
             case "DocumentManifest": bundleData = await medicalRecord.setMedicalRecordData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+            break;
+            case "ValueSet" : bundleData = await symDiag.manageValueSetData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+            break;
+            case "Condition": bundleData = await symDiag.setConditionData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
             break;
         }
         return bundleData;
@@ -170,6 +175,13 @@ let getBundleResponse = async function (bundleResponse, reqData, reqMethod, resT
                 });
                 return e;
             });
+        }
+        else if(["post", "POST"].includes(reqMethod) && resType == "Condition") {
+            filtereredData = mergedArray.filter(e => e.resource.resourceType == "Encounter" && e.resource?.type?.[0]?.coding?.[0]?.code == "symptom-diagnosis-encounter");
+        }
+        else if(["patch", "PATCH"].includes(reqMethod) && resType == "Condition") {
+            console.log("check --> ", mergedArray)
+            filtereredData = mergedArray.filter(e => e.resource && e.resource.resourceType == "Encounter");
         }
         else
             filtereredData = mergedArray;

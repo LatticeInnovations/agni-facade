@@ -78,7 +78,7 @@ const setPrescriptionDocument = async (resType, reqInput, FHIRData, reqMethod, r
             let appointmentEncounters = await bundleOp.searchData(config.baseUrl + "Encounter", { "_id": appointmentEncounterIds.join(","), _count: 5000}, token);
             appointmentEncounters = appointmentEncounters.data.entry.map(e=> e.resource);
             for(let encData of prescriptionDocumentEncounter) {
-                // console.info("encounter data", encData);
+                console.info("encounter data", encData);
                 let apptEncounter = appointmentEncounters.filter( e=> e.id == encData.partOf.reference.split("/")[1])
                 apptEncounter = new Encounter({}, apptEncounter[0]);
                 apptEncounter = apptEncounter.getFhirToJson();
@@ -89,6 +89,7 @@ const setPrescriptionDocument = async (resType, reqInput, FHIRData, reqMethod, r
                 documentRefs = documentRefs.data.entry.map(e=> e.resource);
                 apptEncounter.prescriptionFiles = [];
                 apptEncounter.prescriptionDocumentFhirId = encData.id;
+                apptEncounter.prescriptionId = encData?.identifier?.[0]?.value || null;
                 for(let document of documentRefs){
                     let documentObj = new DocumentReference({}, document).getFHIRToJSON();
                     apptEncounter.prescriptionFiles.push(documentObj);
