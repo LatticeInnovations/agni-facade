@@ -13,6 +13,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
              url = config.baseUrl + resourceType;
             break;
         case "Medication" :
+        case "ValueSet":
         case "Practitioner" :
              queryParams._total = "accurate"
              url = config.baseUrl + resourceType;
@@ -136,6 +137,15 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             case "DocumentManifest":
                 url = config.baseUrl + "Encounter";
                 queryParams._revinclude = "DocumentManifest:related-ref:Encounter";
+                queryParams["subject.organization"] = token.orgId
+                nestedResource = 1;
+                break;
+            case "Condition":
+                url = config.baseUrl + "Encounter";
+                queryParams["_revinclude:0"] = "Condition:encounter";
+                queryParams["_revinclude:1"] = "Observation:encounter";
+                queryParams._include= "Encounter:part-of:Encounter";
+                queryParams.type="symptom-diagnosis-encounter"
                 queryParams["subject.organization"] = token.orgId
                 nestedResource = 1;
                 break;
