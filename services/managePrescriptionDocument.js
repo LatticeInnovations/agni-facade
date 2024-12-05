@@ -90,6 +90,7 @@ const setPrescriptionDocument = async (resType, reqInput, FHIRData, reqMethod, r
                 apptEncounter.prescriptionFiles = [];
                 apptEncounter.prescriptionDocumentFhirId = encData.id;
                 apptEncounter.prescriptionId = encData?.identifier?.[0]?.value || null;
+                apptEncounter.generatedOn = encData?.period?.start || null;
                 for(let document of documentRefs){
                     let documentObj = new DocumentReference({}, document).getFHIRToJSON();
                     apptEncounter.prescriptionFiles.push(documentObj);
