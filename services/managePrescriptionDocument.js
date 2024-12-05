@@ -89,7 +89,7 @@ const setPrescriptionDocument = async (resType, reqInput, FHIRData, reqMethod, r
                 documentRefs = documentRefs.data.entry.map(e=> e.resource);
                 apptEncounter.prescriptionFiles = [];
                 apptEncounter.prescriptionDocumentFhirId = encData.id;
-                apptEncounter.prescriptionDocumentUuid = encData?.identifier?.[0]?.value || null;
+                apptEncounter.prescriptionId = encData?.identifier?.[0]?.value || null;
                 for(let document of documentRefs){
                     let documentObj = new DocumentReference({}, document).getFHIRToJSON();
                     apptEncounter.prescriptionFiles.push(documentObj);
