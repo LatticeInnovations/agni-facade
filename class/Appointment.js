@@ -35,7 +35,7 @@ class Appointment {
         this.fhirResource.appointmentType.coding = [
             {
                 "system": config.sctCodeUrl,
-                "code": statusData.type    
+                "code": this.apptObj.status == "in-progress" ? this.apptObj.appointmentType : statusData.type    
             }
         ]
     }
@@ -107,6 +107,10 @@ class Appointment {
         this.apptObj.appointmentId = this.fhirResource.id;
     }   
 
+    getAppointmentType() {
+        this.apptObj.appointmentType = this?.fhirResource?.appointmentType?.coding?.[0]?.code || null;
+    }
+
     getFHIRToUserInput() {
         this.getId();
         this.getIdentifier();
@@ -114,6 +118,7 @@ class Appointment {
         this.getSlot();
         this.getParticipant();
         this.getCreated();
+        this.getAppointmentType();
     }
 
     getJsonToFhirTranslator() {

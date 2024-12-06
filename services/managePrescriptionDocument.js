@@ -86,7 +86,7 @@ const setPrescriptionDocument = async (resType, reqInput, FHIRData, reqMethod, r
                 let documents = medReqList[0].supportingInformation;
                 let documentIds = documents.map((document) => document.reference.split('/')[1]);
                 let documentRefs = await bundleOp.searchData(config.baseUrl + "DocumentReference", { "_id": documentIds.join(","), _count: 5000}, token);
-                documentRefs = documentRefs.data.entry.map(e=> e.resource);
+                documentRefs = documentRefs?.data?.entry?.map(e=> e.resource) || [];
                 apptEncounter.prescriptionFiles = [];
                 apptEncounter.prescriptionDocumentFhirId = encData.id;
                 apptEncounter.prescriptionId = encData?.identifier?.[0]?.value || null;
