@@ -249,6 +249,12 @@ class Encounter {
                 "reference": "Practitioner/" + this.encounterObj.practitionerId
             }
         }];
+        this.fhirResource.status = 'planned';
+        return this.fhirResource;
+    }
+
+    deletePrescriptionDocument(){
+        this.fhirResource.status = "entered-in-error";
         return this.fhirResource;
     }
     

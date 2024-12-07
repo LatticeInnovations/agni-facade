@@ -33,18 +33,30 @@ const setLabReportData = async (resType, reqInput, FHIRData, reqMethod, reqQuery
             }
         }
         else if (["delete", "DELETE"].includes(reqMethod)){
-            for(let diagReportId of reqInput){
-                let diagReportDeleteBundle = await bundleFun.setBundleDelete("DiagnosticReport", diagReportId); 
-                resourceResult.push(diagReportDeleteBundle);
-            }
             let diagReportIds = reqInput.join(',');
             let diagReportData = await bundleOp.searchData(config.baseUrl + "DiagnosticReport", { _id: diagReportIds, _count: 5000}, token);
             diagReportData = diagReportData?.data?.entry?.map((e) => e?.resource) || [];
-            
+            let documentReferenceIds = [];
+            diagReportData.forEach((diag) => {
+                let documents = diag?.extension || [];
+                documents.forEach((doc) => {
+                    let docId = doc.valueReference.reference.split('/')[1];
+                    documentReferenceIds.push(docId);
+                });
+            });
+            documentReferenceIds = documentReferenceIds.join(',');
+            let documentReferenceData = await bundleOp.searchData(config.baseUrl + "DocumentReference", { _id: documentReferenceIds, _count: 5000}, token);
+            documentReferenceData = documentReferenceData?.data?.entry?.map((e) => e?.resource) || [];
             for(let diag of diagReportData){
-                let documents = diag?.extension || []; 
+                let diagData = new DiagnosticReport({}, diag).deleteDiagnosticReport();
+                let diagReportDeleteBundle = await bundleFun.setBundlePut(diagData, diagData.identifier, diagData.id, 'PUT'); 
+                resourceResult.push(diagReportDeleteBundle);
+                let documents = diagData?.extension || [];
                 for(let doc of documents){
-                    let documentReferenceDeleteBundle = await bundleFun.setBundleDelete("DocumentReference", doc.valueReference.reference.split('/')[1]); 
+                    let docId = doc?.valueReference?.reference?.split('/')[1];
+                    let docResource = documentReferenceData.find((d) => d.id == docId);
+                    let docData = new DocumentReference({}, docResource).deleteDocument();
+                    let documentReferenceDeleteBundle = await bundleFun.setBundlePut(docData, docData.identifier, docData.id, 'PUT'); 
                     resourceResult.push(documentReferenceDeleteBundle);
                 }
             }  

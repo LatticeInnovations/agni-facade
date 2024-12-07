@@ -35,21 +35,34 @@ const setMedicalRecordData = async (resType, reqInput, FHIRData, reqMethod, reqQ
             }
         }
         else if (["delete", "DELETE"].includes(reqMethod)){
-            for(let documentManifestId of reqInput){
-                let documentManifestDeleteBundle = await bundleFun.setBundleDelete("DocumentManifest", documentManifestId); 
-                resourceResult.push(documentManifestDeleteBundle);
-            }
             let documentManifestIds = reqInput.join(',');
             let documentManifestData = await bundleOp.searchData(config.baseUrl + "DocumentManifest", { _id: documentManifestIds, _count: 5000}, token);
             documentManifestData = documentManifestData?.data?.entry?.map((e) => e?.resource) || [];
+            let documentReferenceIds = [];
+            documentManifestData.forEach((report) => {
+                let documents = report?.content || [];
+                documents.forEach((doc) => {
+                    let docId = doc.reference.split('/')[1];
+                    documentReferenceIds.push(docId);
+                });
+            });
+            documentReferenceIds = documentReferenceIds.join(',');
+            let documentReferenceData = await bundleOp.searchData(config.baseUrl + "DocumentReference", { _id: documentReferenceIds, _count: 5000}, token);
+            documentReferenceData = documentReferenceData?.data?.entry?.map((e) => e?.resource) || [];
             
-            for(let med of documentManifestData){
-                let documents = med?.content || []; 
+            for(let report of documentManifestData){
+                let reportData = new DocumentManifest({}, report).deleteDocumentManifest();
+                let reportDeleteBundle = await bundleFun.setBundlePut(reportData, reportData.identifier, reportData.id, 'PUT'); 
+                resourceResult.push(reportDeleteBundle);
+                let documents = reportData?.content || [];
                 for(let doc of documents){
-                    let documentReferenceDeleteBundle = await bundleFun.setBundleDelete("DocumentReference", doc.reference.split('/')[1]); 
+                    let docId = doc?.reference?.split('/')[1];
+                    let docResource = documentReferenceData.find((d) => d.id == docId);
+                    let docData = new DocumentReference({}, docResource).deleteDocument();
+                    let documentReferenceDeleteBundle = await bundleFun.setBundlePut(docData, docData.identifier, docData.id, 'PUT'); 
                     resourceResult.push(documentReferenceDeleteBundle);
                 }
-            }  
+            } 
         }
         else {
             console.log(FHIRData);

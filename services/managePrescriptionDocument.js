@@ -55,19 +55,40 @@ const setPrescriptionDocument = async (resType, reqInput, FHIRData, reqMethod, r
             }
         }
         else if (["delete", "DELETE"].includes(reqMethod)){
-            for(let encounterId of reqInput){
-                let encounterDeleteBundle = await bundleFun.setBundleDelete("Encounter", encounterId); 
+            let encounterIds = reqInput.join(',');
+            let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { _id: encounterIds, _count: 5000}, token);
+            encounterData = encounterData?.data?.entry?.map((e) => e?.resource) || [];
+            for(let encounter of encounterData){
+                let enc = new Encounter({}, encounter).deletePrescriptionDocument();
+                let encounterDeleteBundle = await bundleFun.setBundlePut(enc, enc.identifier, enc.id, 'PUT'); 
                 resourceResult.push(encounterDeleteBundle);
             }
-            let encounterIds = reqInput.join(',');
+            
             let medicationRequestData = await bundleOp.searchData(config.baseUrl + "MedicationRequest", { encounter: encounterIds, _count: 5000}, token);
             medicationRequestData = medicationRequestData?.data?.entry?.map((e) => e?.resource) || [];
+            let documentReferenceIds = []; 
+            medicationRequestData.map((e) => {
+                let supportingInformation = e?.supportingInformation || [];
+                supportingInformation.forEach((d) => {
+                    let docId = d?.reference?.split('/')[1] || null;
+                    if(docId){
+                        documentReferenceIds.push(docId);
+                    }
+                });
+            });
+            documentReferenceIds = documentReferenceIds.join(',');
+            let documentReferenceData = await bundleOp.searchData(config.baseUrl + "DocumentReference", { _id: documentReferenceIds, _count: 5000}, token);
+            documentReferenceData = documentReferenceData?.data?.entry?.map((e) => e?.resource) || [];
             for(let med of medicationRequestData){
-                let medRequestDeleteBundle = await bundleFun.setBundleDelete("MedicationRequest", med.id); 
+                let medData = new MedicationRequest({}, med).deletePrescriptionDocument();
+                let medRequestDeleteBundle = await bundleFun.setBundlePut(medData, medData.identifier, medData.id, 'PUT'); 
                 resourceResult.push(medRequestDeleteBundle);
                 let documents = med?.supportingInformation || []; 
                 for(let doc of documents){
-                    let documentReferenceDeleteBundle = await bundleFun.setBundleDelete("DocumentReference", doc.reference.split('/')[1]); 
+                    let docId = doc?.reference.split('/')[1];
+                    let docResource = documentReferenceData.find((d) => d.id == docId);
+                    let docData = new DocumentReference({}, docResource).deleteDocument();
+                    let documentReferenceDeleteBundle = await bundleFun.setBundlePut(docData, docData.identifier, docData.id, 'PUT'); 
                     resourceResult.push(documentReferenceDeleteBundle);
                 }
             }  
@@ -89,6 +110,7 @@ const setPrescriptionDocument = async (resType, reqInput, FHIRData, reqMethod, r
                 documentRefs = documentRefs?.data?.entry?.map(e=> e.resource) || [];
                 apptEncounter.prescriptionFiles = [];
                 apptEncounter.prescriptionDocumentFhirId = encData.id;
+                apptEncounter.status = medReqList?.[0]?.status == "entered-in-error" ? "deleted" : "saved";
                 apptEncounter.prescriptionId = encData?.identifier?.[0]?.value || null;
                 apptEncounter.generatedOn = encData?.period?.start || null;
                 for(let document of documentRefs){

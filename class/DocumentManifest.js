@@ -16,6 +16,7 @@ class DocumentManifest {
         this.fhirResource.author = [];
         this.fhirResource.related = [];
         this.fhirResource.identifier = [];
+        this.fhirResource.status = "current";
     }
 
     setPatientReference() {
@@ -75,6 +76,7 @@ class DocumentManifest {
         }
         this.reportObj.labReport.createdOn = this?.fhirResource?.created || "";
         this.reportObj.labReport.medicalReportUuid = this?.fhirResource?.identifier?.[0]?.value || null;
+        this.reportObj.labReport.status = this?.fhirResource?.status == "entered-in-error" ? "deleted" : "saved";
     }
 
     getFHIRToUserData() {
@@ -86,6 +88,11 @@ class DocumentManifest {
     patchDocuments() {
         this.fhirResource.content = [];
         this.setContent();
+        return this.fhirResource;
+    }
+
+    deleteDocumentManifest(){
+        this.fhirResource.status = "entered-in-error";
         return this.fhirResource;
     }
 }

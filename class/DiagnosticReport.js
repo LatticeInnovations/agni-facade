@@ -24,6 +24,7 @@ class DiagnosticReport {
         this.fhirResource.issued = this?.reportObj?.createdOn || new Date().toISOString();
         this.fhirResource.extension = [];
         this.fhirResource.identifier = [];
+        this.fhirResource.status = "final";
     }
 
     setPatientReference() {
@@ -73,7 +74,8 @@ class DiagnosticReport {
             });
         }
         this.reportObj.labReport.createdOn = this?.fhirResource?.issued || "";
-        this.reportObj.labReport.diagnosticUuid = this?.fhirResource?.identifier?.[0]?.value || null
+        this.reportObj.labReport.diagnosticUuid = this?.fhirResource?.identifier?.[0]?.value || null;
+        this.reportObj.labReport.status = this?.fhirResource?.status == "entered-in-error" ? "deleted" : "saved";
     }
 
     getFHIRToUserData() {
@@ -85,6 +87,11 @@ class DiagnosticReport {
     patchDocuments() {
         this.fhirResource.extension = [];
         this.setExtension();
+        return this.fhirResource;
+    }
+
+    deleteDiagnosticReport(){
+        this.fhirResource.status = "entered-in-error";
         return this.fhirResource;
     }
 }
