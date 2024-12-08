@@ -18,7 +18,8 @@ const setCVDData = async (resType, reqInput, FHIRData, reqMethod, reqQuery, toke
                     patientId: cvd.patientId,
                     cvdUuid: cvd.cvdUuid,
                     practitionerId: token.userId,
-                    createdOn: cvd.createdOn
+                    createdOn: cvd.createdOn,
+                    orgId: token.orgId
                 }, {}).getUserInputToFhirForCVD();
                 cvd.encounterId = encounterUuid;
                 cvd.practitionerId = token.userId;

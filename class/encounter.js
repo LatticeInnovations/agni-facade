@@ -31,6 +31,10 @@ class Encounter {
         this.fhirResource.subject.reference = "Patient/" + this.encounterObj.patientId
     }
 
+    setOrganizationReference(){
+        this.fhirResource.serviceProvider.reference = "Organization/" + this.encounterObj.orgId;
+    }
+
     getPatientReference() {
         this.encounterObj.patientId = this.fhirResource.subject.reference.split("/")[1];
     }
@@ -94,7 +98,9 @@ class Encounter {
         this.fhirResource.id = this.encounterObj.id;
         this.fhirResource.identifier = [];
         this.fhirResource.subject = {};
+        this.fhirResource.serviceProvider = {}; 
         this.setPatientReference();
+        this.setOrganizationReference();
         this.fhirResource.type = [
             {
                 "coding": [
@@ -175,7 +181,9 @@ class Encounter {
         this.fhirResource.id = this.encounterObj.id;
         this.fhirResource.identifier = [];
         this.fhirResource.subject = {};
+        this.fhirResource.serviceProvider = {}; 
         this.setPatientReference();
+        this.setOrganizationReference();
         this.fhirResource.type = [
             {
                 "coding": [
@@ -219,7 +227,9 @@ class Encounter {
         this.fhirResource.id = this.encounterObj.id;
         this.fhirResource.identifier = [];
         this.fhirResource.subject = {};
+        this.fhirResource.serviceProvider = {}; 
         this.setPatientReference();
+        this.setOrganizationReference();
         this.fhirResource.type = [
             {
                 "coding": [
@@ -249,6 +259,91 @@ class Encounter {
                 "reference": "Practitioner/" + this.encounterObj.practitionerId
             }
         }];
+        this.fhirResource.status = 'planned';
+        return this.fhirResource;
+    }
+
+    deletePrescriptionDocument(){
+        this.fhirResource.status = "entered-in-error";
+        return this.fhirResource;
+    }
+
+    getUserInputToFhirForLabReport() {
+        this.fhirResource.resourceType = "Encounter";
+        this.fhirResource.id = this.encounterObj.id;
+        this.fhirResource.identifier = [];
+        this.fhirResource.subject = {};
+        this.fhirResource.serviceProvider = {}; 
+        this.setPatientReference();
+        this.setOrganizationReference();
+        this.fhirResource.type = [
+            {
+                "coding": [
+                            {
+                                "system": "http://your-custom-coding-system",
+                                "code": "lab-report-encounter",
+                                "display": "Lab Report encounter"
+                            }
+                        ]
+            }
+        ];
+        this.fhirResource.period = {
+            "start": this.encounterObj.createdOn,
+            "end": this.encounterObj.createdOn
+        }
+        this.fhirResource.partOf = {
+            "reference": "Encounter/" + this.encounterObj.encounterId,
+            "display": "Primary Encounter"
+        }
+
+        this.fhirResource.participant = [{
+            "individual" : {
+                "reference": "Practitioner/" + this.encounterObj.practitionerId
+            }
+        }];
+        this.fhirResource.status = 'planned';
+        return this.fhirResource;
+    }
+
+    getUserInputToFhirForMedicalReport() {
+        this.fhirResource.resourceType = "Encounter";
+        this.fhirResource.id = this.encounterObj.id;
+        this.fhirResource.identifier = [];
+        this.fhirResource.subject = {};
+        this.fhirResource.serviceProvider = {}; 
+        this.setPatientReference();
+        this.setOrganizationReference();
+        this.fhirResource.type = [
+            {
+                "coding": [
+                            {
+                                "system": "http://your-custom-coding-system",
+                                "code": "medical-report-encounter",
+                                "display": "medical Report encounter"
+                            }
+                        ]
+            }
+        ];
+        this.fhirResource.period = {
+            "start": this.encounterObj.createdOn,
+            "end": this.encounterObj.createdOn
+        }
+        this.fhirResource.partOf = {
+            "reference": "Encounter/" + this.encounterObj.encounterId,
+            "display": "Primary Encounter"
+        }
+
+        this.fhirResource.participant = [{
+            "individual" : {
+                "reference": "Practitioner/" + this.encounterObj.practitionerId
+            }
+        }];
+        this.fhirResource.status = 'planned';
+        return this.fhirResource;
+    }
+
+    deleteEncounter(){
+        this.fhirResource.status = "entered-in-error";
         return this.fhirResource;
     }
     

@@ -14,7 +14,19 @@ const setMedicalRecordData = async (resType, reqInput, FHIRData, reqMethod, reqQ
             for(let medicalRecord of reqInput){ 
                 let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": medicalRecord.appointmentId, _count: 5000 , "_include": "Encounter:appointment" }, token);
 
-                medicalRecord.encounterId = encounterData.data.entry[0].resource.id;
+                let encounterUuid = uuidv4();
+                let encounter = new Encounter({ 
+                    id: encounterUuid,
+                    encounterId: encounterData.data.entry[0].resource.id,
+                    patientId: medicalRecord.patientId,
+                    practitionerId: token.userId,
+                    createdOn: medicalRecord.createdOn,
+                    orgId: token.orgId
+                }, {}).getUserInputToFhirForMedicalReport();
+                let encounterBundle = await bundleFun.setBundlePost(encounter, encounter.identifier, encounter.id, "POST", "identifier");
+                resourceResult.push(encounterBundle);
+                medicalRecord.encounterId = encounter.id;
+
                 let documents = [];
                 for(let file of medicalRecord.files) {
                     let document = new DocumentReference({
@@ -35,28 +47,54 @@ const setMedicalRecordData = async (resType, reqInput, FHIRData, reqMethod, reqQ
             }
         }
         else if (["delete", "DELETE"].includes(reqMethod)){
-            for(let documentManifestId of reqInput){
-                let documentManifestDeleteBundle = await bundleFun.setBundleDelete("DocumentManifest", documentManifestId); 
-                resourceResult.push(documentManifestDeleteBundle);
-            }
             let documentManifestIds = reqInput.join(',');
             let documentManifestData = await bundleOp.searchData(config.baseUrl + "DocumentManifest", { _id: documentManifestIds, _count: 5000}, token);
             documentManifestData = documentManifestData?.data?.entry?.map((e) => e?.resource) || [];
+            let encounterIds = documentManifestData.map((e) => e?.related?.[0]?.ref?.reference.split('/')[1]);
+            encounterIds = encounterIds.join(',');
+            let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { _id: encounterIds, _count: 5000}, token);
+            encounterData = encounterData?.data?.entry?.map((e) => e?.resource) || [];
+            for(let enc of encounterData){
+                let encounter = new Encounter({}, enc).deleteEncounter();
+                let encounterDeleteBundle = await bundleFun.setBundlePut(encounter, encounter.identifier, encounter.id, 'PUT'); 
+                resourceResult.push(encounterDeleteBundle);
+            }
+            let documentReferenceIds = [];
+            documentManifestData.forEach((report) => {
+                let documents = report?.content || [];
+                documents.forEach((doc) => {
+                    let docId = doc.reference.split('/')[1];
+                    documentReferenceIds.push(docId);
+                });
+            });
+            documentReferenceIds = documentReferenceIds.join(',');
+            let documentReferenceData = await bundleOp.searchData(config.baseUrl + "DocumentReference", { _id: documentReferenceIds, _count: 5000}, token);
+            documentReferenceData = documentReferenceData?.data?.entry?.map((e) => e?.resource) || [];
             
-            for(let med of documentManifestData){
-                let documents = med?.content || []; 
+            for(let report of documentManifestData){
+                let reportData = new DocumentManifest({}, report).deleteDocumentManifest();
+                let reportDeleteBundle = await bundleFun.setBundlePut(reportData, reportData.identifier, reportData.id, 'PUT'); 
+                resourceResult.push(reportDeleteBundle);
+                let documents = reportData?.content || [];
                 for(let doc of documents){
-                    let documentReferenceDeleteBundle = await bundleFun.setBundleDelete("DocumentReference", doc.reference.split('/')[1]); 
+                    let docId = doc?.reference?.split('/')[1];
+                    let docResource = documentReferenceData.find((d) => d.id == docId);
+                    let docData = new DocumentReference({}, docResource).deleteDocument();
+                    let documentReferenceDeleteBundle = await bundleFun.setBundlePut(docData, docData.identifier, docData.id, 'PUT'); 
                     resourceResult.push(documentReferenceDeleteBundle);
                 }
-            }  
+            } 
         }
         else {
-            console.log(FHIRData);
-            console.log("Fetch medical record section");
+            console.info("Fetch medical record section");
             let encounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource);
+            let mainEncounterIds = new Set(encounterList.map((e) => e.partOf.reference.split('/')[1]));
+            mainEncounterIds = [...mainEncounterIds.values()].join(',');
+            let mainEncounterList = await bundleOp.searchData(config.baseUrl + "Encounter", { _id: mainEncounterIds, _count: 5000}, token);
+            mainEncounterList = mainEncounterList?.data?.entry?.map((e) => e?.resource) || [];
             for(let encounter of encounterList){
-                let report = new Encounter({}, encounter);
+                let mainEncounter = mainEncounterList.find((e) => e.id == encounter.partOf.reference.split('/')[1]);
+                let report = new Encounter({}, mainEncounter);
                 report.getFhirToJson();
                 let reportData = report.getEncounterResource();
                 delete reportData.prescriptionId;

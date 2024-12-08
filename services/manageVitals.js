@@ -18,7 +18,8 @@ const setVitalsData = async (resType, reqInput, FHIRData, reqMethod, reqQuery, t
                     patientId: vital.patientId,
                     vitalUuid: vital.vitalUuid,
                     practitionerId: token.userId,
-                    createdOn: vital.createdOn
+                    createdOn: vital.createdOn,
+                    orgId: token.orgId
                 }, {}).getUserInputToFhirForVitals();
                 vital.encounterId = encounterUuid;
                 vital.practitionerId = token.userId;

@@ -90,6 +90,11 @@ class DocumentReference {
         this.patchDocumentContent();
         return this.fhirResource;
     }
+
+    deleteDocument(){
+        this.fhirResource.status = "entered-in-error";
+        return this.fhirResource;
+    }
 }
 
 module.exports = DocumentReference;

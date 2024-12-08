@@ -199,6 +199,7 @@ getId() {
         this.fhirResource.note = [];
         this.fhirResource.identifier = [];
         this.fhirResource.supportingInformation = [];
+        this.fhirResource.status = "completed";
     }
 
     getJSONtoFhirForPrescriptionDocument(){
@@ -210,6 +211,11 @@ getId() {
         this.setPatientReference();
         this.setEncounter();
         this.setDocument();
+        return this.fhirResource;
+    }
+
+    deletePrescriptionDocument(){
+        this.fhirResource.status = "entered-in-error";
         return this.fhirResource;
     }
 }
