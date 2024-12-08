@@ -20,7 +20,8 @@ const setPrescriptionDocument = async (resType, reqInput, FHIRData, reqMethod, r
                     patientId: patPres.patientId,
                     prescriptionId: patPres.prescriptionId,
                     practitionerId: token.userId,
-                    createdOn: patPres.generatedOn
+                    createdOn: patPres.generatedOn,
+                    orgId: token.orgId
                 }, {}).getUserInputToFhirForPrescriptionDocument();
             
                 let dateToday = (new Date(patPres.generatedOn)).getTime().toString();

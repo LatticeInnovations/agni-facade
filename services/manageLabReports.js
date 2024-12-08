@@ -13,8 +13,18 @@ const setLabReportData = async (resType, reqInput, FHIRData, reqMethod, reqQuery
             console.log("create lab report section");
             for(let labReport of reqInput){ 
                 let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": labReport.appointmentId, _count: 5000 , "_include": "Encounter:appointment" }, token);
-                
-                labReport.encounterId = encounterData.data.entry[0].resource.id;
+                let encounterUuid = uuidv4();
+                let encounter = new Encounter({ 
+                    id: encounterUuid,
+                    encounterId: encounterData.data.entry[0].resource.id,
+                    patientId: labReport.patientId,
+                    practitionerId: token.userId,
+                    createdOn: labReport.createdOn,
+                    orgId: token.orgId
+                }, {}).getUserInputToFhirForLabReport();
+                let encounterBundle = await bundleFun.setBundlePost(encounter, encounter.identifier, encounter.id, "POST", "identifier");
+                resourceResult.push(encounterBundle);
+                labReport.encounterId = encounter.id;
                 let documents = [];
                 for(let file of labReport.files) {
                     let document = new DocumentReference({
@@ -36,6 +46,15 @@ const setLabReportData = async (resType, reqInput, FHIRData, reqMethod, reqQuery
             let diagReportIds = reqInput.join(',');
             let diagReportData = await bundleOp.searchData(config.baseUrl + "DiagnosticReport", { _id: diagReportIds, _count: 5000}, token);
             diagReportData = diagReportData?.data?.entry?.map((e) => e?.resource) || [];
+            let encounterIds = diagReportData.map((e) => e.encounter.reference.split('/')[1]);
+            encounterIds = encounterIds.join(',');
+            let encounterData = await bundleOp.searchData(config.baseUrl + "Encounter", { _id: encounterIds, _count: 5000}, token);
+            encounterData = encounterData?.data?.entry?.map((e) => e?.resource) || [];
+            for(let enc of encounterData){
+                let encounter = new Encounter({}, enc).deleteEncounter();
+                let encounterDeleteBundle = await bundleFun.setBundlePut(encounter, encounter.identifier, encounter.id, 'PUT'); 
+                resourceResult.push(encounterDeleteBundle);
+            }
             let documentReferenceIds = [];
             diagReportData.forEach((diag) => {
                 let documents = diag?.extension || [];
@@ -62,10 +81,15 @@ const setLabReportData = async (resType, reqInput, FHIRData, reqMethod, reqQuery
             }  
         }
         else {
-            console.log("Fetch lab report section");
+            console.info("Fetch lab report section");
             let encounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource);
+            let mainEncounterIds = new Set(encounterList.map((e) => e.partOf.reference.split('/')[1]));
+            mainEncounterIds = [...mainEncounterIds.values()].join(',');
+            let mainEncounterList = await bundleOp.searchData(config.baseUrl + "Encounter", { _id: mainEncounterIds, _count: 5000}, token);
+            mainEncounterList = mainEncounterList?.data?.entry?.map((e) => e?.resource) || [];
             for(let encounter of encounterList){
-                let report = new Encounter({}, encounter);
+                let mainEncounter = mainEncounterList.find((e) => e.id == encounter.partOf.reference.split('/')[1]);
+                let report = new Encounter({}, mainEncounter);
                 report.getFhirToJson();
                 let reportData = report.getEncounterResource();
                 delete reportData.prescriptionId;

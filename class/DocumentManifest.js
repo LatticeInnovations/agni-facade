@@ -26,7 +26,7 @@ class DocumentManifest {
     setEncounterReference() {
         this.fhirResource.related.push({
             "ref": {
-                "reference": "Encounter/" + this.reportObj?.encounterId
+                "reference": "Encounter/" + "urn:uuid:" + this.reportObj?.encounterId
             }
         });
     }

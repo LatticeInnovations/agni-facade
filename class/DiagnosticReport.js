@@ -32,7 +32,7 @@ class DiagnosticReport {
     }
 
     setEncounterReference() {
-        this.fhirResource.encounter.reference = "Encounter/" + this.reportObj?.encounterId;
+        this.fhirResource.encounter.reference = "Encounter/" + "urn:uuid:" + this.reportObj?.encounterId;
     }
 
     setExtension() {

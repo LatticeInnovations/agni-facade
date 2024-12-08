@@ -47,6 +47,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             queryParams._count= 3000;
             queryParams._revinclude = "MedicationRequest:encounter:Encounter";
             queryParams["type"] = "prescription-encounter-document";
+            queryParams["service-provider"] = token.orgId;
             nestedResource = 1;
             break;
         case "Organization" : 
@@ -92,13 +93,13 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             case "CVD":
                 url = config.baseUrl + "Encounter";
                 queryParams.type="cvd-encounter"
-                queryParams["subject.organization"] = token.orgId
+                queryParams["service-provider"] = token.orgId
                 nestedResource = 1;
                 break;
             case "Observation":
                 url = config.baseUrl + "Encounter";
                 queryParams.type="vital-encounter"
-                queryParams["subject.organization"] = token.orgId
+                queryParams["service-provider"] = token.orgId
                 nestedResource = 1;
                 break;
                 case "MedicationDispense": 
@@ -131,13 +132,15 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             case "DiagnosticReport":
                 url = config.baseUrl + "Encounter";
                 queryParams._revinclude = "DiagnosticReport:encounter:Encounter";
-                queryParams["subject.organization"] = token.orgId
+                queryParams["type"] = "lab-report-encounter"
+                queryParams["service-provider"] = token.orgId
                 nestedResource = 1;
                 break;
             case "DocumentManifest":
                 url = config.baseUrl + "Encounter";
                 queryParams._revinclude = "DocumentManifest:related-ref:Encounter";
-                queryParams["subject.organization"] = token.orgId
+                queryParams["type"] = "medical-report-encounter";
+                queryParams["service-provider"] = token.orgId;
                 nestedResource = 1;
                 break;
             case "Condition":
