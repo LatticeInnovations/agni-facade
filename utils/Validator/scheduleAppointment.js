@@ -31,7 +31,8 @@ function apptValidation(userInput) {
     patientId: Joi.string().required(),
     scheduleId: Joi.string().required(),
     orgId: Joi.string().required(),
-    appointmentType: Joi.string().valid('walkin', 'routine').required()
+    appointmentType: Joi.string().valid('walkin', 'routine').required(),
+    generatedOn: Joi.date().required()
   });
   return JoiSchema.validate(userInput);
 }
