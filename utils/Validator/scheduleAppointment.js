@@ -30,7 +30,8 @@ function apptValidation(userInput) {
     status: Joi.string().valid('arrived', 'walkin', 'scheduled', 'noshow', 'cancelled', 'in-progress', 'completed').required(),
     patientId: Joi.string().required(),
     scheduleId: Joi.string().required(),
-    orgId: Joi.string().required()
+    orgId: Joi.string().required(),
+    appointmentType: Joi.string().valid('walkin', 'routine').required()
   });
   return JoiSchema.validate(userInput);
 }
