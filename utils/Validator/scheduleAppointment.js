@@ -32,7 +32,7 @@ function apptValidation(userInput) {
     scheduleId: Joi.string().required(),
     orgId: Joi.string().required(),
     appointmentType: Joi.string().valid('walkin', 'routine').required(),
-    generatedOn: Joi.date().required()
+    generatedOn: Joi.date()
   });
   return JoiSchema.validate(userInput);
 }

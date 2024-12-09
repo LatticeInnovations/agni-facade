@@ -147,7 +147,7 @@ let setApptData = async function (resType, reqInput, FHIRData, reqMethod) {
             let slotList = await bundleOp.searchData(config.baseUrl + "Slot", { "_id": [...slotIds].join(","), _count: 5000 });
             let slotAppt = slotList.data.entry.map(e => { return { slotId: e.resource.id, slot: { start: e.resource.start, end: e.resource.end}, scheduleId: e.resource.schedule.reference.split("/")[1] } });
             let encounterList = await bundleOp.searchData(config.baseUrl + "Encounter", { "appointment": [...apptIds].join(","), _count: 5000 });
-            let apptEncounter = encounterList.data.entry.map(e => { return { encStatus: e.resource.status, appointmentId: e.resource.appointment[0].reference.split("/")[1] } });
+            let apptEncounter = encounterList.data.entry.map(e => { return { encStatus: e.resource.status, appointmentId: e.resource.appointment[0].reference.split("/")[1], generatedOn: e?.resource?.period?.start || null } });
             //combine appointmnet with slot and encounter stataus
             resourceResult = apptResult.map(obj1 => {
                 let obj2 = slotAppt.find(obj2 => obj2.slotId === obj1.slotId);
