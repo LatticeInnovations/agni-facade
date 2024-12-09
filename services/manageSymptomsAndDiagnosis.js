@@ -192,7 +192,8 @@ const saveSymptomDiagnosisData = async function(resType, reqInput, FHIRData, req
                 //  create sub encounter
                 let subEncounter = new Encounter({ 
                     id: symDiagData.symDiagUuid,  encounterId: mainEncounter.id, patientId: patientId,
-                    vitalUuid: symDiagData.symDiagUuid, practitionerId: token.userId, createdOn: symDiagData.createdOn
+                    vitalUuid: symDiagData.symDiagUuid, practitionerId: token.userId, createdOn: symDiagData.createdOn,
+                    orgId: token.orgId
                 }, {}).getUserInputToFhirForVitals();
                 subEncounter.identifier[0].system = "http://hl7.org/fhir/sid/sn/diagnosis"
                 subEncounter.type =  [
