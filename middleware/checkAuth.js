@@ -13,7 +13,7 @@ router.use(function (req, res, next) {
     // decode token
     if (tokenData) {
         let token = tokenData.split(" ")[1];
-        console.log("token is", token)
+        console.info("token is", token)
         // verifies secret and checks exp
         jwt.verify(token, secretKey,function (err, decoded) {
             if (err) {

@@ -27,13 +27,13 @@ const uploadMiddleware = (req, res, next) => {
     const successFiles = [];
     files.forEach((file) => {
       const allowedTypes = ['image/jpeg', 'image/png', 'image/jpeg', 'application/pdf', 'image/img', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const maxSize = 30 * 1024 * 1024; // 30MB
     
       if (!allowedTypes.includes(file.mimetype)) {
         errors.push({ filename : file.filename, originalname : file.originalname, error: "Invalid file type" });
       }
       else if (file.size > maxSize) {
-        errors.push({ filename : file.filename, originalname : file.originalname, error: "file greater than 5MB" });
+        errors.push({ filename : file.filename, originalname : file.originalname, error: "file greater than 30MB" });
       }
       else {
         successFiles.push(file);

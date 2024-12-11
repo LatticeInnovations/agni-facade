@@ -149,7 +149,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 queryParams["_revinclude:1"] = "Observation:encounter";
                 queryParams._include= "Encounter:part-of:Encounter";
                 queryParams.type="symptom-diagnosis-encounter"
-                queryParams["subject.organization"] = token.orgId
+                queryParams["service-provider"] = token.orgId
                 nestedResource = 1;
                 break;
 
