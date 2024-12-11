@@ -246,14 +246,22 @@ const getSymptomDiagnosisData = async function(resType, reqInput, FHIRData, reqM
         console.info("Symptom and Diagnosis GET", FHIRData);       
         let mainEncounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter" && e.resource.appointment).map(e => e.resource);
         let subEncounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter" && e.resource.type && e.resource.type[0].coding[0].code == "symptom-diagnosis-encounter").map(e => e.resource);
+        
+        let subEncounterIds = subEncounterList.map((e) => e.id).join(',');
+        let symptoms = await bundleOp.searchData(config.baseUrl + "Observation", { "encounter": subEncounterIds, _count: 5000 }, token);
+        symptoms = symptoms?.data?.entry || [];
+
+        let diagnosis = await bundleOp.searchData(config.baseUrl + "Condition", { "encounter": subEncounterIds, _count: 5000 }, token);
+        diagnosis = diagnosis?.data?.entry || [];
+        
         const practitonerIdList = subEncounterList.map(e=> e.participant[0].individual.reference.split("/")[1]).join(",")
         let practitionerData = await bundleOp.searchData(config.baseUrl + "Practitioner", { _id: practitonerIdList, _count: 100000 }, token);
         practitionerData = practitionerData.data.entry;
         for(let encounter of subEncounterList){
                 let diagnosisList = [];
                 const mainEncounter = mainEncounterList.filter(e => e.id = encounter.partOf.reference.split("/")[1])[0]
-                const symptomObservation = FHIRData.filter(e => e.resource.resourceType == "Observation" && e.resource.encounter.reference.split("/")[1] == encounter.id)
-                const diagnosisResources = FHIRData.filter(e => e.resource.resourceType == "Condition" && e.resource.encounter.reference.split("/")[1] == encounter.id).map(e => e.resource)
+                const symptomObservation = symptoms.filter(e => e.resource.resourceType == "Observation" && e.resource.encounter.reference.split("/")[1] == encounter.id)
+                const diagnosisResources = diagnosis.filter(e => e.resource.resourceType == "Condition" && e.resource.encounter.reference.split("/")[1] == encounter.id).map(e => e.resource)
                 if(diagnosisResources.length > 0)
                     diagnosisList = diagnosisResources.map(element => {
                     const data = new Condition({}, element).getFHIRToUserResponse()                    

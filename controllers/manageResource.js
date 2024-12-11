@@ -145,8 +145,8 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 break;
             case "Condition":
                 url = config.baseUrl + "Encounter";
-                queryParams["_revinclude:0"] = "Condition:encounter";
-                queryParams["_revinclude:1"] = "Observation:encounter";
+                // queryParams["_revinclude:0"] = "Condition:encounter";
+                // queryParams["_revinclude:1"] = "Observation:encounter";
                 queryParams._include= "Encounter:part-of:Encounter";
                 queryParams.type="symptom-diagnosis-encounter"
                 queryParams["service-provider"] = token.orgId
