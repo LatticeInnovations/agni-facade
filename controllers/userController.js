@@ -209,6 +209,7 @@ const createUser = async (req, res, next) => {
         }
         response = await axios.post(config.baseUrl+'PractitionerRole', practitionerRole);
         response = await axios.post(config.baseUrl+'Location', location);
+        await db.authentication_detail.create({ user_id: userId });
         let userProfile = {
             "userId": userId, "userName": firstName + ' ' + lastName,
             "orgId": orgId

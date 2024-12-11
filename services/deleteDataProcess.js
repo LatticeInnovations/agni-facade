@@ -10,3 +10,7 @@ deleteUserDataQueue.process(async (job, done)=>{
 deleteUserDataQueue.on("completed", (job) => {
     console.info(`completed ${job.id} job`);
 });
+
+deleteUserDataQueue.on("failed", async (job) => {
+   await deleteData(job.data);
+});
