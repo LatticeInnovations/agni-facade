@@ -70,8 +70,9 @@ const setConditionData = async (resType, reqInput, FHIRData, reqMethod, reqQuery
             const subEncounterResources = allResources.data.entry.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource)
             allResources = allResources.data.entry
             for(let symDiagData of reqInput) {                
-                const subEncounter = subEncounterResources.filter(e => e.id == symDiagData.symDiagFhirId)[0]
-                const subEncounterPatch = await bundleFun.setBundlePost(subEncounter, null, subEncounter.id, "PUT", null);  
+                const subEncounter = subEncounterResources.filter(e => e.id == symDiagData.symDiagFhirId)[0];
+                let subEncounterData = new Encounter({}, subEncounter).patchSystemDiagnosisSubEncounter();
+                const subEncounterPatch = await bundleFun.setBundlePut(subEncounterData, subEncounterData.indentifier, subEncounter.id, "PUT");  
                 resourceResult.push(subEncounterPatch)
                 const patientId = subEncounter.subject.reference.split("/")[1]
                 const observationResource = allResources.filter(e => e.resource.resourceType == "Observation" && e.resource.encounter.reference.split("/")[1] == symDiagData.symDiagFhirId)
@@ -242,7 +243,7 @@ const saveSymptomDiagnosisData = async function(resType, reqInput, FHIRData, req
 const getSymptomDiagnosisData = async function(resType, reqInput, FHIRData, reqMethod, reqQuery, token){
     let resourceResult = []
     try {
-        console.log("Symptom and Diagnosis GET");       
+        console.info("Symptom and Diagnosis GET", FHIRData);       
         let mainEncounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter" && e.resource.appointment).map(e => e.resource);
         let subEncounterList = FHIRData.filter(e => e.resource.resourceType == "Encounter" && e.resource.type && e.resource.type[0].coding[0].code == "symptom-diagnosis-encounter").map(e => e.resource);
         const practitonerIdList = subEncounterList.map(e=> e.participant[0].individual.reference.split("/")[1]).join(",")

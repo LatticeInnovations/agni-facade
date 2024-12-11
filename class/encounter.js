@@ -346,6 +346,16 @@ class Encounter {
         this.fhirResource.status = "entered-in-error";
         return this.fhirResource;
     }
+
+    patchSystemDiagnosisSubEncounter(){
+        this.fhirResource.length = {
+            "value": new Date().valueOf(),
+            "unit": "millisecond",
+            "system": "http://unitsofmeasure.org",
+            "code": "ms"
+        };
+        return this.fhirResource;
+    }
     
 }
 

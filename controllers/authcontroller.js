@@ -48,10 +48,10 @@ let login = async function (req, res) {
             OTPGenerateAttempt = authentication_detail.dataValues.otp_generate_attempt + 1;
         }
 
-        if (req.body.userContact == 1111111111 || req.body.userContact == 9999999999 || req.body.userContact == "himanshu@thelattice.in" || req.body.userContact == "dev3test@gmail.com") {
-            otp = 111111;
-        } else if (req.body.userContact == 9876543210 || req.body.userContact == "dev2@gmail.com") {
-            otp = 222222;
+        if (process.env.bypassNumbers.includes(req.body.userContact)) {
+            otp = process.env.bypassOTP;
+        } else if (process.env.playstoreNumber.includes(req.body.userContact)) {
+            otp = process.env.playstoreOTP;
             OTPGenerateAttempt = 1;
             loginAttempts = 0;
         }
