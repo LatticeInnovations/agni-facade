@@ -163,7 +163,7 @@ const setPrescriptionFileResponse = (resType, reqMethod, responseData) => {
     return response;
 }
 
-const setMedicationDispenseResponse = (resType, reqMethod, responseData) => {
+const setMedicationDispenseResponse = (resType, reqMethod, responseData, reqInput) => {
     let filteredData = [];
     let response = [];
     if(["post", "POST", "put", "PUT"].includes(reqMethod)) {
