@@ -12,6 +12,8 @@ let secretKey = require('../config/nodeConfig').jwtSecretKey;
 let Queue = require('bull');
 const deleteUserDataQueue =  new Queue('userQueue');
 const db = require('../models/index');
+let sendEmail = require("../utils/sendgrid.util").sendEmail;
+let sendSms = require('../utils/twilio.util');
 // { redis: {port: '6379', host: 'localhost'}}
 // Get user profile
 let getUserProfile = async function (req, res, next) {
@@ -148,9 +150,23 @@ const deleteUserData = async (req, res, next) => {
               }
             ]
         });
-        deleteUserDataQueue.add({ userId: req.decoded.userId, orgId: req.decoded.orgId, mobile, email }).then(() => {
-            return res.json({ status : 1, message: "Your account will be delete within 48 hours, you will get confirmation SMS or email"});
-        });
+        // deleteUserDataQueue.add({ userId: req.decoded.userId, orgId: req.decoded.orgId, mobile, email }).then(() => {
+        //     return res.json({ status : 1, message: "Your account will be delete within 48 hours, you will get confirmation SMS or email"});
+        // });
+        if (email) {
+            let mailData = {
+                to: [{ email: email }],
+                    subject: 'Agni : Account Deleted',
+                    content: 'Your account has been successfully deleted.'
+            }
+            await sendEmail(mailData);
+        }
+            
+        if(mobile) {
+            let text = `Your Agni account has been successfully deleted.`
+            await sendSms(mobile, text);
+        }
+        return res.json({ status : 1, message: "Your account will be delete within 48 hours, you will get confirmation SMS or email"});
     }
     catch(e){
         console.info(e)
