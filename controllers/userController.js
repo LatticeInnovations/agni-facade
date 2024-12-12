@@ -11,6 +11,7 @@ let jwt = require("jsonwebtoken");
 let secretKey = require('../config/nodeConfig').jwtSecretKey;
 let Queue = require('bull');
 const deleteUserDataQueue =  new Queue('userQueue');
+const db = require('../models/index');
 // { redis: {port: '6379', host: 'localhost'}}
 // Get user profile
 let getUserProfile = async function (req, res, next) {
