@@ -187,9 +187,10 @@ async function sendOTP(isEmail, userDetail, otp) {
 // get user and his/her OTP details using sequelize
 async function getUserDetail(req, contact) {
     try {
-        let queryParam ={"_total": "accurate", "_revinclude": "PractitionerRole:practitioner"};
+        let queryParam ={"_total": "accurate", "_revinclude": "PractitionerRole:practitioner", "active" : true};
         queryParam[contact] = contact == "email" ? req.body.userContact.toLowerCase() : req.body.userContact;
         let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam);
+        console.info("existing Practitioner", existingPractioner.data);
         if (existingPractioner.data.total == 0 || !existingPractioner?.data?.entry) {
             return null;
         }
