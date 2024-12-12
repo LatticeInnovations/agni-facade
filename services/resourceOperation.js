@@ -91,7 +91,7 @@ const getBundleResponse = async (bundleResponse, reqData, reqMethod, resType, re
                 response = setPrescriptionFileResponse(resType, reqMethod, responseData);
                 break;
             case "MedicationDispense":
-                response = setMedicationDispenseResponse(resType, reqMethod, responseData);
+                response = setMedicationDispenseResponse(resType, reqMethod, responseData, reqInput);
                 break;
             case "DiagnosticReport":
                 response = setDiagnosticReportResponse(resType, reqMethod, responseData);
