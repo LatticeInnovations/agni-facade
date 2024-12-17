@@ -103,7 +103,6 @@ let setMedicationDispenseData = async function (resType, reqInput, FHIRData, req
 
 const getMainEncountersForPrescription = async function(reqInput, token, prescriptionIds) {
   try {
-    console.info
     let existingMainEncountersList = []
     console.info("prescriptionIds: ", prescriptionIds)
     if(prescriptionIds.length > 0) {
@@ -356,7 +355,7 @@ const addNewRecord = async function (resType, reqInput, token) {
     let combinedMedReqResource = await combineMedReqAndInput(prescriptionEncounterId, reqInput, token);
 
      // create sub-encounter to maintain notes and date time
-    const subEncounter = await getEncounterResource(reqInput, {}, false, {});
+    const subEncounter = await getEncounterResource(reqInput, {}, false);
     const subEncounterResInBundle = await bundleFun.setBundlePost(subEncounter, subEncounter.identifier, reqInput.dispenseId, "POST", "identifier");
     bundleResources.push(subEncounterResInBundle)
     //  create medical dispense record
@@ -374,7 +373,7 @@ const addOTCRecord = async function (resType, reqInput) {
   try {
   let bundleResources = []
      // create sub-encounter to maintain notes and date time
-    const subEncounter = await getEncounterResource(reqInput, {}, false, {});
+    const subEncounter = await getEncounterResource(reqInput, {}, false);
     const subEncounterResInBundle = await bundleFun.setBundlePost(subEncounter, subEncounter.identifier, reqInput.dispenseId, "POST", "identifier");
     bundleResources.push(subEncounterResInBundle)
     //  create medical dispense record

@@ -393,7 +393,7 @@ class Observation {
                 "code": {
                     "coding": [
                         {
-                            "system": "http://loinc.org",
+                            "system": "https://loinc.org",
                             "code": "98498-9",
                             "display": "Visual acuity left eye"
                         }
@@ -403,7 +403,7 @@ class Observation {
                 "valueQuantity": {
                     "value": this.observationObj?.leftEye,
                     "unit": "feet",
-                    "system": "http://unitsofmeasure.org",
+                    "system": "https://unitsofmeasure.org",
                     "code": "[ft_i]"
                 }
             });
@@ -414,7 +414,7 @@ class Observation {
                 "code": {
                     "coding": [
                         {
-                        "system": "http://loinc.org",
+                        "system": "https://loinc.org",
                         "code": "98499-7",
                         "display": "Visual acuity right eye"
                     }
@@ -424,7 +424,7 @@ class Observation {
                 "valueQuantity": {
                     "value": this.observationObj?.rightEye,
                     "unit": "feet",
-                    "system": "http://unitsofmeasure.org",
+                    "system": "https://unitsofmeasure.org",
                     "code": "[ft_i]"
                 }
             });
@@ -435,7 +435,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
                 {
-                    "system": "http://loinc.org",
+                    "system": "https://loinc.org",
                     "code": "70937-8",
                     "display": "Visual Acuity"
                 }
@@ -451,7 +451,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "1558-6",
                       "display": this.observationObj?.bloodGlucoseType === "fasting" ? "fasting" : "random"
                     }
@@ -461,7 +461,7 @@ class Observation {
                 "valueQuantity": {
                   "value": this.observationObj?.bloodGlucose,
                   "unit": this.observationObj?.bloodGlucoseUnit === "mg/dl" ? "mg/dl" : "mmol/L",
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                   "code": this.observationObj?.bloodGlucoseUnit === "mg/dl" ? "mg/dl" : "mmol/L"
                 }
             });
@@ -472,7 +472,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "74774-1",
                 "display": "glucose"
               }
@@ -488,7 +488,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "8462-4",
                       "display": "Diastolic blood pressure"
                     }
@@ -498,7 +498,7 @@ class Observation {
                 "valueQuantity": {
                   "value": this.observationObj?.bpDiastolic,
                   "unit": "mmHg",
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                   "code": "mm[Hg]"
                 }
             });
@@ -509,7 +509,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "8480-6",
                       "display": "Systolic blood pressure"
                     }
@@ -519,7 +519,7 @@ class Observation {
                 "valueQuantity": {
                   "value": this.observationObj?.bpSystolic,
                   "unit": "mmHg",
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                   "code": "mm[Hg]"
                 }
             });
@@ -530,7 +530,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "35094-2",
                 "display": "Blood Pressure"
               }
@@ -546,7 +546,7 @@ class Observation {
                 "code": {
                     "coding": [
                         {
-                            "system": "http://loinc.org",
+                            "system": "https://loinc.org",
                             "code": "8310-5",
                             "display": "Body temperature"
                         }
@@ -556,7 +556,7 @@ class Observation {
                 "valueQuantity": {
                     "value": this.observationObj?.temp,
                     "unit": this.observationObj?.tempUnit === "F" ? "F" : "C",
-                    "system": "http://unitsofmeasure.org",
+                    "system": "https://unitsofmeasure.org",
                     "code": this.observationObj?.tempUnit === "F" ? "Fahrenheit" : "Celsius"
                 }
             });
@@ -567,7 +567,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "8310-5",
                 "display": "Body temperature"
               }
@@ -583,12 +583,12 @@ class Observation {
                 "code": {
                     "coding": [
                         {
-                            "system": "http://loinc.org",
+                            "system": "https://loinc.org",
                             "code": "2708-6",
                             "display": "Oxygen saturation in Arterial blood"
                         },
                         {
-                            "system": "http://loinc.org",
+                            "system": "https://loinc.org",
                             "code": "59408-5",
                             "display": "Oxygen saturation in Arterial blood by Pulse oximetry"
                         },
@@ -603,7 +603,7 @@ class Observation {
                 "valueQuantity": {
                     "value": this.observationObj?.spo2,
                     "unit": "%",
-                    "system": "http://unitsofmeasure.org",
+                    "system": "https://unitsofmeasure.org",
                     "code": "%"
                 }
             });
@@ -614,12 +614,12 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "2708-6",
                 "display": "Oxygen saturation in Arterial blood"
               },
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "59408-5",
                 "display": "Oxygen saturation in Arterial blood by Pulse oximetry"
               },
@@ -640,7 +640,7 @@ class Observation {
                "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "9279-1",
                       "display": "Respiratory rate"
                     }
@@ -650,7 +650,7 @@ class Observation {
                 "valueQuantity": {
                     "value": this.observationObj?.respRate,
                     "unit": "breaths/minute",
-                    "system": "http://unitsofmeasure.org",
+                    "system": "https://unitsofmeasure.org",
                     "code": "/min"
                 }
             });
@@ -661,7 +661,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "9279-1",
                 "display": "Respiratory rate"
               }
@@ -677,7 +677,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "29463-7",
                       "display": "weight"
                     }
@@ -687,7 +687,7 @@ class Observation {
                 "valueQuantity": {
                   "value": this.observationObj?.weight,
                   "unit": "kg",
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                   "code": "kg"
                 }
             });
@@ -698,7 +698,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "29463-7",
                 "display": "weight"
               }
@@ -714,7 +714,7 @@ class Observation {
                 "code": {
                     "coding": [
                         {
-                            "system": "http://loinc.org",
+                            "system": "https://loinc.org",
                             "code": "8867-4",
                             "display": "Heart rate"
                         }
@@ -724,7 +724,7 @@ class Observation {
                 "valueQuantity": {
                     "value": this.observationObj?.heartRate,
                     "unit": "beats/minute",
-                    "system": "http://unitsofmeasure.org",
+                    "system": "https://unitsofmeasure.org",
                     "code": "/min"
                 }
             });
@@ -735,7 +735,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "8867-4",
                 "display": "Heart Rate"
               }
@@ -755,7 +755,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "8302-2",
                       "display": "height"
                     }
@@ -765,7 +765,7 @@ class Observation {
                 "valueQuantity": {
                   "value": this.observationObj?.heightFt,
                   "unit": "ft",
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                   "code": "[ft_i]"
                 }
             });
@@ -776,7 +776,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "8302-2",
                       "display": "height"
                     }
@@ -786,7 +786,7 @@ class Observation {
                 "valueQuantity": {
                   "value": this.observationObj?.heightInch,
                   "unit": "in",
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                   "code": "[in_i]"
                 }
             });
@@ -797,7 +797,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "8302-2",
                       "display": "height"
                     }
@@ -807,7 +807,7 @@ class Observation {
                 "valueQuantity": {
                   "value": this.observationObj?.heightCm,
                   "unit": "cm",
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                   "code": "[cm_i]"
                 }
             });
@@ -818,7 +818,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "8302-2",
                 "display": "height"
               }
@@ -831,7 +831,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "33248-6",
                 "display": "Diabetic status"
               }
@@ -847,7 +847,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "33248-6",
                       "display": "Diabetic status"
                     }
@@ -856,7 +856,7 @@ class Observation {
                 },
                 "valueQuantity": {
                   "value": this.observationObj?.diabetic,
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                 }
             });
         }
@@ -866,7 +866,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "72166-2",
                 "display": "smoking status"
               }
@@ -882,7 +882,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "72166-2",
                       "display": "smoking status"
                     }
@@ -891,7 +891,7 @@ class Observation {
                 },
                 "valueQuantity": {
                   "value": this.observationObj?.smoker,
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                 }
             });
         }
@@ -901,7 +901,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "2093-3",
                 "display": "Cholesterol [Mass/volume] in Serum or Plasma"
               }
@@ -917,7 +917,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "2093-3",
                       "display": "Cholesterol [Mass/volume] in Serum or Plasma"
                     }
@@ -927,7 +927,7 @@ class Observation {
                 "valueQuantity": {
                   "value": this.observationObj?.cholesterol,
                   "unit": this.observationObj?.cholesterolUnit,
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                   "code": this.observationObj?.cholesterolUnit
                 }
             });
@@ -938,7 +938,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "9156-5",
                 "display": "Body mass index (BMI) [Ratio]"
               }
@@ -954,7 +954,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "9156-5",
                       "display": "Body mass index (BMI) [Ratio]"
                     }
@@ -964,7 +964,7 @@ class Observation {
                 "valueQuantity": {
                   "value": this.observationObj?.bmi,
                   "unit": "kg/m2",
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                   "code": "kg/m2"
                 }
             });
@@ -975,7 +975,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://loinc.org",
+                "system": "https://loinc.org",
                 "code": "72333-9",
                 "display": "Cardiovascular disease risk score"
               }
@@ -991,7 +991,7 @@ class Observation {
                 "code": {
                   "coding": [
                     {
-                      "system": "http://loinc.org",
+                      "system": "https://loinc.org",
                       "code": "72333-9",
                       "display": "Cardiovascular disease risk score"
                     }
@@ -1001,7 +1001,7 @@ class Observation {
                 "valueQuantity": {
                   "value": this.observationObj?.risk,
                   "unit": "%",
-                  "system": "http://unitsofmeasure.org",
+                  "system": "https://unitsofmeasure.org",
                   "code": "%"
                 }
             });
@@ -1023,7 +1023,7 @@ class Observation {
             {
               "coding": [
                 {
-                  "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                  "system": "https://terminology.hl7.org/CodeSystem/observation-category",
                   "code": this.observationObj?.categoryCode || "vital-signs",
                   "display": this.observationObj?.categoryDisplay || "Vitals"
                 }

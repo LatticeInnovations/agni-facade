@@ -127,7 +127,7 @@ class MedicationDispense {
     this.fhirResource.category = {
       coding: [
         {
-          "system": "http://your-custom-coding-system",
+          "system": "https://your-custom-coding-system",
           code: this.medDispenseObj?.category,
         },
       ],
@@ -147,7 +147,7 @@ class MedicationDispense {
     {
       "coding": [
         {
-          "system": "http://terminology.hl7.org/CodeSystem/v3-ActReason",
+          "system": "https://terminology.hl7.org/CodeSystem/v3-ActReason",
           "code": this.medDispenseObj.modificationType
         }
       ]

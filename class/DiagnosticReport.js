@@ -13,7 +13,7 @@ class DiagnosticReport {
         this.fhirResource.code = {
             "coding": [
                 {
-                    "system": "http://loinc.org",
+                    "system": "https://loinc.org",
                     "code": "11502-2",
                     "display": "Laboratory report"
                 }
@@ -39,7 +39,7 @@ class DiagnosticReport {
         if (this.reportObj?.documents?.length > 0 ){
             this.reportObj?.documents.forEach((document) => {
                 this.fhirResource.extension.push({
-                        "url": "http://hl7.org/fhir/StructureDefinition/DocumentReference",
+                        "url": "https://hl7.org/fhir/StructureDefinition/DocumentReference",
                         "valueReference": {
                           "reference": "DocumentReference/" + "urn:uuid:" + document.id
                         }
@@ -50,7 +50,7 @@ class DiagnosticReport {
 
     setIdentifier() {
         this.fhirResource.identifier.push({
-            "system": "http://hl7.org/fhir/sid/sn",
+            "system": "https://hl7.org/fhir/sid/sn",
             "value": this.reportObj?.diagnosticUuid || null
         });
     }

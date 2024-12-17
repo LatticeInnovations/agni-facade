@@ -16,7 +16,7 @@ class Condition {
         this.fhirResource.category = [{
             "coding": [
               {
-                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "system": "https://terminology.hl7.org/CodeSystem/condition-category",
                 "code": "diagnosis",
                 "display": "Diagnosis"
               }
@@ -66,7 +66,7 @@ class Condition {
     setDiagnosis() {
         let diagnosis_list = [];
         diagnosis_list.push({
-            "system": "http://hl7.org/fhir/sid/icd-10",
+            "system": "https://hl7.org/fhir/sid/icd-10",
             "code": this.conditionObj.diagnosis,
             "display": global.diagnosisMap.get(this.conditionObj.diagnosis) || ""
         });
@@ -113,7 +113,7 @@ class Condition {
     patchSymptom() {
         let symptoms_list = []
         this.conditionObj.symptoms.map(symptom => symptoms_list.push({
-            "system": "http://www.lattice.in/fhir/ValueSet/symptoms",
+            "system": "https://www.lattice.in/fhir/ValueSet/symptoms",
              "code": symptom
         }))
         this.conditionObj.evidence = [
@@ -126,7 +126,7 @@ class Condition {
     patchDiagnosis() {
         let diagnosis_list = [];
         this.conditionObj.diagnosis.map(code => diagnosis_list.push({
-            "system": "http://hl7.org/fhir/sid/icd-10",
+            "system": "https://hl7.org/fhir/sid/icd-10",
             "code": code,
         }));
         this.conditionObj.code = {

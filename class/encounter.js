@@ -105,7 +105,7 @@ class Encounter {
             {
                 "coding": [
                             {
-                                "system": "http://your-custom-coding-system",
+                                "system": "https://your-custom-coding-system",
                                 "code": "vital-encounter",
                                 "display": "Vital encounter"
                             }
@@ -133,7 +133,7 @@ class Encounter {
         this.fhirResource.length = {
             "value": new Date().valueOf(),
             "unit": "millisecond",
-            "system": "http://unitsofmeasure.org",
+            "system": "https://unitsofmeasure.org",
             "code": "ms"
         };
         return this.fhirResource;
@@ -188,7 +188,7 @@ class Encounter {
             {
                 "coding": [
                             {
-                                "system": "http://your-custom-coding-system",
+                                "system": "https://your-custom-coding-system",
                                 "code": "cvd-encounter",
                                 "display": "CVD encounter"
                             }
@@ -216,7 +216,7 @@ class Encounter {
         this.fhirResource.length = {
             "value": new Date().valueOf(),
             "unit": "millisecond",
-            "system": "http://unitsofmeasure.org",
+            "system": "https://unitsofmeasure.org",
             "code": "ms"
         };
         return this.fhirResource;
@@ -234,7 +234,7 @@ class Encounter {
             {
                 "coding": [
                             {
-                                "system": "http://your-custom-coding-system",
+                                "system": "https://your-custom-coding-system",
                                 "code": "prescription-encounter-document",
                                 "display": "Prescription document encounter"
                             }
@@ -280,7 +280,7 @@ class Encounter {
             {
                 "coding": [
                             {
-                                "system": "http://your-custom-coding-system",
+                                "system": "https://your-custom-coding-system",
                                 "code": "lab-report-encounter",
                                 "display": "Lab Report encounter"
                             }
@@ -317,7 +317,7 @@ class Encounter {
             {
                 "coding": [
                             {
-                                "system": "http://your-custom-coding-system",
+                                "system": "https://your-custom-coding-system",
                                 "code": "medical-report-encounter",
                                 "display": "medical Report encounter"
                             }
@@ -351,7 +351,7 @@ class Encounter {
         this.fhirResource.length = {
             "value": new Date().valueOf(),
             "unit": "millisecond",
-            "system": "http://unitsofmeasure.org",
+            "system": "https://unitsofmeasure.org",
             "code": "ms"
         };
         return this.fhirResource;

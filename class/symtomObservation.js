@@ -35,7 +35,7 @@ class Observation {
                 "code": {
                 "coding": [
               {
-                "system": "http://snomed.info/sct",
+                "system": "https://snomed.info/sct",
                 "code": symptom,
                 "display": global.symptomsMap.get(symptom) || symptom 
               }
@@ -86,7 +86,7 @@ class Observation {
             {
                 "coding": [
                   {
-                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                    "system": "https://terminology.hl7.org/CodeSystem/observation-category",
                     "code": "symptom",
                     "display": "Symptom"
                   }
@@ -96,7 +96,7 @@ class Observation {
         this.fhirResource.code = {
             "coding": [
               {
-                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "system": "https://terminology.hl7.org/CodeSystem/observation-category",
                 "code": "symptom",
                 "display": "Symptoms"
               }

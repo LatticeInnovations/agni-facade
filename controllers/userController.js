@@ -192,7 +192,7 @@ const createUser = async (req, res, next) => {
         const organization = {
             "resourceType": "Organization",
             "active": true,
-            "type": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/organization-type","code": "prov","display": "Private Hospital"}]}],
+            "type": [{"coding": [{"system": "https://terminology.hl7.org/CodeSystem/organization-type","code": "prov","display": "Private Hospital"}]}],
             "name": clinicName,
             "telecom": [{"system": "phone","value": mobile},{"system": "email","value": email}],
         }
@@ -218,7 +218,7 @@ const createUser = async (req, res, next) => {
             "resourceType": "PractitionerRole",
             "practitioner": { "reference": `Practitioner/${userId}`},
             "organization": { "reference": `Organization/${orgId}`},
-            "code": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/practitioner-role","code": "doctor"}]}]
+            "code": [{"coding": [{"system": "https://terminology.hl7.org/CodeSystem/practitioner-role","code": "doctor"}]}]
         }
         let location = { "resourceType": "Location", "status": "active", "name": clinicName,
             "position": { "longitude": 28.537, "latitude": 77.383 },

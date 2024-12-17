@@ -34,7 +34,7 @@ class DispenseEncounter {
   // setAppointmentEncounterId() {
   //   if(this.dispenseObj.appointmentEncounterId) {
   //     this.fhirResource.extension.push({
-  //       "url": "http://hl7.org/fhir/StructureDefinition/encounter-associatedEncounter",
+  //       "url": "https://hl7.org/fhir/StructureDefinition/encounter-associatedEncounter",
   //        "valueReference": {
   //             "reference": "Encounter/" + this.dispenseObj.appointmentEncounterId
   //         }
@@ -74,7 +74,7 @@ class DispenseEncounter {
       {
         coding: [
           {
-            system: "http://your-custom-coding-system",
+            system: "https://your-custom-coding-system",
             code: code,
             display: display
           },
@@ -109,7 +109,7 @@ class DispenseEncounter {
     if (!this.isMain) {
       this.fhirResource.extension.push(
         {
-          "url": "http://hl7.org/fhir/StructureDefinition/encounter-note",
+          "url": "https://hl7.org/fhir/StructureDefinition/encounter-note",
           "valueString": this.dispenseObj?.note
         }
       );
@@ -118,7 +118,7 @@ class DispenseEncounter {
 
   getNote() {
     if(!this.isMain && this.fhirResource.extension) {
-      const filteredData = this.fhirResource.extension.filter(e => e.url == "http://hl7.org/fhir/StructureDefinition/encounter-note")
+      const filteredData = this.fhirResource.extension.filter(e => e.url == "https://hl7.org/fhir/StructureDefinition/encounter-note")
       this.dispenseObj.note = filteredData[0]?.valueString ? filteredData[0].valueString :null
     }
      
