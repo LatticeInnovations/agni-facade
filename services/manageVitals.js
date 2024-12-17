@@ -85,7 +85,7 @@ const setVitalsData = async (resType, reqInput, FHIRData, reqMethod, reqQuery, t
                         value : {
                             "value": new Date().valueOf(),
                             "unit": "millisecond",
-                            "system": "http://unitsofmeasure.org",
+                            "system": "https://unitsofmeasure.org",
                             "code": "ms"
                         },
                     }], "Encounter"+ "/"+ vital.vitalFhirId);

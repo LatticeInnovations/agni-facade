@@ -50,7 +50,7 @@ class DocumentManifest {
 
     setIdentifier() {
         this.fhirResource.identifier.push({
-            "system": "http://hl7.org/fhir/sid/sn",
+            "system": "https://hl7.org/fhir/sid/sn",
             "value": this.reportObj?.medicalReportUuid || null
         });
     }

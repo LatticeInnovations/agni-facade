@@ -196,12 +196,12 @@ const saveSymptomDiagnosisData = async function(resType, reqInput, FHIRData, req
                     vitalUuid: symDiagData.symDiagUuid, practitionerId: token.userId, createdOn: symDiagData.createdOn,
                     orgId: token.orgId
                 }, {}).getUserInputToFhirForVitals();
-                subEncounter.identifier[0].system = "http://hl7.org/fhir/sid/sn/diagnosis"
+                subEncounter.identifier[0].system = "https://hl7.org/fhir/sid/sn/diagnosis"
                 subEncounter.type =  [
                     {
                         "coding": [
                             {
-                                "system": "http://your-custom-coding-system",
+                                "system": "https://your-custom-coding-system",
                                 "code": "symptom-diagnosis-encounter",
                                 "display": "Symptom Diagnosis encounter"
                             }

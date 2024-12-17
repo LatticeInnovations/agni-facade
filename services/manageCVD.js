@@ -82,7 +82,7 @@ const setCVDData = async (resType, reqInput, FHIRData, reqMethod, reqQuery, toke
                         value : {
                             "value": new Date().valueOf(),
                             "unit": "millisecond",
-                            "system": "http://unitsofmeasure.org",
+                            "system": "https://unitsofmeasure.org",
                             "code": "ms"
                         },
                     }], "Encounter"+ "/"+ cvd.cvdFhirId);

@@ -93,7 +93,7 @@ class Encounter {
         this.fhirResource.appointment = {};
     }
 
-    getUserInputToFhirForVitals() {
+    setStructureForEncounter() {
         this.fhirResource.resourceType = "Encounter";
         this.fhirResource.id = this.encounterObj.id;
         this.fhirResource.identifier = [];
@@ -101,17 +101,6 @@ class Encounter {
         this.fhirResource.serviceProvider = {}; 
         this.setPatientReference();
         this.setOrganizationReference();
-        this.fhirResource.type = [
-            {
-                "coding": [
-                            {
-                                "system": "http://your-custom-coding-system",
-                                "code": "vital-encounter",
-                                "display": "Vital encounter"
-                            }
-                        ]
-            }
-        ];
         this.fhirResource.period = {
             "start": this.encounterObj.createdOn,
             "end": this.encounterObj.createdOn
@@ -120,20 +109,35 @@ class Encounter {
             "reference": "Encounter/" + this.encounterObj.encounterId,
             "display": "Primary Encounter"
         }
-
-        this.fhirResource.identifier.push({
-            "system": config.snUrl + '/vital',
-            "value": this.encounterObj.vitalUuid
-        });
         this.fhirResource.participant = [{
             "individual" : {
                 "reference": "Practitioner/" + this.encounterObj.practitionerId
             }
         }];
+    }
+
+    getUserInputToFhirForVitals() {
+        this.setStructureForEncounter();
+        this.fhirResource.type = [
+            {
+                "coding": [
+                            {
+                                "system": "https://your-custom-coding-system",
+                                "code": "vital-encounter",
+                                "display": "Vital encounter"
+                            }
+                        ]
+            }
+        ];
+
+        this.fhirResource.identifier.push({
+            "system": config.snUrl + '/vital',
+            "value": this.encounterObj.vitalUuid
+        });
         this.fhirResource.length = {
             "value": new Date().valueOf(),
             "unit": "millisecond",
-            "system": "http://unitsofmeasure.org",
+            "system": "https://unitsofmeasure.org",
             "code": "ms"
         };
         return this.fhirResource;
@@ -175,90 +179,52 @@ class Encounter {
     getPrimaryEncounterReference() {
         this.encounterObj.primaryEncounterId = this?.fhirResource?.partOf?.reference?.split('/')[1] || null;
     }
-
+    
     getUserInputToFhirForCVD() {
-        this.fhirResource.resourceType = "Encounter";
-        this.fhirResource.id = this.encounterObj.id;
-        this.fhirResource.identifier = [];
-        this.fhirResource.subject = {};
-        this.fhirResource.serviceProvider = {}; 
-        this.setPatientReference();
-        this.setOrganizationReference();
+        this.setStructureForEncounter();
         this.fhirResource.type = [
             {
                 "coding": [
                             {
-                                "system": "http://your-custom-coding-system",
+                                "system": "https://your-custom-coding-system",
                                 "code": "cvd-encounter",
                                 "display": "CVD encounter"
                             }
                         ]
             }
         ];
-        this.fhirResource.period = {
-            "start": this.encounterObj.createdOn,
-            "end": this.encounterObj.createdOn
-        }
-        this.fhirResource.partOf = {
-            "reference": "Encounter/" + this.encounterObj.encounterId,
-            "display": "Primary Encounter"
-        }
 
         this.fhirResource.identifier.push({
             "system": config.snUrl + '/CVD',
             "value": this.encounterObj.cvdUuid
         });
-        this.fhirResource.participant = [{
-            "individual" : {
-                "reference": "Practitioner/" + this.encounterObj.practitionerId
-            }
-        }];
         this.fhirResource.length = {
             "value": new Date().valueOf(),
             "unit": "millisecond",
-            "system": "http://unitsofmeasure.org",
+            "system": "https://unitsofmeasure.org",
             "code": "ms"
         };
         return this.fhirResource;
     }
-
+    
     getUserInputToFhirForPrescriptionDocument() {
-        this.fhirResource.resourceType = "Encounter";
-        this.fhirResource.id = this.encounterObj.id;
-        this.fhirResource.identifier = [];
-        this.fhirResource.subject = {};
-        this.fhirResource.serviceProvider = {}; 
-        this.setPatientReference();
-        this.setOrganizationReference();
+        this.setStructureForEncounter();
         this.fhirResource.type = [
             {
                 "coding": [
                             {
-                                "system": "http://your-custom-coding-system",
+                                "system": "https://your-custom-coding-system",
                                 "code": "prescription-encounter-document",
                                 "display": "Prescription document encounter"
                             }
                         ]
             }
         ];
-        this.fhirResource.period = {
-            "start": this.encounterObj.createdOn,
-            "end": this.encounterObj.createdOn
-        }
-        this.fhirResource.partOf = {
-            "reference": "Encounter/" + this.encounterObj.encounterId,
-            "display": "Primary Encounter"
-        }
 
         this.fhirResource.identifier.push({
             "system": config.snUrl + '/prescriptionDocument',
             "value": this.encounterObj.prescriptionId
         });
-        this.fhirResource.participant = [{
-            "individual" : {
-                "reference": "Practitioner/" + this.encounterObj.practitionerId
-            }
-        }];
         this.fhirResource.status = 'planned';
         return this.fhirResource;
     }
@@ -267,77 +233,37 @@ class Encounter {
         this.fhirResource.status = "entered-in-error";
         return this.fhirResource;
     }
-
+    
     getUserInputToFhirForLabReport() {
-        this.fhirResource.resourceType = "Encounter";
-        this.fhirResource.id = this.encounterObj.id;
-        this.fhirResource.identifier = [];
-        this.fhirResource.subject = {};
-        this.fhirResource.serviceProvider = {}; 
-        this.setPatientReference();
-        this.setOrganizationReference();
+        this.setStructureForEncounter();
         this.fhirResource.type = [
             {
                 "coding": [
                             {
-                                "system": "http://your-custom-coding-system",
+                                "system": "https://your-custom-coding-system",
                                 "code": "lab-report-encounter",
                                 "display": "Lab Report encounter"
                             }
                         ]
             }
         ];
-        this.fhirResource.period = {
-            "start": this.encounterObj.createdOn,
-            "end": this.encounterObj.createdOn
-        }
-        this.fhirResource.partOf = {
-            "reference": "Encounter/" + this.encounterObj.encounterId,
-            "display": "Primary Encounter"
-        }
-
-        this.fhirResource.participant = [{
-            "individual" : {
-                "reference": "Practitioner/" + this.encounterObj.practitionerId
-            }
-        }];
         this.fhirResource.status = 'planned';
         return this.fhirResource;
     }
-
+    
     getUserInputToFhirForMedicalReport() {
-        this.fhirResource.resourceType = "Encounter";
-        this.fhirResource.id = this.encounterObj.id;
-        this.fhirResource.identifier = [];
-        this.fhirResource.subject = {};
-        this.fhirResource.serviceProvider = {}; 
-        this.setPatientReference();
-        this.setOrganizationReference();
+        this.setStructureForEncounter();
         this.fhirResource.type = [
             {
                 "coding": [
                             {
-                                "system": "http://your-custom-coding-system",
+                                "system": "https://your-custom-coding-system",
                                 "code": "medical-report-encounter",
                                 "display": "medical Report encounter"
                             }
                         ]
             }
         ];
-        this.fhirResource.period = {
-            "start": this.encounterObj.createdOn,
-            "end": this.encounterObj.createdOn
-        }
-        this.fhirResource.partOf = {
-            "reference": "Encounter/" + this.encounterObj.encounterId,
-            "display": "Primary Encounter"
-        }
-
-        this.fhirResource.participant = [{
-            "individual" : {
-                "reference": "Practitioner/" + this.encounterObj.practitionerId
-            }
-        }];
         this.fhirResource.status = 'planned';
         return this.fhirResource;
     }
@@ -351,7 +277,7 @@ class Encounter {
         this.fhirResource.length = {
             "value": new Date().valueOf(),
             "unit": "millisecond",
-            "system": "http://unitsofmeasure.org",
+            "system": "https://unitsofmeasure.org",
             "code": "ms"
         };
         return this.fhirResource;

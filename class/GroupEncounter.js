@@ -49,7 +49,7 @@ getEncounterTime() {
       {
         coding: [
           {
-            system: "http://your-custom-coding-system",
+            system: "https://your-custom-coding-system",
             code: code,
             display: display
           },

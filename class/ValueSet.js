@@ -17,8 +17,8 @@ class ValueSet {
                 }
             }
             else if(this.reqType == "symptoms"){
-                let section = data?.extension?.find(d => d.url == "http://www.lattice.in/fhir/StructureDefinition/symptom-section");
-                let gender = data?.extension?.find(d => d.url == "http://www.lattice.in/fhir/StructureDefinition/gender");
+                let section = data?.extension?.find(d => d.url == "https://www.lattice.in/fhir/StructureDefinition/symptom-section");
+                let gender = data?.extension?.find(d => d.url == "https://www.lattice.in/fhir/StructureDefinition/gender");
                 return {
                     code: data.code,
                     display: data.display,
