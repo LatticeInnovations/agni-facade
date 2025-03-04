@@ -66,7 +66,7 @@ let corsOptions = {
 }
 app.use(cors(corsOptions));
 
-console.log= function(){}
+// console.log= function(){}
 
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json());
