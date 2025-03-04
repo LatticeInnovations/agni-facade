@@ -5,7 +5,7 @@ let resourceValid = require("../utils/Validator/validateRsource").resourceValida
 let createBundle = async function (req, res) {
     try {
         let token = req.token;
-        
+
         let response = resourceValid(req.params);
         if (response.error) {
             console.error(response.error.details)
@@ -18,8 +18,8 @@ let createBundle = async function (req, res) {
         let fhirResource = {};
 
         let resourceData = await getBundleJSON(reqInput, resourceType, fhirResource, "POST", token);
-            bundle = resourceData.bundle;
-      //return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
+        bundle = resourceData.bundle;
+        // return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })
         if (bundle.entry.length > 0) {
             let response = await axios.post(config.baseUrl, bundle);
             if (response.status == 200) {
@@ -33,7 +33,7 @@ let createBundle = async function (req, res) {
                 })
             }
         }
-        else if(resourceData.errData.length > 0) {
+        else if (resourceData.errData.length > 0) {
             return res.status(201).json({ status: 1, message: "Data saved successfully.", data: resourceData.errData })
         }
         else {
@@ -80,8 +80,8 @@ let patchBundle = async function (req, res) {
         bundle = bundlePatchJSON.bundle;
         //res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundle })
         if (bundle.entry.length > 0) {
-        let response = await axios.post(config.baseUrl, bundle);
-            if (response.status == 200 || response.status == 201) {            
+            let response = await axios.post(config.baseUrl, bundle);
+            if (response.status == 200 || response.status == 201) {
                 let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "PATCH", req.params.resourceType, reqInput);
                 responseData = [...responseData, ...bundlePatchJSON.errData]
                 return res.status(201).json({ status: 1, message: "Data updated successfully.", data: responseData })
@@ -92,12 +92,12 @@ let patchBundle = async function (req, res) {
                 })
             }
         }
-        else if(bundlePatchJSON.errData.length > 0) {
+        else if (bundlePatchJSON.errData.length > 0) {
             res.status(201).json({ status: 1, message: "Data updated successfully.", data: bundlePatchJSON.errData })
         }
         else {
             return res.status(500).json({
-                status: 0, message: "Unable to process. Please try again.", error: {response: {data: bundlePatchJSON.errData}}
+                status: 0, message: "Unable to process. Please try again.", error: { response: { data: bundlePatchJSON.errData } }
             })
         }
 
@@ -126,7 +126,7 @@ let patchBundle = async function (req, res) {
 let deleteBundle = async (req, res) => {
     try {
         let token = req.token;
-        
+
         let response = resourceValid(req.params);
         if (response.error) {
             console.error(response.error.details)
@@ -139,8 +139,8 @@ let deleteBundle = async (req, res) => {
         let fhirResource = {};
 
         let resourceData = await getBundleJSON(reqInput, resourceType, fhirResource, "DELETE", token);
-            bundle = resourceData.bundle;
-    //   return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
+        bundle = resourceData.bundle;
+        //   return res.status(201).json({ status: 1, message: "Data updated", data: resourceData })     
         if (bundle.entry.length > 0) {
             let response = await axios.post(config.baseUrl, bundle);
             if (response.status == 200) {
@@ -154,7 +154,7 @@ let deleteBundle = async (req, res) => {
                 })
             }
         }
-        else if(resourceData.errData.length > 0) {
+        else if (resourceData.errData.length > 0) {
             return res.status(201).json({ status: 1, message: "Data deleted successfully.", data: resourceData.errData })
         }
         else {
@@ -187,12 +187,12 @@ let getBundleJSON = async function (reqInput, resourceType, fhirResource, reqMet
         "type": "transaction",
         "entry": []
     };
-    let errData = [] ;
+    let errData = [];
     let resourceData = await resourceFun.getResource(resourceType, reqInput, fhirResource, reqMethod, null, token);
     console.info(resourceData)
-        bundle.entry = resourceData.resourceResult
-        errData = resourceData.errData
-    return {bundle, errData};
+    bundle.entry = resourceData.resourceResult
+    errData = resourceData.errData
+    return { bundle, errData };
 }
 
 
