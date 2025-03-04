@@ -79,8 +79,8 @@ class ImmunizationRecommendation {
                         "value": moment(this.data.birthDate).add(vaccineData.doses[dose].buffer, 'weeks').toISOString()
                     }
                 ],
-                "doseNumber": dose,
-                "seriesDoses": doses.length,
+                "doseNumberString": dose,
+                "seriesDosesString": doses.length,
             });
         }
     }
@@ -89,6 +89,24 @@ class ImmunizationRecommendation {
         this.setBasicStructure();
         this.setRecommendation();
         return this.fhirResource;
+    }
+
+    getFHIRtoJSON() {
+        let result = [];
+        for(let recommendation of this.fhirResource.recommendation) {
+            result.push({
+                patientId : this.fhirResource.patient.reference.split('/')[1],
+                vaccine : recommendation.vaccineCode[0].coding[0].display,
+                vaccineText : recommendation.vaccineCode[0].text,
+                vaccineCode : recommendation.vaccineCode[0].coding[0].code,
+                seriesDoses : recommendation?.seriesDosesString || null,
+                doseNumber : recommendation?.doseNumberString || null,
+                vaccineStartDate : recommendation?.dateCriterion?.filter(e => e.code.coding[0]?.code == "30981-5")[0].value,
+                vaccineEndDate : recommendation?.dateCriterion?.filter(e => e.code.coding[0]?.code == "30980-7")[0].value,
+                vaccineBufferDate : recommendation?.dateCriterion?.filter(e => e.code.coding[0]?.code == "59778-1")[0].value
+            });
+        }
+        return result;
     }
 }
 

@@ -153,7 +153,10 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 queryParams["service-provider"] = token.orgId
                 nestedResource = 1;
                 break;
-
+            case "ImmunizationRecommendation":
+                url = config.baseUrl + "ImmunizationRecommendation"
+                queryParams._total = "accurate"
+                queryParams._count = 10000
     }
 
     return { link: url, reqQuery: queryParams, nestedResource: nestedResource, specialOffset: specialOffset }

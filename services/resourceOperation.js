@@ -15,6 +15,7 @@ let documentReference = require("./manageDocuments");
 let labReports = require('./manageLabReports');
 let medicalRecord = require('./manageMedicalRecord');
 let symDiag = require("./manageSymptomsAndDiagnosis");
+let ImmunizationRecommendation = require('./manageImmunizationRecommendation');
 let { setPatientResponse, setAppointmentResponse, setMedicationRequestResponse, setCVDResponse, setObservationResponse, setPrescriptionFileResponse, setMedicationDispenseResponse, setDiagnosticReportResponse, setDocumentManifestResponse, setConditionResponse, setDefaultResponse } = require('./manageResponses');
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
@@ -59,6 +60,7 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
             break;
             case "Condition": bundleData = await symDiag.setConditionData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
             break;
+            case "ImmunizationRecommendation": bundleData = await ImmunizationRecommendation.setImmunizationRecommendationData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
         }
         return bundleData;
     }
