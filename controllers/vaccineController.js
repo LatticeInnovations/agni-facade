@@ -2,13 +2,14 @@ let bundleFun = require("../services/bundleOperation");
 let config = require("../config/nodeConfig");
 let getManufacturer = async function (req, res) {
     try {
+        //  Get organizations list which are manufacturers
         let link = config.baseUrl + "Organization"
         let reqQuery = {
             type: "bus",
             _count: 1000
         }
+        //  fetch data from fhir server
         let responseData = await bundleFun.searchData(link, reqQuery);
-        console.info("reached here", responseData.data.entry[0].resource.type[0])
         let manufacturersList = []
         if(responseData.data.entry.length > 0) {
             manufacturersList = responseData.data.entry.map(res => {
