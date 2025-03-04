@@ -1,0 +1,292 @@
+{
+    "19": {
+        "doses": {
+            "1": {
+                "start": "0",
+                "end": "6",
+                "buffer": "0"
+            }
+        },
+        "text": "BCG",
+        "display": "Bacillus Calmette-Guerin vaccine"
+    },
+    "45": {
+        "doses": {
+            "1": {
+                "start": "0",
+                "end": "6",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "6",
+                "end": "10",
+                "buffer": "0"
+            },
+            "3": {
+                "start": "10",
+                "end": "14",
+                "buffer": "0"
+            },
+            "4": {
+                "start": "14",
+                "end": "26",
+                "buffer": "0"
+            }
+        },
+        "text": "Hep B, adolescent or pediatric",
+        "display": "hepatitis B vaccine, pediatric or pediatric/adolescent dosage"
+    },
+    "2": {
+        "text": "OPV",
+        "display": "trivalent poliovirus vaccine, live, oral",
+        "doses": {
+            "1": {
+                "start": "0",
+                "end": "6",
+                "buffer": "0"
+            }
+        }
+    },
+    "10": {
+        "text": "IPV",
+        "display": "poliovirus vaccine, inactivated",
+        "doses": {
+            "1": {
+                "start": "6",
+                "end": "10",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "10",
+                "end": "14",
+                "buffer": "0"
+            },
+            "3": {
+                "start": "14",
+                "end": "26",
+                "buffer": "0"
+            },
+            "4": {
+                "start": "69",
+                "end": "78",
+                "buffer": "0"
+            },
+            "5": {
+                "start": "208",
+                "end": "313",
+                "buffer": "0"
+            }
+        }
+    },
+    "20": {
+        "text": "DTaP",
+        "display": "diphtheria, tetanus toxoids and acellular pertussis vaccine",
+        "doses": {
+            "1": {
+                "start": "6",
+                "end": "10",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "10",
+                "end": "14",
+                "buffer": "0"
+            },
+            "3": {
+                "start": "14",
+                "end": "26",
+                "buffer": "0"
+            },
+            "4": {
+                "start": "69",
+                "end": "78",
+                "buffer": "0"
+            },
+            "5": {
+                "start": "208",
+                "end": "313",
+                "buffer": "0"
+            }
+        }
+    },
+    "17": {
+        "text": "Hib, unspecified formulation",
+        "display": "Haemophilus influenzae type b vaccine, conjugate unspecified formulation",
+        "doses": {
+            "1": {
+                "start": "6",
+                "end": "10",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "10",
+                "end": "14",
+                "buffer": "0"
+            },
+            "3": {
+                "start": "14",
+                "end": "26",
+                "buffer": "0"
+            },
+            "4": {
+                "start": "69",
+                "end": "78",
+                "buffer": "0"
+            }
+        }
+    },
+    "133": {
+        "text": "Pneumococcal conjugate PCV 13",
+        "display": "pneumococcal conjugate vaccine, 13 valent",
+        "doses": {
+            "1": {
+                "start": "6",
+                "end": "10",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "10",
+                "end": "14",
+                "buffer": "0"
+            },
+            "3": {
+                "start": "14",
+                "end": "26",
+                "buffer": "0"
+            },
+            "4": {
+                "start": "52",
+                "end": "78",
+                "buffer": "0"
+            }
+        }
+    },
+    "122": {
+        "text": "rotavirus, pentavalent",
+        "display": "rotavirus, live, pentavalent vaccine",
+        "doses": {
+            "1": {
+                "start": "6",
+                "end": "10",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "10",
+                "end": "14",
+                "buffer": "0"
+            },
+            "3": {
+                "start": "14",
+                "end": "26",
+                "buffer": "0"
+            }
+        }
+    },
+    "88": {
+        "text": "influenza, whole",
+        "display": "influenza virus vaccine, whole virus",
+        "doses": {
+            "1": {
+                "start": "26",
+                "end": "30",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "30",
+                "end": "39",
+                "buffer": "0"
+            }
+        }
+    },
+    "3": {
+        "text": "MMR",
+        "display": "measles, mumps and rubella virus vaccine",
+        "doses": {
+            "1": {
+                "start": "39",
+                "end": "52",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "65",
+                "end": "69",
+                "buffer": "0"
+            },
+            "3": {
+                "start": "208",
+                "end": "312",
+                "buffer": "0"
+            }
+        }
+    },
+    "190": {
+        "text": "Typhoid conjugate vaccine (TCV)",
+        "display": "Typhoid conjugate vaccine (non-US)",
+        "doses": {
+            "1": {
+                "start": "26",
+                "end": "52",
+                "buffer": "0"
+            }
+        }
+    },
+    "84": {
+        "text": "Hep A, ped/adol, 3 dose",
+        "display": "hepatitis A vaccine, pediatric/adolescent dosage, 3 dose schedule",
+        "doses": {
+            "1": {
+                "start": "52",
+                "end": "56",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "78",
+                "end": "104",
+                "buffer": "0"
+            }
+        }
+    },
+    "21": {
+        "text": "varicella",
+        "display": "varicella virus vaccine",
+        "doses": {
+            "1": {
+                "start": "65",
+                "end": "69",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "78",
+                "end": "104",
+                "buffer": "0"
+            }
+        }
+    },
+    "115": {
+        "text": "Tdap",
+        "display": "tetanus toxoid, reduced diphtheria toxoid, and acellular pertussis vaccine, adsorbed",
+        "doses": {
+            "1": {
+                "start": "469",
+                "end": "730",
+                "buffer": "0"
+            }
+        }
+    },
+    "62": {
+        "text": "HPV, quadrivalent",
+        "display": "human papilloma virus vaccine, quadrivalent",
+        "doses": {
+            "1": {
+                "start": "469",
+                "end": "730",
+                "buffer": "0"
+            },
+            "2": {
+                "start": "782",
+                "end": "938",
+                "buffer": "0"
+            }
+        }
+    }
+}

@@ -480,6 +480,7 @@ class Person {
         this.patchIdentifier(fetchedResourceData);
         this.patchActive();
         this.patchGender();
+        this.patchBirthDate();
         if(this.personObj.mobileNumber || this.personObj.email)
             this.patchTelecom(fetchedResourceData);
         if(!fetchedResourceData.address) {
