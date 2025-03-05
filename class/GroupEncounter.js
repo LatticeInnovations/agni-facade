@@ -11,6 +11,7 @@ class GroupEncounter {
   }
 
   setIdentifier() {
+    console.log("check identifier", this.fhirResource.identifier, this.groupEncounterObj)
     this.fhirResource.identifier.push({
       system: config.snUrl,
       value: this.groupEncounterObj.uuid
@@ -65,15 +66,15 @@ getEncounterTime() {
   }
 
   setPartOf() {
-    if(this.groupEncounterObj.appointmentId)
+    if(this.groupEncounterObj.appointmentEncounterId)
         this.fhirResource.partOf = {
-          reference: "Encounter/" + this.groupEncounterObj.appointmentId
+          reference: "Encounter/" + this.groupEncounterObj.appointmentEncounterId
         };
   }
 
   getPartOf() {
     if(this.isMain && this.fhirResource?.partOf)
-      this.groupEncounterObj.appointmentId = this.fhirResource?.partOf?.reference.split("/")[1]
+      this.groupEncounterObj.appointmentEncounterId = this.fhirResource?.partOf?.reference.split("/")[1]
   }
 
   getPatientReference() {
