@@ -79,6 +79,7 @@ const getBundleResponse = async (bundleResponse, reqData, reqMethod, resType, re
         let responseData = bundleResponse.map((data, i) => Object.assign({}, data, reqData[i]));
         switch(resType) {
             case "Patient":
+            case "Immunization":
                 response = setPatientResponse(resType, reqMethod, responseData);
                 break;
             case "Appointment" : 

@@ -1,5 +1,6 @@
 let Encounter = require("../class/GroupEncounter");
 let Immunization = require("../class/Immunization")
+let DocumentReference = require("../class/DocumentReference")
 let bundleOp = require("./bundleOperation");
 let config = require("../config/nodeConfig");
 let bundleFun = require("./bundleOperation");
@@ -20,7 +21,6 @@ const manageImmunizationDetail = async (resType, reqInput, FHIRData,reqMethod,re
         // resourceResult = await getSymptomDiagnosisData(resType, reqInput, FHIRData, reqMethod, reqQuery, token)
         }
         console.log("==============> ", resourceResult);
-        resourceResult = []
         return { resourceResult, errData };
   } catch (e) {
     return Promise.reject(e);
@@ -33,31 +33,39 @@ const saveImmunizationData = async function (reqInput, token) {
     const mainEncounters = await getMainEncounter(reqInput, token);
     // Get immunization recommendation resources of the patients
     const immunizationRecommendations = await getImmunizationRecommendation(reqInput, token);
-    console.log(immunizationRecommendations)
+    // console.log(immunizationRecommendations)
     for (let immunizationData of reqInput) {
         let mainEncounter = mainEncounters.filter(
             (e) =>e.resourceType == "Encounter" && e.appointment[0]?.reference?.split("/")[1] == immunizationData.appointmentId);
         console.log("Immunization POST");
         mainEncounter = mainEncounter[0];
-        const encounterData = { token, mainEncounter, immunizationData };
+
         //  create sub encounter
+        const encounterData = { token, mainEncounter, immunizationData };
         let subEncounter = createSubEncounter(encounterData);
         let subEncounterBundle = await bundleFun.setBundlePost(subEncounter, null, subEncounter.identifier[0].value, "POST", "identifier");
-        console.log("sub encounter: ", subEncounterBundle)
-        // set immunization parameters
+
+        // set immunization parameters and create Immunization Record
         immunizationData.orgId = token.orgId;
         immunizationData.practitionerId = token.userId;
         immunizationData.subEncounterId = subEncounter.identifier[0].value;
-
-        // create Immunization Record
-        const immunizationBundle = await createImmunizationResource(immunizationData);
-        resourceResult.push(subEncounterBundle, immunizationBundle);
+        const immunizationBundle = await createImmunizationResource(immunizationData);        
 
         // Link immunization To ImmunizationRecommendation
-
-        // Link document Reference
+        const recommendationBundle = await addImmunizationReference(immunizationRecommendations, immunizationData)   
+        console.log("recommendation resource check: ", recommendationBundle)
+        //  push data
+        resourceResult.push(subEncounterBundle, immunizationBundle, recommendationBundle);
+        // if documents exist create reference
+        if(immunizationData.immunizationFiles) {
+            immunizationData.immunizationFiles.forEach(async file => {
+                file.encounterUuid = subEncounter.identifier[0].value
+                let docReferenceBundle = await createDocumentReference(file)
+                resourceResult.push(docReferenceBundle)
+            });
+        }
     }
-    return resourceResult = [];
+    return resourceResult;
   } catch (e) {
     return Promise.reject(e);
   }
@@ -151,6 +159,45 @@ async function createImmunizationResource(inputData) {
         console.log("immunization:", immunizationBundle)
         return immunizationBundle;
 
+    }
+    catch(e) {
+        console.error(e)
+        return Promise.reject(e)
+    }
+}
+
+async function addImmunizationReference(immunizationRecommendations, immunizationData) {
+    let recommendationResource = immunizationRecommendations.filter(e => 
+        e.recommendation[0].vaccineCode[0].coding[0].code == immunizationData.vaccineCode &&
+        e.patient.reference.split("/")[1] == immunizationData.patientId
+    )
+    recommendationResource = recommendationResource[0]
+    for(let i=0; i<recommendationResource.recommendation.length; i++) {
+        if(!recommendationResource.recommendation[i].supportingImmunization) {
+            console.log("entered loop if condition")
+            recommendationResource.recommendation[i].supportingImmunization = [
+                {
+                    "reference": "urn:uuid:" + immunizationData.immunizationUuid
+                }
+            ]
+            break;
+        }
+    }
+
+    let recommendationBundle = await bundleFun.setBundlePost(recommendationResource, null, recommendationResource.id, "PUT", "identifier"); 
+
+    console.log("recommendation bundle: ", recommendationBundle)
+    return recommendationBundle
+}
+
+async function createDocumentReference(file) {
+    try {
+        file.uuid = uuidv4();
+        file.filename = file.fileName;
+        const documentReferenceResource = new DocumentReference(file, {}).getJSONtoFhir();
+        let documentReferenceBundle = await bundleOp.setBundlePost(documentReferenceResource,null, file.uuid, "POST", "identifier");
+        console.log("documentReferenceBundle: ", documentReferenceBundle)
+        return documentReferenceBundle;
     }
     catch(e) {
         console.error(e)
