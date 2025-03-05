@@ -1,0 +1,107 @@
+[
+    {
+        "vaccineCode": "19",
+        "shortName": "BCG",
+        "shortNameFulldata": "BCG",
+        "text": "Bacillus Calmette-Guerin vaccine",
+        "noOfDoses": "1"
+    },
+    {
+        "vaccineCode": "45",
+        "shortName": "Hep B",
+        "shortNameFulldata": "Hep B, adolescent or pediatric",
+        "text": "hepatitis B vaccine, pediatric or pediatric/adolescent dosage",
+        "noOfDoses": "4"
+    },
+    {
+        "vaccineCode": "2",
+        "shortName": "OPV",
+        "shortNameFulldata": "OPV",
+        "text": "trivalent poliovirus vaccine, live, oral",
+        "noOfDoses": "1"
+    },
+    {
+        "vaccineCode": "10",
+        "shortName": "IPV",
+        "shortNameFulldata": "IPV",
+        "text": "poliovirus vaccine, inactivated",
+        "noOfDoses": "5"
+    },
+    {
+        "vaccineCode": "20",
+        "shortName": "DTaP",
+        "shortNameFulldata": "DTaP",
+        "text": "diphtheria, tetanus toxoids and acellular pertussis vaccine",
+        "noOfDoses": "5"
+    },
+    {
+        "vaccineCode": "17",
+        "shortName": "Hib",
+        "shortNameFulldata": "Hib, unspecified formulation",
+        "text": "Haemophilus influenzae type b vaccine, conjugate unspecified formulation",
+        "noOfDoses": "4"
+    },
+    {
+        "vaccineCode": "133",
+        "shortName": "PCV",
+        "shortNameFulldata": "Pneumococcal conjugate PCV 13",
+        "text": "pneumococcal conjugate vaccine, 13 valent",
+        "noOfDoses": "4"
+    },
+    {
+        "vaccineCode": "122",
+        "shortName": "rotavirus",
+        "shortNameFulldata": "rotavirus, pentavalent",
+        "text": "rotavirus, live, pentavalent vaccine",
+        "noOfDoses": "3"
+    },
+    {
+        "vaccineCode": "88",
+        "shortName": "influenza",
+        "shortNameFulldata": "influenza, whole",
+        "text": "influenza virus vaccine, whole virus",
+        "noOfDoses": "2"
+    },
+    {
+        "vaccineCode": "3",
+        "shortName": "MMR",
+        "shortNameFulldata": "MMR",
+        "text": "measles, mumps and rubella virus vaccine",
+        "noOfDoses": "3"
+    },
+    {
+        "vaccineCode": "190",
+        "shortName": "TCV",
+        "shortNameFulldata": "Typhoid conjugate vaccine (TCV)",
+        "text": "Typhoid conjugate vaccine (non-US)",
+        "noOfDoses": "1"
+    },
+    {
+        "vaccineCode": "84",
+        "shortName": "Hep A",
+        "shortNameFulldata": "Hep A, ped/adol, 3 dose",
+        "text": "hepatitis A vaccine, pediatric/adolescent dosage, 3 dose schedule",
+        "noOfDoses": "2"
+    },
+    {
+        "vaccineCode": "21",
+        "shortName": "varicella",
+        "shortNameFulldata": "varicella",
+        "text": "varicella virus vaccine",
+        "noOfDoses": "2"
+    },
+    {
+        "vaccineCode": "115",
+        "shortName": "Tdap",
+        "shortNameFulldata": "Tdap",
+        "text": "tetanus toxoid, reduced diphtheria toxoid, and acellular pertussis vaccine, adsorbed",
+        "noOfDoses": "1"
+    },
+    {
+        "vaccineCode": "62",
+        "shortName": "HPV",
+        "shortNameFulldata": "HPV, quadrivalent",
+        "text": "human papilloma virus vaccine, quadrivalent",
+        "noOfDoses": "2"
+    }
+]

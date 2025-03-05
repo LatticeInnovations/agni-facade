@@ -22,7 +22,10 @@ class DocumentReference {
     }
 
     setNote(){
-        this.fhirResource.description = this.documentObj.note;
+        if(this.documentObj.note) {
+            this.fhirResource.description = this.documentObj.note;
+        }
+        
     }
 
     setIdentifier(){
@@ -32,11 +35,22 @@ class DocumentReference {
         });
     }
 
+    setContext() {
+        if(this.documentObj.encounterUuid) {
+            this.fhirResource.context = {
+                "encounter": {
+                    "reference": "urn:uuid:" + this.documentObj.encounterUuid
+                }
+            }
+        }
+    }
+
     getJSONtoFhir() {
         this.setBasicStructure();
         this.setIdentifier();
         this.setDocumentContent();
         this.setNote();
+        this.setContext();
         return this.fhirResource;
     }
 
