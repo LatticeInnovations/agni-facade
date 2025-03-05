@@ -23,65 +23,70 @@ class ImmunizationRecommendation {
         }
     }
 
+    createRecommendationData(code, birthDate, dose, doses, vaccineData) {
+        // console.info("code", code, " birthdate ", birthDate, " dose ", dose, " vaccine data", vaccineData)
+        return {
+            "vaccineCode": [
+                {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/sid/cvx",
+                            "code": code,
+                            "display": vaccineData.display
+                        }
+                    ],
+                    "text": vaccineData.text
+                }
+            ],
+            "dateCriterion": [
+                {
+                    "code": {
+                        "coding": [
+                            {
+                                "system": "http://loinc.org/",
+                                "code": "30981-5",
+                                "display": "Earliest date to give"
+                            }
+                        ]
+                    },
+                    "value": moment(birthDate).add(vaccineData.doses[dose].start, 'weeks').toISOString()
+                },
+                {
+                    "code": {
+                        "coding": [
+                            {
+                                "system": "http://loinc.org/",
+                                "code": "30980-7",
+                                "display": "Date vaccine due"
+                            }
+                        ]
+                    },
+                    "value": moment(birthDate).add(vaccineData.doses[dose].end, 'weeks').toISOString()
+                },
+                {
+                    "code": {
+                        "coding": [
+                            {
+                                "system": "http://loinc.org/",
+                                "code": "59778-1",
+                                "display": "Date when overdue for immunization"
+                            }
+                        ]
+                    },
+                    "value": moment(birthDate).add(vaccineData.doses[dose].buffer, 'weeks').toISOString()
+                }
+            ],
+            "doseNumberString": dose,
+            "seriesDosesString": doses.length,
+        }
+    }
+
     setRecommendation() {
         this.fhirResource.recommendation = [];
         let vaccineData = vaccines[this.data.code];
         let doses = Object.keys(vaccineData.doses);
         for (let dose of doses) {
-            this.fhirResource.recommendation.push({
-                "vaccineCode": [
-                    {
-                        "coding": [
-                            {
-                                "system": "http://hl7.org/fhir/sid/cvx",
-                                "code": this.data.code,
-                                "display": vaccineData.display
-                            }
-                        ],
-                        "text": vaccineData.text
-                    }
-                ],
-                "dateCriterion": [
-                    {
-                        "code": {
-                            "coding": [
-                                {
-                                    "system": "http://loinc.org/",
-                                    "code": "30981-5",
-                                    "display": "Earliest date to give"
-                                }
-                            ]
-                        },
-                        "value": moment(this.data.birthDate).add(vaccineData.doses[dose].start, 'weeks').toISOString()
-                    },
-                    {
-                        "code": {
-                            "coding": [
-                                {
-                                    "system": "http://loinc.org/",
-                                    "code": "30980-7",
-                                    "display": "Date vaccine due"
-                                }
-                            ]
-                        },
-                        "value": moment(this.data.birthDate).add(vaccineData.doses[dose].end, 'weeks').toISOString()
-                    },
-                    {
-                        "code": {
-                            "coding": [
-                                {
-                                    "system": "http://loinc.org/",
-                                    "code": "59778-1",
-                                    "display": "Date when overdue for immunization"
-                                }
-                            ]
-                        },
-                        "value": moment(this.data.birthDate).add(vaccineData.doses[dose].buffer, 'weeks').toISOString()
-                    }
-                ],
-                "doseNumberString": dose,
-                "seriesDosesString": doses.length,
-            });
+            this.fhirResource.recommendation.push(this.createRecommendationData(this.data.code, this.data.birthDate, dose, doses, vaccineData));
         }
     }
 
@@ -107,6 +112,22 @@ class ImmunizationRecommendation {
             });
         }
         return result;
+    }
+
+    patchImmunizationRecommendation() {
+        let recommendation = [];
+        let code = this.fhirResource?.recommendation?.[0]?.vaccineCode?.[0]?.coding?.[0]?.code;
+        let vaccineData = vaccines[code];
+        let doses = Object.keys(vaccineData.doses);
+        for (let dose of doses) {
+            recommendation.push(this.createRecommendationData(code, this.data.birthDate, dose, doses, vaccineData));
+        }
+
+        return [{
+            "op": "replace",
+            "path": "/recommendation",
+            "value": recommendation
+        }]
     }
 }
 

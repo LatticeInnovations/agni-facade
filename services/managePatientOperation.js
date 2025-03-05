@@ -54,6 +54,15 @@ let setPatientData = async function (resType, reqInput, FHIRData, reqMethod, tok
                 const patchUrl = resType + "/" + inputData.id;
                 let patchResource = await bundleFun.setBundlePatch(resourceData, patchUrl);
                 resourceResult.push(patchResource);
+                if(inputData?.birthDate){
+                    let immunizationRecommendationData = await bundleFun.searchData(config.baseUrl + "ImmunizationRecommendation", { "patient": inputData.id });
+                    immunizationRecommendationData = immunizationRecommendationData?.data?.entry?.map(e => e.resource) || [];
+                    for(let fhirData of immunizationRecommendationData){
+                        let patchImmunizationRecommendation = new ImmunizationRecommendation({ birthDate : inputData?.birthDate.value }, fhirData).patchImmunizationRecommendation();
+                        patchImmunizationRecommendation = await bundleFun.setBundlePatch(patchImmunizationRecommendation, "ImmunizationRecommendation/" + fhirData.id);
+                        resourceResult.push(patchImmunizationRecommendation);
+                    }
+                }
             }
         }
         else {
