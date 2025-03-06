@@ -18,9 +18,9 @@ const manageImmunizationDetail = async (resType, reqInput, FHIRData,reqMethod,re
         } else if (["PATCH", "patch"].includes(reqMethod)) {
             return resourceResult;
         } else {
-        // resourceResult = await getSymptomDiagnosisData(resType, reqInput, FHIRData, reqMethod, reqQuery, token)
+        resourceResult = await getImmunizationDetails(FHIRData, reqQuery, token)
         }
-        console.log("==============> ", resourceResult);
+        // console.log("==============> ", resourceResult);
         return { resourceResult, errData };
   } catch (e) {
     return Promise.reject(e);
@@ -59,7 +59,8 @@ const saveImmunizationData = async function (reqInput, token) {
         // if documents exist create reference
         if(immunizationData.immunizationFiles) {
             immunizationData.immunizationFiles.forEach(async file => {
-                file.encounterUuid = subEncounter.identifier[0].value
+                file.encounterUuid = subEncounter.identifier[0].value;
+                file.patientId = immunizationData.patientId;
                 let docReferenceBundle = await createDocumentReference(file)
                 resourceResult.push(docReferenceBundle)
             });
@@ -70,6 +71,45 @@ const saveImmunizationData = async function (reqInput, token) {
     return Promise.reject(e);
   }
 };
+
+const getImmunizationDetails = async function(FHIRData, reqQuery, token) {
+  try {
+    let resourceResult = []
+      console.log("FHIR data received: ", FHIRData)
+      if(FHIRData.length == 0) {
+        return resourceResult
+      }
+      // get encounters list
+      const encounterIds = FHIRData.map(e => e.resource.encounter.reference.split("/")[1]).join(",")
+      // fetch Document references for the immunization
+      let docReferenceResources = await bundleOp.searchData(config.baseUrl + "DocumentReference",{
+        "encounter": encounterIds, "encounter.type": "384810002",  "_count": 5000 }, token );
+        if(docReferenceResources.data.entry.length > 0){
+          docReferenceResources = docReferenceResources.data.entry.map(e => e.resource)
+        }
+        else {
+          docReferenceResources = [];
+        }
+        console.log("docReferenceResources: ", docReferenceResources)
+      // create response data
+      FHIRData.forEach(vaccine => {
+        let immunizationObj = new Immunization({}, vaccine.resource).getImmunizationObj();
+        //  get doc if present
+        let immunizationFiles = []
+        immunizationFiles = docReferenceResources.filter(e => e.context.encounter[0].reference == vaccine.resource.encounter.reference).map(e => {
+          return {filename: e.content[0].attachment.title}})
+        immunizationObj.immunizationFiles = immunizationFiles
+        // console.log("immunizationObj: ", immunizationObj)
+        resourceResult.push(immunizationObj)
+      })
+      return resourceResult;
+
+  }
+  catch(e) {
+    console.error(e);
+    return Promise.reject(e);
+  }
+}
 
 async function getImmunizationRecommendation(reqInput, token) {
     try {
@@ -193,7 +233,6 @@ async function addImmunizationReference(immunizationRecommendations, immunizatio
 async function createDocumentReference(file) {
     try {
         file.uuid = uuidv4();
-        file.filename = file.fileName;
         const documentReferenceResource = new DocumentReference(file, {}).getJSONtoFhir();
         let documentReferenceBundle = await bundleOp.setBundlePost(documentReferenceResource,null, file.uuid, "POST", "identifier");
         console.log("documentReferenceBundle: ", documentReferenceBundle)

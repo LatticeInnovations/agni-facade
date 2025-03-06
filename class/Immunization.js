@@ -17,12 +17,10 @@ class Immunization {
   }
 
   getimmunizationFhirId() {
-    this.immunizationObj.immunizationFhirId =
-      this.fhirResource?.immunizationReference?.reference.split("/")[1];
+    this.immunizationObj.immunizationId =this.fhirResource.id
   }
 
   getId() {
-    this.immunizationObj.immunizationFhirId = this.fhirResource.id;
     if (this.fhirResource.identifier) {
       this.immunizationObj.immunizationUuid =
         this.fhirResource.identifier[0].value;
@@ -31,7 +29,6 @@ class Immunization {
 
   setVaccineCode() {
     const vaccineData = vaccineList.filter(e => e.vaccineCode ==  this.immunizationObj.vaccineCode)
-    console.log("vaccine data: ", vaccineData[0])
     this.fhirResource.vaccineCode.coding[0].code = this.immunizationObj.vaccineCode;
     this.fhirResource.vaccineCode.coding[0].display = vaccineData[0].shortName;
     this.fhirResource.vaccineCode.text = vaccineData[0].text;
@@ -50,7 +47,6 @@ class Immunization {
   }
 
   setManufacturer() {
-    console.log("manufacturer id: ", this.immunizationObj.manufacturerId)
     if(!checkEmptyData(this.immunizationObj.manufacturerId))
         this.fhirResource.manufacturer.reference = "Organization/" + this.immunizationObj.manufacturerId
   }
@@ -168,7 +164,7 @@ class Immunization {
     this.getNotes();
     this.getLotNumber();
     this.getManufacturer();
-    this.getSubEncounter();
+    // this.getSubEncounter();
     this.getExpiryDate();
     this.getOccuranceTime();
     this.getPatientReference();
