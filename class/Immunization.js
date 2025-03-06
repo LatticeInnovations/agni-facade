@@ -1,5 +1,5 @@
 let { checkEmptyData } = require("../services/CheckEmpty");
-let vaccineList = require("../utils/vaccineList.json")
+let vaccineList = require("../utils/vaccines.json")
 class Immunization {
   immunizationObj;
   fhirResource;
@@ -28,10 +28,10 @@ class Immunization {
   }
 
   setVaccineCode() {
-    const vaccineData = vaccineList.filter(e => e.vaccineCode ==  this.immunizationObj.vaccineCode)
+    const vaccineData = vaccineList[this.immunizationObj.vaccineCode] ||  null
     this.fhirResource.vaccineCode.coding[0].code = this.immunizationObj.vaccineCode;
-    this.fhirResource.vaccineCode.coding[0].display = vaccineData[0].shortName;
-    this.fhirResource.vaccineCode.text = vaccineData[0].text;
+    this.fhirResource.vaccineCode.coding[0].display = vaccineData.text;
+    this.fhirResource.vaccineCode.text = vaccineData.display;
   }
 
   getVaccineCode() {
