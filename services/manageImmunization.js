@@ -5,9 +5,8 @@ let bundleOp = require("./bundleOperation");
 let config = require("../config/nodeConfig");
 let bundleFun = require("./bundleOperation");
 const { v4: uuidv4 } = require("uuid");
+const {validateImmunization} = require("../utils/Validator/immunizationValidation")
 
-global.diagnosisMap = new Map();
-global.symptomsMap = new Map();
 
 const manageImmunizationDetail = async (resType, reqInput, FHIRData,reqMethod,reqQuery,token) => {
   try {
@@ -30,79 +29,85 @@ const manageImmunizationDetail = async (resType, reqInput, FHIRData,reqMethod,re
 const saveImmunizationData = async function (reqInput, token) {
   let resourceResult = [];
   try {
-    const mainEncounters = await getMainEncounter(reqInput, token);
-    // Get immunization recommendation resources of the patients
-    const immunizationRecommendations = await getImmunizationRecommendation(reqInput, token);
-    // console.log(immunizationRecommendations)
-    for (let immunizationData of reqInput) {
-        let mainEncounter = mainEncounters.filter(
-            (e) =>e.resourceType == "Encounter" && e.appointment[0]?.reference?.split("/")[1] == immunizationData.appointmentId);
-        console.log("Immunization POST");
-        mainEncounter = mainEncounter[0];
-
-        //  create sub encounter
-        const encounterData = { token, mainEncounter, immunizationData };
-        let subEncounter = createSubEncounter(encounterData);
-        let subEncounterBundle = await bundleFun.setBundlePost(subEncounter, null, subEncounter.identifier[0].value, "POST", "identifier");
-
-        // set immunization parameters and create Immunization Record
-        immunizationData.orgId = token.orgId;
-        immunizationData.practitionerId = token.userId;
-        immunizationData.subEncounterId = subEncounter.identifier[0].value;
-        const immunizationBundle = await createImmunizationResource(immunizationData);        
-
-        // Link immunization To ImmunizationRecommendation
-        const recommendationBundle = await addImmunizationReference(immunizationRecommendations, immunizationData)   
-        console.log("recommendation resource check: ", recommendationBundle)
-        //  push data
-        resourceResult.push(subEncounterBundle, immunizationBundle, recommendationBundle);
-        // if documents exist create reference
-        if(immunizationData.immunizationFiles) {
-            immunizationData.immunizationFiles.forEach(async file => {
-                file.encounterUuid = subEncounter.identifier[0].value;
-                file.patientId = immunizationData.patientId;
-                let docReferenceBundle = await createDocumentReference(file)
-                resourceResult.push(docReferenceBundle)
-            });
-        }
-    }
-    return resourceResult;
-  } catch (e) {
-    return Promise.reject(e);
-  }
-};
-
-const getImmunizationDetails = async function(FHIRData, reqQuery, token) {
-  try {
-    let resourceResult = []
-      console.log("FHIR data received: ", FHIRData)
-      if(FHIRData.length == 0) {
-        return resourceResult
+      let validationResponse = validateImmunization(reqInput);
+      if (validationResponse.error) {
+          console.error(validationResponse.error.details)
+          let errData = { code: "ERR", statusCode: 422, response: { data: validationResponse.error.details[0] }, message: "Invalid input" }
+          return Promise.reject(errData);
       }
-      // get encounters list
-      const encounterIds = FHIRData.map(e => e.resource.encounter.reference.split("/")[1]).join(",")
-      // fetch Document references for the immunization
-      let docReferenceResources = await bundleOp.searchData(config.baseUrl + "DocumentReference",{
-        "encounter": encounterIds, "encounter.type": "384810002",  "_count": 5000 }, token );
-        if(docReferenceResources.data.entry.length > 0){
-          docReferenceResources = docReferenceResources.data.entry.map(e => e.resource)
-        }
-        else {
-          docReferenceResources = [];
-        }
-        console.log("docReferenceResources: ", docReferenceResources)
-      // create response data
-      FHIRData.forEach(vaccine => {
-        let immunizationObj = new Immunization({}, vaccine.resource).getImmunizationObj();
-        //  get doc if present
-        let immunizationFiles = []
-        immunizationFiles = docReferenceResources.filter(e => e.context.encounter[0].reference == vaccine.resource.encounter.reference).map(e => {
-          return {filename: e.content[0].attachment.title}})
-        immunizationObj.immunizationFiles = immunizationFiles
-        // console.log("immunizationObj: ", immunizationObj)
-        resourceResult.push(immunizationObj)
-      })
+      const mainEncounters = await getMainEncounter(reqInput, token);
+      // Get immunization recommendation resources of the patients
+      const immunizationRecommendations = await getImmunizationRecommendation(reqInput, token);
+      // console.log(immunizationRecommendations)
+      for (let immunizationData of reqInput) {
+          let mainEncounter = mainEncounters.filter(
+              (e) =>e.resourceType == "Encounter" && e.appointment[0]?.reference?.split("/")[1] == immunizationData.appointmentId);
+          console.log("Immunization POST");
+          mainEncounter = mainEncounter[0];
+
+          //  create sub encounter
+          const encounterData = { token, mainEncounter, immunizationData };
+          let subEncounter = createSubEncounter(encounterData);
+          let subEncounterBundle = await bundleFun.setBundlePost(subEncounter, null, subEncounter.identifier[0].value, "POST", "identifier");
+
+          // set immunization parameters and create Immunization Record
+          immunizationData.orgId = token.orgId;
+          immunizationData.practitionerId = token.userId;
+          immunizationData.subEncounterId = subEncounter.identifier[0].value;
+          const immunizationBundle = await createImmunizationResource(immunizationData);        
+
+          // Link immunization To ImmunizationRecommendation
+          const recommendationBundle = await addImmunizationReference(immunizationRecommendations, immunizationData)   
+          console.log("recommendation resource check: ", recommendationBundle)
+          //  push data
+          resourceResult.push(subEncounterBundle, immunizationBundle, recommendationBundle);
+          // if documents exist create reference
+          if(immunizationData.immunizationFiles) {
+              immunizationData.immunizationFiles.forEach(async file => {
+                  file.encounterUuid = subEncounter.identifier[0].value;
+                  file.patientId = immunizationData.patientId;
+                  let docReferenceBundle = await createDocumentReference(file)
+                  resourceResult.push(docReferenceBundle)
+              });
+          }
+      }
       return resourceResult;
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  };
+
+  const getImmunizationDetails = async function(FHIRData, reqQuery, token) {
+    try {
+      let resourceResult = []
+        console.log("FHIR data received: ", FHIRData)
+        if(FHIRData.length == 0) {
+          return resourceResult
+        }
+        // get encounters list
+        const encounterIds = FHIRData.map(e => e.resource.encounter.reference.split("/")[1]).join(",")
+        // fetch Document references for the immunization
+        let docReferenceResources = await bundleOp.searchData(config.baseUrl + "DocumentReference",{
+          "encounter": encounterIds, "encounter.type": "384810002",  "_count": 5000 }, token );
+          if(docReferenceResources.data.entry.length > 0){
+            docReferenceResources = docReferenceResources.data.entry.map(e => e.resource)
+          }
+          else {
+            docReferenceResources = [];
+          }
+          console.log("docReferenceResources: ", docReferenceResources)
+        // create response data
+        FHIRData.forEach(vaccine => {
+          let immunizationObj = new Immunization({}, vaccine.resource).getImmunizationObj();
+          //  get doc if present
+          let immunizationFiles = []
+          immunizationFiles = docReferenceResources.filter(e => e.context.encounter[0].reference == vaccine.resource.encounter.reference).map(e => {
+            return {filename: e.content[0].attachment.title}})
+          immunizationObj.immunizationFiles = immunizationFiles
+          // console.log("immunizationObj: ", immunizationObj)
+          resourceResult.push(immunizationObj)
+        })
+        return resourceResult;
 
   }
   catch(e) {
