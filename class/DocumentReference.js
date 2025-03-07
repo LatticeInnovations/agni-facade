@@ -21,6 +21,12 @@ class DocumentReference {
         );
     }
 
+    setSubject() {
+        if(this.documentObj.patientId) {
+            this.fhirResource.subject.reference = "Patient/" + this.documentObj.patientId
+            }
+    }
+
     setNote(){
         if(this.documentObj.note) {
             this.fhirResource.description = this.documentObj.note;
@@ -51,6 +57,7 @@ class DocumentReference {
         this.setDocumentContent();
         this.setNote();
         this.setContext();
+        this.setSubject();
         return this.fhirResource;
     }
 
@@ -61,6 +68,7 @@ class DocumentReference {
         this.fhirResource.content = [];
         this.fhirResource.description = "";
         this.fhirResource.identifier = [];
+        this.fhirResource.subject = {}
     }
 
     getFHIRToJSON(){
