@@ -157,6 +157,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 url = config.baseUrl + "ImmunizationRecommendation"
                 queryParams._total = "accurate"
                 queryParams._count = 10000
+                nestedResource = 1
                 break;
             case "Immunization":
                 url = config.baseUrl + "Immunization"
@@ -209,6 +210,7 @@ let searchResourceData = async function (req, res) {
             res.status(200).json({ status: resStatus, message: "Data fetched", total: result.length, data: result  })
         }
         else {      
+            console.log("response data: ", responseData.data)
              if(responseData.data.link) {
                 let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
                 if(nextIndex != -1) {
