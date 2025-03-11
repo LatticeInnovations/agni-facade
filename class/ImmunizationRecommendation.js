@@ -25,6 +25,9 @@ class ImmunizationRecommendation {
 
     createRecommendationData(code, birthDate, dose, doses, vaccineData) {
         // console.info("code", code, " birthdate ", birthDate, " dose ", dose, " vaccine data", vaccineData)
+        let startDate = moment(birthDate).add(vaccineData.doses[dose].start, 'weeks');
+        let endDate = moment(birthDate).add(vaccineData.doses[dose].end, 'weeks');
+        let midDate = moment(startDate).add(endDate.diff(startDate) / 2, 'milliseconds').toISOString();
         return {
             "vaccineCode": [
                 {
@@ -61,7 +64,7 @@ class ImmunizationRecommendation {
                             }
                         ]
                     },
-                    "value": moment(birthDate).add(vaccineData.doses[dose].end, 'weeks').toISOString()
+                    "value": midDate
                 },
                 {
                     "code": {
@@ -69,11 +72,11 @@ class ImmunizationRecommendation {
                             {
                                 "system": "http://loinc.org/",
                                 "code": "59778-1",
-                                "display": "Date when overdue for immunization"
+                                "display": "Latest date to give immunization"
                             }
                         ]
                     },
-                    "value": moment(birthDate).add(vaccineData.doses[dose].buffer, 'weeks').toISOString()
+                    "value": moment(birthDate).add(vaccineData.doses[dose].end, 'weeks').toISOString()
                 }
             ],
             "doseNumberString": dose,
@@ -107,8 +110,9 @@ class ImmunizationRecommendation {
                 seriesDoses : recommendation?.seriesDosesString || null,
                 doseNumber : recommendation?.doseNumberString || null,
                 vaccineStartDate : recommendation?.dateCriterion?.filter(e => e.code.coding[0]?.code == "30981-5")[0].value,
-                vaccineEndDate : recommendation?.dateCriterion?.filter(e => e.code.coding[0]?.code == "30980-7")[0].value,
-                vaccineBufferDate : recommendation?.dateCriterion?.filter(e => e.code.coding[0]?.code == "59778-1")[0].value
+                vaccineEndDate : recommendation?.dateCriterion?.filter(e => e.code.coding[0]?.code == "59778-1")[0].value,
+                vaccineBufferDate : recommendation?.dateCriterion?.filter(e => e.code.coding[0]?.code == "30981-5")[0].value,
+                vaccineDueDate : recommendation?.dateCriterion?.filter(e => e.code.coding[0]?.code == "30980-7")[0].value,
             });
         }
         return result;
