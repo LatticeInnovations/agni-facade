@@ -86,6 +86,18 @@ const saveImmunizationData = async function (reqInput, token) {
         }
         // get encounters list
         const encounterIds = FHIRData.map(e => e.resource.encounter.reference.split("/")[1]).join(",")
+        let subencounters = await bundleOp.searchData(config.baseUrl + "Encounter", {
+          "_id": encounterIds, "_count": 5000 }, token );
+        subencounters = subencounters?.data?.entry?.map((e) => e?.resource) || [];
+        let subEncMainEncMap = new Map(subencounters.map((e) => [e.id, e?.partOf?.reference.split("/")[1]]));
+        let mainEncounterIds = subencounters.map(e => e?.partOf?.reference.split("/")[1]).join(",");
+        console.info("These are main encounters", mainEncounterIds);
+        let mainEncounters = await bundleOp.searchData(config.baseUrl + "Encounter", {
+          "_id": mainEncounterIds, "_count": 5000 }, token );
+        mainEncounters = mainEncounters?.data?.entry?.map((e) => e?.resource) || [];
+        let mainEncounterAppointmentMap = new Map(mainEncounters.map((e) => [e.id, e?.appointment?.[0]?.reference?.split("/")[1]]));
+        console.log("this is appointment map", mainEncounterAppointmentMap);
+        console.log("this is encounter map", subEncMainEncMap);
         // fetch Document references for the immunization
         let docReferenceResources = await bundleOp.searchData(config.baseUrl + "DocumentReference",{
           "encounter": encounterIds, "encounter.type": "384810002",  "_count": 5000 }, token );
@@ -99,6 +111,8 @@ const saveImmunizationData = async function (reqInput, token) {
         // create response data
         FHIRData.forEach(vaccine => {
           let immunizationObj = new Immunization({}, vaccine.resource).getImmunizationObj();
+          immunizationObj.appointmentId = mainEncounterAppointmentMap.get(subEncMainEncMap.get(immunizationObj.subEncounterId));
+          delete immunizationObj.subEncounterId;
           //  get doc if present
           let immunizationFiles = []
           immunizationFiles = docReferenceResources.filter(e => e.context.encounter[0].reference == vaccine.resource.encounter.reference).map(e => {

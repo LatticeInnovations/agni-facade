@@ -164,7 +164,7 @@ class Immunization {
     this.getNotes();
     this.getLotNumber();
     this.getManufacturer();
-    // this.getSubEncounter();
+    this.getSubEncounter();
     this.getExpiryDate();
     this.getOccuranceTime();
     this.getPatientReference();
