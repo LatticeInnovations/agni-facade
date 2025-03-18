@@ -28,4 +28,5 @@ let config = function () {
             medReqUuidUrl: "https://lattice.in/sid/medRequest"
         };
 };
+
 module.exports = new config();
