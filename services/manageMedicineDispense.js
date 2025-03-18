@@ -458,7 +458,7 @@ const combineMedReqAndInput = async function ( prescriptionEncounterId, reqInput
     console.error(e);
     return Promise.reject(e);
   }
-};
+}
 
 const getEncounterResource = async function (reqInput, FHIRData, isMain) {
   try {
