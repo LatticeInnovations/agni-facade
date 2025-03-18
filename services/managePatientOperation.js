@@ -1,4 +1,4 @@
-let Person = require("../class/person");
+
 let bundleFun = require("./bundleOperation");
 let config = require("../config/nodeConfig");
 const { v4: uuidv4 } = require('uuid');
@@ -79,3 +79,5 @@ let setPatientData = async function (resType, reqInput, FHIRData, reqMethod, tok
 }
 
 module.exports = { setPatientData }
+
+

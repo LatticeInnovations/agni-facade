@@ -20,7 +20,7 @@ let resourceController = require("../../controllers/manageResource");
  * @returns {Error} 504 - Database connection error
  */
 
-router.get("/:resourceType", resourceController.searchResourceData); 
+router.get("/old/:resourceType", resourceController.searchResourceData); 
 
 
 

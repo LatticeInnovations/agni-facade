@@ -5,7 +5,7 @@ let config = require("../config/nodeConfig");
 let url = require('url');
 let resourceValid = require("../utils/Validator/validateRsource").resourceValidation;
 let getResourceUrl = async function (resourceType, queryParams, token) {
-    let url = "", nestedResource = null, specialOffset = null;
+    let url = "", allowPagination = null, specialOffset = null;
     switch (resourceType) {
         case "Patient": 
              queryParams._total = "accurate"
@@ -27,7 +27,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 "_total": "accurate",
                 "_count" : queryParams._count
             };
-            nestedResource = 1;
+            allowPagination = 1;
         }
 
             break;
@@ -38,7 +38,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             queryParams._count= 3000;
             queryParams._revinclude = "MedicationRequest:encounter:Encounter";
             queryParams["type"] = "prescription-encounter-form";
-            nestedResource = 1;
+            allowPagination = 1;
             break;
         case "PrescriptionFile":
             url = config.baseUrl + "Encounter";
@@ -48,7 +48,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             queryParams._revinclude = "MedicationRequest:encounter:Encounter";
             queryParams["type"] = "prescription-encounter-document";
             queryParams["service-provider"] = token.orgId;
-            nestedResource = 1;
+            allowPagination = 1;
             break;
         case "Organization" : 
             url = config.baseUrl + resourceType;
@@ -58,7 +58,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 "_revinclude" : "Location:organization:Organization",
                 "_total": "accurate",
             };
-            nestedResource = 1;
+            allowPagination = 1;
             break;
         case "PractitionerRole":
             url = config.baseUrl + resourceType;
@@ -67,14 +67,14 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 "_include": "*",
                 "_total": "accurate"
             }
-            nestedResource = 1;
+            allowPagination = 1;
             break;
         case "Schedule":
             queryParams._total = "accurate"
             queryParams["actor.organization"] = queryParams.orgId;
             delete queryParams.orgId;
             url = config.baseUrl + resourceType;
-            nestedResource = 1;
+            allowPagination = 1;
             specialOffset = 1;
             break;
         case "Appointment": 
@@ -88,20 +88,20 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 delete queryParams.patientId;
              }
             url = config.baseUrl + resourceType;
-            nestedResource = 1;
+            allowPagination = 1;
             specialOffset = 1;
             break;
             case "CVD":
                 url = config.baseUrl + "Encounter";
                 queryParams.type="cvd-encounter"
                 queryParams["service-provider"] = token.orgId
-                nestedResource = 1;
+                allowPagination = 1;
                 break;
             case "Observation":
                 url = config.baseUrl + "Encounter";
                 queryParams.type="vital-encounter"
                 queryParams["service-provider"] = token.orgId
-                nestedResource = 1;
+                allowPagination = 1;
                 break;
                 case "MedicationDispense": 
                 queryParams._total = "accurate"
@@ -116,7 +116,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 }
                 queryParams["type"]="pharmacy-service";
                 url = config.baseUrl + "Encounter";
-                nestedResource = 1;
+                allowPagination = 1;
                //  specialOffset = 1;
                 break;
            case "DispenseLog": 
@@ -127,7 +127,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 }
                 queryParams["type"]="dispensing-encounter";
                 url = config.baseUrl + "Encounter";
-                nestedResource = 1;
+                allowPagination = 1;
                //  specialOffset = 1;
                 break;
             case "DiagnosticReport":
@@ -135,14 +135,14 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 queryParams._revinclude = "DiagnosticReport:encounter:Encounter";
                 queryParams["type"] = "lab-report-encounter"
                 queryParams["service-provider"] = token.orgId
-                nestedResource = 1;
+                allowPagination = 1;
                 break;
             case "DocumentManifest":
                 url = config.baseUrl + "Encounter";
                 queryParams._revinclude = "DocumentManifest:related-ref:Encounter";
                 queryParams["type"] = "medical-report-encounter";
                 queryParams["service-provider"] = token.orgId;
-                nestedResource = 1;
+                allowPagination = 1;
                 break;
             case "Condition":
                 url = config.baseUrl + "Encounter";
@@ -151,13 +151,13 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 queryParams._include= "Encounter:part-of:Encounter";
                 queryParams.type="symptom-diagnosis-encounter"
                 queryParams["service-provider"] = token.orgId
-                nestedResource = 1;
+                allowPagination = 1;
                 break;
             case "ImmunizationRecommendation":
                 url = config.baseUrl + "ImmunizationRecommendation"
                 queryParams._total = "accurate"
                 queryParams._count = 10000
-                nestedResource = 1
+                allowPagination = 1
                 break;
             case "Immunization":
                 url = config.baseUrl + "Immunization"
@@ -165,11 +165,11 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
                 queryParams.patient=queryParams.patientId
                 queryParams._count = 5000
                 delete queryParams.patientId;
-                nestedResource = 1;
+                allowPagination = 1;
                 break;
     }
 
-    return { link: url, reqQuery: queryParams, nestedResource: nestedResource, specialOffset: specialOffset }
+    return { link: url, reqQuery: queryParams, allowPagination: allowPagination, specialOffset: specialOffset }
 }
 
 let searchResourceData = async function (req, res) {
@@ -193,7 +193,7 @@ let searchResourceData = async function (req, res) {
             resStatus = reqUrl.query && reqUrl.query._offset ? 2 : 1;
             return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
         }
-        else if (resouceUrl.nestedResource == 1) {
+        else if (resouceUrl.allowPagination == 1) {
             let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, reqQuery, 0);
             result = result.concat(res_data.resourceResult);
             if(resouceUrl.specialOffset) {
