@@ -6,9 +6,9 @@ on:
     - closed   # <=== here we have defined pull request type merged
 
 jobs:
-  on-merge: if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'  # <=== here we have defined branch name
-
-runs-on: ubuntu-latest
+  on-merge: 
+  runs-on: ubuntu-latest
+  if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'  # ✅ Correct placement
 
 steps:
 - name: Check out the repository
@@ -27,6 +27,6 @@ steps:
   with:
       projectBaseDir: .
       args: >
-        -Dsonar.projectKey=${{ inputs.project_key }}
+        -Dsonar.projectKey=${{ github.repository }}
         -Dsonar.scm.provider=git
         -Dsonar.analysis.analysisNumber="pr-${{ github.event.pull_request.number }}"  # <=== Extra param to be used in analysis
