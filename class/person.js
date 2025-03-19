@@ -9,6 +9,7 @@ class Person {
         this.personObj = personObj;
         this.fhirResource = fhirResource;
         this.token = token;
+        console.info("=================------------->", this.fhirResource)
     }
 
     setBasicStructure() {

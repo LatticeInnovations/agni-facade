@@ -1,7 +1,6 @@
 
 let Person = require("../class/person");
 let axios = require("axios");
-let url = require('url');
 let config = require("../config/nodeConfig");
 const { v4: uuidv4 } = require('uuid');
 const bundleStructure = require("../services/bundleOperation")
@@ -106,30 +105,27 @@ let getPatientData = async function (req, res) {
     try {
         const link = config.baseUrl + "Patient"
         let specialOffset = null;
-        let reqUrl = url.parse(req.originalUrl, true)
         let queryParams = req.query
         queryParams._total = "accurate"
         queryParams['organization'] = "Organization/"+req.token.orgId;
-        
-        console.log("queryParams: ", queryParams)
         let resourceResult = []
         let resourceUrlData = { link: link, reqQuery: queryParams, allowNesting: 1, specialOffset: specialOffset }
-        let responseData = await bundleStructure.searchData(url, queryParams);
-        let result = [];
+        let responseData = await bundleStructure.searchData(link, queryParams);
         let resStatus = 1;
-        console.info(responseData.data)
+        console.info("==================>", responseData.data)
         if( !responseData.data.entry || responseData.data.total == 0) {
                 return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
         }
         else {            
             resStatus = bundleStructure.setResponse(resourceUrlData, responseData);
+            
             for (let i = 0; i < responseData.data.entry.length; i++) {
-                let patient = new Person({}, responseData.data.entry[i], req.token);
+                let patient = new Person({}, responseData.data.entry[i].resource, req.token);
                 patient.getFHIRToUserInput();
                 resourceResult.push(patient.getPersonResource())                
             }
         }
-        res.status(200).json({ status: resStatus, message: "Data fetched successfully.", total: result.length,"offset": +queryParams._offset, data: result  })
+        res.status(200).json({ status: resStatus, message: "Data fetched.", total: resourceResult.length,"offset": +queryParams?._offset, data: resourceResult  })
         
     }
     catch(e) {
@@ -142,7 +138,84 @@ let getPatientData = async function (req, res) {
     }
 }
 
+const patchPatientData = async function(req, res) {
+    try {
+      // let response = resourceValid(req.params);
+      // if (response.error) {
+      //     console.error(response.error.details)
+      //     let errData = { status: 0, response: { data: response.error.details }, message: "Invalid input" }
+      //     return res.status(422).json(errData);
+      // }
+      const resourceType = "Patient";
+      const reqInput = req.body;
+      let resourceResult = [];
+      for (let inputData of reqInput) {
+        let patient = new Person(inputData, []);
+        let link = config.baseUrl + resourceType;
+        let resourceSavedData = await bundleStructure.searchData(link, {_id: inputData.id });
+        if (resourceSavedData.data.total != 1) {
+          return res.status(500).json({
+            status: 0,
+            message: "Patient Id " + inputData.id + " does not exist.",
+            statusCode: 500,
+          });
+        }
+        patient.patchUserInputToFHIR(resourceSavedData.data.entry[0].resource);
+        let resourceData = [...patient.getFHIRResource()];
+        const patchUrl = resourceType + "/" + inputData.id;
+        let patchResource = await bundleStructure.setBundlePatch(
+          resourceData,
+          patchUrl
+        );
+        resourceResult.push(patchResource);
+        if (inputData?.birthDate) {
+            let immunizationPatchResources = await immunizationPatch(inputData)
+            resourceResult = resourceResult.concat(immunizationPatchResources)
+        }
+      }
+    console.info(resourceResult)
+    const resourceData = {resourceResult: resourceResult, errData: []}
+    let bundleData = await bundleStructure.getBundleJSON(resourceData)  
+    console.info(bundleData)
+    let response = await axios.post(config.baseUrl, bundleData.bundle); 
+    console.log("get bundle json response: ", response.status)  
+    if (response.status == 200 || response.status == 201) {
+        let resourceResponse = setPatientSaveResponse(bundleData.bundle.entry, response.data.entry);
+        let responseData = [...resourceResponse, ...bundleData.errData];
+        res.status(201).json({ status: 1, message: "Patient data saved.", data: responseData })
+    }
+    else {
+        return res.status(500).json({
+        status: 0, message: "Unable to process. Please try again.", error: response
+        })
+    }
+    }  catch(e) {
+            console.error("Error",e)
+            return res.status(200).json({
+                    status: 0,
+                    message: "Unable to process. Please try again"
+                }) 
+        }
+}
+
+const immunizationPatch = async function (inputData) {
+    let resourceResult = [];
+    let immunizationRecommendationData = await bundleStructure.searchData(
+        config.baseUrl + "ImmunizationRecommendation",
+        { patient: inputData.id }
+      );
+      immunizationRecommendationData = immunizationRecommendationData?.data?.entry?.map((e) => e.resource) || [];
+      for (let fhirData of immunizationRecommendationData) {
+        let patchImmunizationRecommendation = new ImmunizationRecommendation({ birthDate: inputData?.birthDate.value }, fhirData).patchImmunizationRecommendation();
+        patchImmunizationRecommendation = await bundleStructure.setBundlePatch( patchImmunizationRecommendation,"ImmunizationRecommendation/" + fhirData.id);
+        resourceResult.push(patchImmunizationRecommendation);
+      }
+
+      return resourceResult;
+}
+
 module.exports = {
     savePatientData,
-    getPatientData
+    getPatientData,
+    patchPatientData
 }

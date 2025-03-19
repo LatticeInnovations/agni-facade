@@ -1,6 +1,8 @@
-let manageResource = require("./manageResource");
-let bundleFun = require("../services/bundleOperation");
-let resourceFunc = require("../services/resourceOperation");
+
+const bundleStructure = require("../services/bundleOperation")
+let PractitionerRole = require("../class/practitionerRole");
+let Organization = require("../class/organization");
+let Practitioner = require("../class/practitioner");
 let model = require('../models/index');
 let { validationResult } = require('express-validator');
 let response = require("../utils/responseStatus");
@@ -21,18 +23,52 @@ let getUserProfile = async function (req, res, next) {
         let resourceType = "PractitionerRole";
         req.params.resourceType = resourceType;
         req.query = {practitionerId: req.decoded.userId};
-        let resouceUrl = await manageResource.getResourceUrl(resourceType, req.query);
-        let responseData = await bundleFun.searchData(resouceUrl.link, resouceUrl.reqQuery);
+        let link = config.baseUrl + resourceType;
+        let queryParams = {
+                "practitioner" : req.decoded.userId,
+                "_include": "*",
+                "_total": "accurate"
+        }
+        let resourceResult = []
+        // let resourceUrlData = { link: link, reqQuery: queryParams, allowNesting: 1, specialOffset: null }
+        let responseData = await bundleStructure.searchData(link, queryParams);
         let result = [];
         let data = {};
         if( !responseData.data.entry || responseData.data.total == 0) {
             return res.status(200).json({ status: 1, message: "Profile detail fetched", total: 0, data: data})
         }
         else {
-            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, null, 0);
-            result = result.concat(res_data);
-            result = result[0].resourceResult;
-            console.info(result)
+            let role = [];
+            let practitioner = responseData.data.entry.find(e => e.resource.resourceType == "Practitioner");
+            let practitionerData = new Practitioner({}, practitioner.resource);
+            practitionerData.getFHIRToUserInput();
+            practitionerData = practitionerData.getPersonResource();
+            let roleArray = responseData.data.entry.filter(e => e.resource.resourceType == "PractitionerRole");
+            for (let i = 0; i < roleArray.length; i++) {                        
+                let roleData = new PractitionerRole({}, roleArray[i].resource);
+                roleData.getFhirToJson();
+                let roleObj = roleData.getRoleJson();
+                let orgResource = responseData.data.entry.find(e => e.resource.resourceType == "Organization" && e.fullUrl.includes(roleArray[i].resource.organization.reference));
+                let orgData = new Organization({},orgResource.resource);
+                orgData.getFHIRToUserInput();
+                orgData = orgData.getOrgResource();
+                roleObj.orgId = orgData.orgId;
+                roleObj.orgName = orgData.orgName,
+                roleObj.orgType = orgData.orgType;
+                role.push(roleObj);
+            }
+            let data = {
+                "practitionerId": practitionerData.fhirId,
+                "firstName": practitionerData.firstName,
+                "middleName": practitionerData.middleName,
+                "lastName": practitionerData.lastName,
+                "mobileNumber" : practitionerData.mobileNumber,
+                "email": practitionerData.email,
+                "address": practitionerData.address,
+                "role": role
+            }
+            resourceResult.push(data);
+
             data.userId = result[0].practitionerId,
             data.userName = result[0].firstName + " " + (result[0].middleName? result[0].middleName + " " : "") + (result[0]?.lastName || '');
             data.mobileNumber = result[0].mobileNumber;

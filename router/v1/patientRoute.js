@@ -39,7 +39,7 @@ router.post("/",  patientController.savePatientData);
  * @returns {Error} 504 - Database connection error
  */
 
-router.patch("/", patientController.savePatientData);
+router.patch("/", patientController.patchPatientData);
 
 
  
@@ -49,7 +49,6 @@ router.patch("/", patientController.savePatientData);
  * @group resource
  * @security JWT
  * @param {object} params.query - resource Id to get data
- * @param {string} resourceType.path.required
  * @param {string} id.path
  * @returns {object} 200 - resource data fetched successfully.
  * @returns {object} 200 - resource data not found.
@@ -58,7 +57,7 @@ router.patch("/", patientController.savePatientData);
  * @returns {Error} 504 - Database connection error
  */
 
-router.get("", patientController.getPatientData); 
+router.get("/", patientController.getPatientData); 
 
 
 

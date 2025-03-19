@@ -3,10 +3,6 @@ let axios = require("axios");
 let config = require("../config/nodeConfig");
 const schemaList = config.schemaList;
 const domainsList = config.domainsList;
-let resourceFunc = require("../services/resourceOperation");
-let bundleOp = require("../services/bundleOperation");
-let response = require("../utils/responseStatus");
-let resourceValid = require("../utils/Validator/validateRsource").resourceValidation;
 let url = require('url');
 
 let setBundlePatch = async function (resource_data, patchUrl) {
@@ -99,83 +95,13 @@ let setBundleDelete = async function (resourceType, id) {
 }
 
 
-let searchResourceData = async function (req, res, resourceUrl) {
-    try {
-        let token = req.token;
-        let response = resourceValid(req.params);
-        if (response.error) {
-            console.error(response.error.details)
-            let errData = { status: 0, response: { data: response.error.details }, message: "Invalid input" }
-            return res.status(422).json(errData);
-        }
-        const resourceType = req.params.resourceType;
-        let responseData = await bundleOp.searchData(resourceUrl.link, resourceUrl.reqQuery);
-        let reqUrl = url.parse(req.originalUrl, true)
-        let reqQuery = reqUrl.query;
-        // console.info(responseData.data.link)
-        let result = [];
-        let resStatus = 1;
-        if( !responseData.data.entry || responseData.data.total == 0) {
-            resStatus = reqUrl.query && reqUrl.query._offset ? 2 : 1;
-            return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
-        }
-        else if (resourceUrl.allowNesting == 1) {
-            let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry, req.method, reqQuery, 0);
-            result = result.concat(res_data.resourceResult);
-            if(resourceUrl.specialOffset) {
-                let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
-                if(nextIndex != -1) {
-                     let urlPart = url.parse(responseData.data.link[nextIndex].url, true);                   
-                    let query = urlPart.query;
-                    resStatus = query._offset >= responseData.data.total ? 2 : 1;
-                }  
-                else {
-                    resStatus = 2;
-                }     
-            }
-            res.status(200).json({ status: resStatus, message: "Data fetched", total: result.length, data: result  })
-        }
-        else {      
-            console.log("response data: ", responseData.data)
-             if(responseData.data.link) {
-                let nextIndex = responseData.data.link.findIndex(e => e.relation == "next");
-                if(nextIndex != -1) {
-                     let urlPart = url.parse(responseData.data.link[nextIndex].url, true);                   
-                    let query = urlPart.query;
-                    resStatus = query._offset >= responseData.data.total ? 2 : 1;
-                }  
-                else {
-                    resStatus = 2;
-                }           
-            }
-            for (let i = 0; i < responseData.data.entry.length; i++) {
-                let res_data = await resourceFunc.getResource(resourceType, {}, responseData.data.entry[i].resource, req.method, reqQuery, 0, token);
-                result = result.concat(res_data.resourceResult);
-            }
-             res.status(200).json({ status: resStatus, message: "Data fetched successfully.", total: result.length,"offset": +reqQuery._offset, data: result  })
-        }
-
-    }
-    catch (e) {
-        console.error("Error",e)
-        if (e.code && e.code == "ERR") {
-            return res.status(200).json({
-                status: 0,
-                message: e.message,
-                error: e
-            })
-        }
-        return response.sendDBError(res, e.code);
-    }
-}
-
 
 let searchData = async function (link, reqQuery) {
-    console.log("reached here: ", link)
-    const url = (new URL(link));
-    if (schemaList.includes(url.protocol) && domainsList.includes(url.hostname)) {
+    console.log("reached here: ===========================>", link)
+    const urlVal = (new URL(link));
+    if (schemaList.includes(urlVal.protocol) && domainsList.includes(urlVal.hostname)) {
         try {
-            let responseData = await axios.get(url, { params: reqQuery });
+            let responseData = await axios.get(urlVal, { params: reqQuery });
             return responseData;
         } catch (e) {
             let eData = { status: 0, code: "ERR", e: e, statusCode: 500 }
@@ -224,19 +150,11 @@ let setResponse = function(resourceUrlData, responseData) {
         
 
         }
-        return {resStatus};
-} catch(e) {
-
-    console.error("Error",e)
-    if (e.code && e.code == "ERR") {
-        return res.status(200).json({
-            status: 0,
-            message: e.message,
-            error: e
-        })
+        return resStatus;
+    } catch(e) {
+        console.error("Error",e)
+        return Promise.reject(e)
     }
-    return response.sendDBError(res, e.code);
-}
 }
 
 let getBundleJSON = async function (resourceData) {
@@ -257,4 +175,4 @@ let mapBundleService = function(reqBundleData, responseBundleData) {
  }
  
 
-module.exports = {setBundlePatch, setBundlePost, setBundleDelete, searchData, setBundlePut, getBundleJSON, mapBundleService, searchResourceData, setResponse};
+module.exports = {setBundlePatch, setBundlePost, setBundleDelete, searchData, setBundlePut, getBundleJSON, mapBundleService, setResponse};
