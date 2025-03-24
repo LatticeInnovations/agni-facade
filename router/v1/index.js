@@ -7,5 +7,7 @@ router.use("/timestamp", auth, require('./timestamp'));
 router.use('/upload', auth, require('./fileUpload'));
 router.use("/vaccine", auth, require("./vaccine"))
 router.use("/Patient", auth, require("./patientRoute"))
+router.use("/Practitioner", auth, require("./practitionerRoute"))
+router.use("/Organization", auth, require("./organizationRoute"))
 router.use("/Schedule", auth, require("./scheduleRoute"))
 module.exports = router;

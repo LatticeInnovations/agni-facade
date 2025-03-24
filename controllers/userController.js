@@ -1,7 +1,7 @@
 
 const bundleStructure = require("../services/bundleOperation")
 let PractitionerRole = require("../class/practitionerRole");
-let Organization = require("../class/organization");
+let Organization = require("../class/Organization");
 let Practitioner = require("../class/practitioner");
 let model = require('../models/index');
 let { validationResult } = require('express-validator');
@@ -18,7 +18,7 @@ let sendEmail = require("../utils/sendgrid.util").sendEmail;
 let sendSms = require('../utils/twilio.util');
 // { redis: {port: '6379', host: 'localhost'}}
 // Get user profile
-let getUserProfile = async function (req, res, next) {
+let getUserProfile = async function (req, res) {
     try {
         let resourceType = "PractitionerRole";
         req.params.resourceType = resourceType;
@@ -32,7 +32,6 @@ let getUserProfile = async function (req, res, next) {
         let resourceResult = []
         // let resourceUrlData = { link: link, reqQuery: queryParams, allowNesting: 1, specialOffset: null }
         let responseData = await bundleStructure.searchData(link, queryParams);
-        let result = [];
         let data = {};
         if( !responseData.data.entry || responseData.data.total == 0) {
             return res.status(200).json({ status: 1, message: "Profile detail fetched", total: 0, data: data})
@@ -69,12 +68,12 @@ let getUserProfile = async function (req, res, next) {
             }
             resourceResult.push(data);
 
-            data.userId = result[0].practitionerId,
-            data.userName = result[0].firstName + " " + (result[0].middleName? result[0].middleName + " " : "") + (result[0]?.lastName || '');
-            data.mobileNumber = result[0].mobileNumber;
-            data.userEmail = result[0].email;
-            data.address = result[0].address;
-            data.role = result[0].role;
+            data.userId = resourceResult[0].practitionerId,
+            data.userName = resourceResult[0].firstName + " " + (resourceResult[0].middleName? resourceResult[0].middleName + " " : "") + (resourceResult[0]?.lastName || '');
+            data.mobileNumber = resourceResult[0].mobileNumber;
+            data.userEmail = resourceResult[0].email;
+            data.address = resourceResult[0].address;
+            data.role = resourceResult[0].role;
             console.info(data)
             res.status(200).json({ status: 1, message: "Profile detail fetched", total: 1, data: data  })
         }
@@ -97,7 +96,7 @@ let getUserProfile = async function (req, res, next) {
 
 }
 
-const getTimestamp = async (req, res, next) => {
+const getTimestamp = async (req, res) => {
     try{
         let token = req.token;
         let timestamp = await model.userTimeMap.findAll({ attributes: ['uuid', 'timestamp'], where : { orgId : token.orgId }});
@@ -112,7 +111,7 @@ const getTimestamp = async (req, res, next) => {
     }
 } 
 
-const updateTimestamp = async (req, res, next) => {
+const updateTimestamp = async (req, res) => {
     try{
         let token = req.token;
         let data = req.body;
@@ -138,7 +137,7 @@ const updateTimestamp = async (req, res, next) => {
     }
 }
 
-const deleteUserData = async (req, res, next) => {
+const deleteUserData = async (req, res) => {
     try{
         let {temptoken} = req.headers;
         let type = null;
@@ -214,7 +213,7 @@ const deleteUserData = async (req, res, next) => {
     }
 }
 
-const createUser = async (req, res, next) => {
+const createUser = async (req, res) => {
     try{
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

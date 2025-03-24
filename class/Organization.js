@@ -229,6 +229,12 @@ class Organization {
             if (index > -1) {
                 this.orgObj.contactNumber = this.fhirResource.telecom[index].value
             }
+            else {
+                this.orgObj.contactNumber = null 
+            }
+        }
+        else {
+            this.orgObj.contactNumber = null
         }
     }
 

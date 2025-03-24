@@ -19,7 +19,7 @@ let savePatientData = async function (req, res) {
         //     let errData = { status: 0, response: { data: response.error.details }, message: "Invalid input" }
         //     return res.status(422).json(errData);
         // }
-        let resourceResult = [], errData = [];
+        let resourceResult = [];
         for (let patientData of req.body) {
             let patient = new Person(patientData, {}, token);
             patient.getJsonToFhirTranslator();
@@ -35,24 +35,25 @@ let savePatientData = async function (req, res) {
             personResource.resourceType = "Person";
             personResource.id = uuidv4();            
             let patientBundle = await bundleStructure.setBundlePost(patientResource, patientResource.identifier, patientData.id, "POST", "identifier");
+            console.info("patient bundle: ", patientBundle)
             let personBundle = await bundleStructure.setBundlePost(personResource, patientResource.identifier, personResource.id, "POST", "identifier");
             let immunizationResources = await createImmunizationData(patientData, token)
             resourceResult = resourceResult.concat(immunizationResources)
-            resourceResult.push(patientBundle, personBundle);
-            let bundleData = await bundleStructure.getBundleJSON({resourceResult, errData})  
-            let response = await axios.post(config.baseUrl, bundleData.bundle); 
-            console.log("get bundle json response: ", response.status)  
-            if (response.status == 200 || response.status == 201) {
-                let resourceResponse = setPatientSaveResponse(bundleData.bundle.entry, response.data.entry);
-                let responseData = [...resourceResponse, ...bundleData.errData];
-                res.status(201).json({ status: 1, message: "Patient data saved.", data: responseData })
-            }
-            else {
-                return res.status(500).json({
+            resourceResult.push(patientBundle, personBundle);            
+        }
+        let bundleData = await bundleStructure.getBundleJSON({resourceResult})  
+        console.info("main bundle transaction resource: ", bundleData)
+        let response = await axios.post(config.baseUrl, bundleData.bundle); 
+        console.log("get bundle json response: ", response.status)  
+        if (response.status == 200 || response.status == 201) {
+            let resourceResponse = setPatientSaveResponse(bundleData.bundle.entry, response.data.entry);
+            let responseData = [...resourceResponse, ...bundleData.errData];
+            res.status(201).json({ status: 1, message: "Patient data saved.", data: responseData })
+        }
+        else {
+            return res.status(500).json({
                     status: 0, message: "Unable to process. Please try again.", error: response
-                })
-            }
-            
+            })
         }
     }
     catch (e) {

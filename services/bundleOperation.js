@@ -97,7 +97,6 @@ let setBundleDelete = async function (resourceType, id) {
 
 
 let searchData = async function (link, reqQuery) {
-    console.log("reached here: ===========================>", link)
     const urlVal = (new URL(link));
     if (schemaList.includes(urlVal.protocol) && domainsList.includes(urlVal.hostname)) {
         try {
