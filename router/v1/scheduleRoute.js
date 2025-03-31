@@ -5,7 +5,7 @@ let scheduleController = require("../../controllers/scheduleController")
 
 router.post("/",  scheduleController.setScheduleData);
 
-// router.get("/", scheduleController.getPractitionerData); 
+router.get("/", scheduleController.getScheduleData); 
 
 
 

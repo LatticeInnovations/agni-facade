@@ -53,6 +53,78 @@ let setScheduleData = async function (req, res) {
 
 }
 
+const getScheduleData = async function(req, res) {
+    try {
+            let queryParams = {
+                _total : "accurate",
+                _count: req.query._count,
+                _offset: req.query._offset,
+                _sort: req.query._sort
+            }
+            queryParams["actor.organization"] = req.query.orgId;
+            const link = config.baseUrl + "Schedule";
+            let resourceResult = [];
+            let resourceUrlData = { link: link, reqQuery: queryParams, allowNesting: 1, specialOffset: 1 }
+            let responseData = await bundleStructure.searchData(link, queryParams);
+            console.info("responseData: ", responseData)
+            let resStatus = 1;
+            if( !responseData.data.entry || responseData.data.total == 0) {
+                return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
+            }
+            const FHIRData = responseData.data.entry;
+            let locationIds = new Set(), scheduleIds = new Set(); let scheduleResult = [], resourceSlotResult = [];
+            for (let scheduleData of FHIRData) {
+                let schedule = new Schedule({}, scheduleData.resource);
+                schedule.getFHIRToUserInput();
+                let scheduleResponse = schedule.getInput();
+                scheduleIds.add(scheduleResponse.scheduleId);
+                let locationId = scheduleData.resource.actor[0].reference.split("/")[1];
+                locationIds.add(locationId);
+                scheduleResponse.locationId = locationId;
+                scheduleResponse.bookedSlots = 0;
+                scheduleResult.push(scheduleResponse);
+            }
+            // to get organization id from location of the schedule and join it with schedule data
+            let orgResource = await bundleStructure.searchData(config.baseUrl + "Location", { _elements: "managingOrganization", _id: [...locationIds].join(","), _count: locationIds.size });
+
+            let locationOrg = orgResource.data.entry.map(e => { return { locationId: e.resource.id, orgId: e.resource.managingOrganization.reference.split("/")[1] } });
+            resourceSlotResult = scheduleResult.map(obj1 => {
+                let obj2 = locationOrg.find(obj2 => obj2.locationId === obj1.locationId);
+                return { ...obj1, ...obj2 };
+            });
+            // booked slots count
+
+            let slotList = await bundleStructure.searchData(config.baseUrl + "Slot", { _elements: "schedule", "_has:Appointment:slot:slot.schedule": [...scheduleIds].join(","), _count: 5000, "_has:Appointment:slot:status": "proposed,arrived,noshow" });
+            let resData = []; let resourceResult1 = null;
+            if (slotList.data.total > 0) {
+                resData = slotList.data.entry.reduce((acc, { resource }) => {
+                    let scheduleId = resource.schedule.reference.split("/")[1];
+                    if (scheduleIds.has(scheduleId))
+                        acc[scheduleId] = (acc[scheduleId] || 0) + 1;
+                    return acc;
+                }, {});
+            }
+            else {
+                slotList.data.entry = []
+                for (let i = 0; i < scheduleIds.size; i++) {
+                    resData[scheduleIds[i]] = 0
+                }
+            }
+
+            resourceResult1 = Object.entries(resData).map(([scheduleId, bookedSlots]) => ({ scheduleId, bookedSlots }));
+            resourceResult = resourceSlotResult.map(obj1 => {
+                let obj2 = resourceResult1.find(obj2 => obj2.scheduleId === obj1.scheduleId);
+                return { ...obj1, ...obj2 };
+            });
+            resStatus = bundleStructure.setResponse(resourceUrlData, responseData);
+            res.status(200).json({ status: resStatus, message: "Data fetched", total: resourceResult.length, data: resourceResult  })
+        }  
+    catch(e) {
+        console.error("Error: ", e)
+    }
+}
+
+
 
 const setScheduleResponse  = (reqBundleData, responseBundleData, type) => {
     let filteredData = [];
@@ -63,4 +135,4 @@ const setScheduleResponse  = (reqBundleData, responseBundleData, type) => {
     return response;
 }
 
-module.exports = { setScheduleData }
+module.exports = { setScheduleData, getScheduleData }
