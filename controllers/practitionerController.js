@@ -49,7 +49,7 @@ let savePractitionerData = async function (req, res) {
         let response = await axios.post(config.baseUrl, bundleData.bundle); 
         console.info("get bundle json response: ", response.status)  
         if (response.status == 200 || response.status == 201) {
-            let responseData = setPractitionerSaveResponse(bundleData.bundle.entry, response.data.entry);        //    
+            let responseData = setPractitionerSaveResponse(bundleData.bundle.entry, response.data.entry, "post");        //    
             res.status(201).json({ status: 1, message: "Practitioner data saved.", data: responseData })
         }
         else {
@@ -67,17 +67,6 @@ let savePractitionerData = async function (req, res) {
         })
     }
 
-}
-
-
-const setPractitionerSaveResponse  = (reqBundleData, responseBundleData) => {
-    let filteredData = [];
-    let response = [];
-    const responseData = bundleStructure.mapBundleService(reqBundleData, responseBundleData)
-    filteredData = responseData.filter(e => e.resource.resourceType == "Practitioner");
-    response = responseService.setDefaultResponse("Practitioner", "post", filteredData);
-    console.info("responseData: ", responseData,  "------------", "filteredData: ", filteredData)
-    return response;
 }
 
 //  Get Practitioner data
@@ -104,6 +93,7 @@ let getPractitionerData = async function (req, res) {
                 resourceResult.push(practitioner.getPersonResource())                
             }
         }
+        
         res.status(200).json({ status: resStatus, message: "Data fetched.", total: resourceResult.length,"offset": +queryParams?._offset, data: resourceResult  })
         
     }
@@ -146,7 +136,7 @@ let patchPractitionerData = async function (req, res) {
         let response = await axios.post(config.baseUrl, bundleData.bundle); 
         console.info("get bundle json response: ", response.status)  
         if (response.status == 200 || response.status == 201) {
-            let responseData = setPractitionerSaveResponse(bundleData.bundle.entry, response.data.entry); 
+            let responseData = setPractitionerSaveResponse(bundleData.bundle.entry, response.data.entry, "patch"); 
             res.status(201).json({ status: 1, message: "Practitioner data saved.", data: responseData })
         }
         else {
@@ -164,6 +154,18 @@ let patchPractitionerData = async function (req, res) {
         })
     }
 
+}
+
+
+
+const setPractitionerSaveResponse  = (reqBundleData, responseBundleData, type) => {
+    let filteredData = [];
+    let response = [];
+    const responseData = bundleStructure.mapBundleService(reqBundleData, responseBundleData)
+    filteredData = responseData.filter(e => e.resource.resourceType == "Practitioner" || (type == "patch" && e.resource.resourceType == "Binary") );
+    response = responseService.setDefaultResponse("Practitioner", type, filteredData)
+    console.info("responses: ============================>", filteredData)
+    return response;
 }
 
 

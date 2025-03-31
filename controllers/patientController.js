@@ -46,7 +46,7 @@ let savePatientData = async function (req, res) {
         let response = await axios.post(config.baseUrl, bundleData.bundle); 
         console.log("get bundle json response: ", response.status)  
         if (response.status == 200 || response.status == 201) {
-            let resourceResponse = setPatientSaveResponse(bundleData.bundle.entry, response.data.entry);
+            let resourceResponse = setPatientSaveResponse(bundleData.bundle.entry, response.data.entry, "post");
             let responseData = [...resourceResponse, ...bundleData.errData];
             res.status(201).json({ status: 1, message: "Patient data saved.", data: responseData })
         }
@@ -93,11 +93,11 @@ const createImmunizationData = async function(patientData, token) {
     return immunizationResources
 }
 
-const setPatientSaveResponse  = (reqBundleData, responseBundleData) => {
+const setPatientSaveResponse  = (reqBundleData, responseBundleData, type) => {
     let filteredData = [];
     let response = [];
     const responseData = bundleStructure.mapBundleService(reqBundleData, responseBundleData)
-    filteredData = responseData.filter(e => e.resource.resourceType == "Patient");
+    filteredData = responseData.filter(e => e.resource.resourceType == "Patient" || (type == "patch" && e.resource.resourceType == "Binary"));
     response = responseService.setDefaultResponse("Patient", "post", filteredData);
     return response;
 }
@@ -181,7 +181,7 @@ const patchPatientData = async function(req, res) {
     let response = await axios.post(config.baseUrl, bundleData.bundle); 
     console.log("get bundle json response: ", response.status)  
     if (response.status == 200 || response.status == 201) {
-        let resourceResponse = setPatientSaveResponse(bundleData.bundle.entry, response.data.entry);
+        let resourceResponse = setPatientSaveResponse(bundleData.bundle.entry, response.data.entry, "patch");
         let responseData = [...resourceResponse, ...bundleData.errData];
         res.status(201).json({ status: 1, message: "Patient data saved.", data: responseData })
     }
