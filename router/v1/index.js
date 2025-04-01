@@ -12,4 +12,5 @@ router.use("/Organization", auth, require("./organizationRoute"))
 router.use("/Patient", auth, require("./patientRoute"))
 router.use("/RelatedPerson", auth, require("./relatedPersonRoute"))
 router.use("/Schedule", auth, require("./scheduleRoute"))
+router.use("/Appointment", auth, require("./appointmentRoute"))
 module.exports = router;
