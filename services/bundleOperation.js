@@ -53,7 +53,7 @@ let setBundlePost = async function (resourceData, identifier, id, reqMethod, ide
 }
 }
 
-let setBundlePut = async function (resourceData, identifier, id, reqMethod) {
+let setBundlePut = async function (resourceData, identifier, id) {
     try {
     let identifierConcat = "";
     if (identifier || identifier != null) {
@@ -74,8 +74,8 @@ let setBundlePut = async function (resourceData, identifier, id, reqMethod) {
     }
     return bundlePostStructure;
 } catch (e) {
-    e = { status: 0, code: "ERR", e: e, statusCode: 500 }
-    return Promise.reject(e);
+    const err = { status: 0, code: "ERR", e: e, statusCode: 500 }
+    return Promise.reject(err);
 }
 }
 
@@ -156,6 +156,8 @@ let setResponse = function(resourceUrlData, responseData) {
     }
 }
 
+
+
 let getBundleJSON = async function (resourceData) {
     let bundle = {
         "resourceType": "Bundle",
@@ -170,6 +172,11 @@ let getBundleJSON = async function (resourceData) {
 }
 
 let mapBundleService = function(reqBundleData, responseBundleData) {
+    console.info("--- ", reqBundleData, responseBundleData)
+    if (!Array.isArray(reqBundleData) || !Array.isArray(responseBundleData)) {
+        return []; // Return an empty array if inputs are undefined or not arrays
+    }
+
     return  responseBundleData.map((data, i) => Object.assign({}, data, reqBundleData[i]));
  }
  

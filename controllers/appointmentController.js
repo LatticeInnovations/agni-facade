@@ -71,7 +71,7 @@ let setAppointmentData = async function (req, res) {
 
     }
     catch (e) {
-        return Promise.reject(e);
+        return res.status(500).json({status: 0, message: "Unable to process. Please try again.", error: e})
     }
 
 }
@@ -218,7 +218,7 @@ const patchAppointmentData = async function(req, res) {
     if (response.status == 200 || response.status == 201) {
         let resourceResponse = setAppointmentResponse(bundleData.bundle.entry, response.data.entry, "patch");
         let responseData = [...resourceResponse, ...errData];
-        console.info("===========>", resourceResponse, errData, " ----------->", response.data.entry, "***********", bundleData.bundle.entry, ")))))")
+        console.info("===========>", responseData)
         return res.status(201).json({ status: 1, message: "Appointment data updated.", data: responseData })
     }
     else {

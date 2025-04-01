@@ -27,6 +27,10 @@ class Encounter {
         this.encounterObj.appointmentUuid = this.fhirResource?.identifier[0]?.value;
     }
 
+    getVitalFhirId() {
+        this.encounterObj.vitalFhirId = this.fhirResource?.id;
+    }
+
     setPatientReference() {
         this.fhirResource.subject.reference = "Patient/" + this.encounterObj.patientId
     }
@@ -153,6 +157,7 @@ class Encounter {
 
     getFhirToJsonForVitals() {
         this.getId();
+        this.getVitalFhirId();
         this.getAppointmentReference();
         this.getPatientReference();
         this.getEncounterTime();
