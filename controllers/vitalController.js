@@ -89,7 +89,7 @@ const getVitalData = async function(req, res) {
             queryParams["service-provider"] = req.decoded.orgId
             const link = config.baseUrl + "Encounter";
             let resourceResult = [];
-            let resourceUrlData = { link: link, reqQuery: queryParams, allowNesting: 1, specialOffset: null }
+            let resourceUrlData = { link: link, reqQuery: queryParams, allowNesting: 0, specialOffset: null }
             let responseData = await bundleStructure.searchData(link, queryParams);
             console.info("responseData: ", responseData)
             let resStatus = 1;

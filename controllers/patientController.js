@@ -196,7 +196,7 @@ const patchPatientData = async function(req, res) {
                     status: 0,
                     message: "Unable to process. Please try again"
                 }) 
-        }
+    }
 }
 
 const immunizationPatch = async function (inputData) {

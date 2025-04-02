@@ -117,6 +117,7 @@ let searchData = async function (link, reqQuery) {
 
 let setResponse = function(resourceUrlData, responseData) {
     try {
+        console.info("responseData.data.link: ", responseData.data.link)
         let resStatus = 1;
         if (resourceUrlData.allowNesting == 1) {          
             // result = result.concat(resourceData.resourceResult);

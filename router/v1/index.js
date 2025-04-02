@@ -13,5 +13,6 @@ router.use("/Patient", auth, require("./patientRoute"))
 router.use("/RelatedPerson", auth, require("./relatedPersonRoute"))
 router.use("/Schedule", auth, require("./scheduleRoute"))
 router.use("/Appointment", auth, require("./appointmentRoute"));
-router.use("/Observation", auth, require("./vitalRoute"))
+router.use("/Observation", auth, require("./vitalRoute"));
+router.use("/SympDx", auth, require("./symDiagRoute"))
 module.exports = router;
