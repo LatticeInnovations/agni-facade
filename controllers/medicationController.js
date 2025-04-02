@@ -1,8 +1,6 @@
 let Medication = require("../class/medication");
-let axios = require("axios");
 let config = require("../config/nodeConfig");
-const bundleStructure = require("../services/bundleOperation")
-const responseService = require("../services/responseService");
+const bundleStructure = require("../services/bundleOperation");
 
 
 //  Get Practitioner data
@@ -40,66 +38,6 @@ let getMedicationList = async function (req, res) {
     }
 }
 
-
-//  Patch Practitioner data
-let patchPractitionerData = async function (req, res) {
-    try {
-        const resType = "Practitioner"
-        // let response = resourceValid(req.params);
-        // if (response.error) {
-        //     console.error(response.error.details)
-        //     let errData = { status: 0, response: { data: response.error.details }, message: "Invalid input" }
-        //     return res.status(422).json(errData);
-        // }
-        let resourceResult = [];
-        for (let inputData of req.body) {
-            let practitioner = new Practitioner(inputData, []);
-            let link = config.baseUrl + resType;
-            let resourceSavedData = await bundleStructure.searchData(link, { "_id": inputData.id });
-            if (resourceSavedData.data.total != 1) {
-               return res.status(422).json({ status: 0, code: "ERR", message: "Practitioner Id " + inputData.id + " does not exist."})
-            }
-            practitioner.patchUserInputToFHIR(resourceSavedData.data.entry[0].resource);
-            let resourceData = [...practitioner.getFHIRResource()];
-            const patchUrl = resType + "/" + inputData.id;
-            let patchResource = await bundleStructure.setBundlePatch(resourceData, patchUrl);
-            resourceResult.push(patchResource);
-        }
-        let bundleData = await bundleStructure.getBundleJSON({resourceResult})  
-        let response = await axios.post(config.baseUrl, bundleData.bundle); 
-        console.info("get bundle json response: ", response.status)  
-        if (response.status == 200 || response.status == 201) {
-            let responseData = setPractitionerSaveResponse(bundleData.bundle.entry, response.data.entry, "patch"); 
-            res.status(201).json({ status: 1, message: "Practitioner data saved.", data: responseData })
-        }
-        else {
-                return res.status(500).json({
-                status: 0, message: "Unable to process. Please try again.", error: response
-            })
-        }
-    }
-    catch (e) {
-        console.error(e);
-        return res.status(500).json({
-            status: 0,
-            message: "Unable to process. Please try again.",
-            error: e
-        })
-    }
-
-}
-
-
-
-const setPractitionerSaveResponse  = (reqBundleData, responseBundleData, type) => {
-    let filteredData = [];
-    let response = [];
-    const responseData = bundleStructure.mapBundleService(reqBundleData, responseBundleData)
-    filteredData = responseData.filter(e => e.resource.resourceType == "Practitioner" || (type == "patch" && e.resource.resourceType == "Binary") );
-    response = responseService.setDefaultResponse("Practitioner", type, filteredData)
-    console.info("responses: ============================>", filteredData)
-    return response;
-}
 
 
 module.exports = {
