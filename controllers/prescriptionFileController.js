@@ -147,6 +147,71 @@ let getPrescriptionFile = async function (req, res) {
     }
 }
 
+const deletePrescriptionFile = async (req, res) => {
+    try {
+        let encounterIds = req.body.join(',');
+        let resourceResult = [];
+        let encounterData = await bundleStructure.searchData(config.baseUrl + "Encounter", { _id: encounterIds, _count: 5000});
+        encounterData = encounterData?.data?.entry?.map((e) => e?.resource) || [];
+        for(let encounter of encounterData){
+            let enc = new Encounter({}, encounter).deletePrescriptionDocument();
+            let encounterDeleteBundle = await bundleStructure.setBundlePut(enc, enc.identifier, enc.id, 'PUT'); 
+            resourceResult.push(encounterDeleteBundle);
+        }
+        
+        let medicationRequestData = await bundleStructure.searchData(config.baseUrl + "MedicationRequest", { encounter: encounterIds, _count: 5000});
+        medicationRequestData = medicationRequestData?.data?.entry?.map((e) => e?.resource) || [];
+        let documentReferenceIds = []; 
+        medicationRequestData.map((e) => {
+            let supportingInformation = e?.supportingInformation || [];
+            supportingInformation.forEach((d) => {
+                let docId = d?.reference?.split('/')[1] || null;
+                if(docId){
+                    documentReferenceIds.push(docId);
+                }
+            });
+        });
+        documentReferenceIds = documentReferenceIds.join(',');
+        let documentReferenceData = await bundleStructure.searchData(config.baseUrl + "DocumentReference", { _id: documentReferenceIds, _count: 5000});
+        documentReferenceData = documentReferenceData?.data?.entry?.map((e) => e?.resource) || [];
+        for(let med of medicationRequestData){
+            let medData = new MedicationRequest({}, med).deletePrescriptionDocument();
+            let medRequestDeleteBundle = await bundleStructure.setBundlePut(medData, medData.identifier, medData.id, 'PUT'); 
+            resourceResult.push(medRequestDeleteBundle);
+            let documents = med?.supportingInformation || []; 
+            for(let doc of documents){
+                let docId = doc?.reference.split('/')[1];
+                let docResource = documentReferenceData.find((d) => d.id == docId);
+                let docData = new DocumentReference({}, docResource).deleteDocument();
+                let documentReferenceDeleteBundle = await bundleStructure.setBundlePut(docData, docData.identifier, docData.id, 'PUT'); 
+                resourceResult.push(documentReferenceDeleteBundle);
+            }
+        }
+        
+        let bundleData = await bundleStructure.getBundleJSON({resourceResult})  
+        let response = await axios.post(config.baseUrl, bundleData.bundle); 
+        console.info("get bundle json response: ", response)  
+        if (response.status == 200) {
+            let responseData = setDeleteFileResponse(bundleData.bundle.entry, response.data.entry, "delete");        
+            console.info(responseData)
+            res.status(201).json({ status: 1, message: "data deleted.", data: responseData })
+        }
+        else {
+                return res.status(500).json({
+                status: 0, message: "Unable to process. Please try again.", error: response
+            })
+        }
+
+    }
+    catch(e) {
+        console.error("Error",e)
+        return res.status(200).json({
+                status: 0,
+                message: "Unable to process. Please try again"
+            })
+    }
+}
+
 
 const setPrescriptionFileResponse  = (reqBundleData, responseBundleData, type) => {
     let filteredData = [];
@@ -177,8 +242,27 @@ const setPrescriptionFileResponse  = (reqBundleData, responseBundleData, type) =
     return response;
 }
 
+const setDeleteFileResponse = (reqBundleData, responseBundleData) => {
+    let filteredData = [];
+    let response = [];
+    const responseData = bundleStructure.mapBundleService(reqBundleData, responseBundleData)
+
+    filteredData = responseData.filter(e => e.request.url.split('/')[0] == "Encounter");
+    console.info("filteredArray", JSON.stringify(filteredData));
+    filteredData.forEach((element) => {
+        response.push({
+            status: element.response.status,
+            id: null,
+            err: null,
+            fhirId: element.response.location.split('/')[1]
+        });
+    });
+    return response;
+}
+
 
 module.exports = {
     savePrescriptionFile,
-    getPrescriptionFile
+    getPrescriptionFile,
+    deletePrescriptionFile
 }

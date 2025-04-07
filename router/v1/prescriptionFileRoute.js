@@ -7,4 +7,6 @@ router.post("/",  prescriptionFileController.savePrescriptionFile);
 
 router.get("/", prescriptionFileController.getPrescriptionFile); 
 
+router.delete("/", prescriptionFileController.deletePrescriptionFile); 
+
 module.exports = router
