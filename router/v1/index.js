@@ -17,6 +17,7 @@ router.use("/Vital", auth, require("./vitalRoute"));
 router.use("/SympDx", auth, require("./symDiagRoute"));
 router.use("/Medication", auth, require("./medicationRoute"));
 router.use("/Prescription", auth, require("./prescriptionRoute"));
+router.use("/PrescriptionFile", auth, require("./prescriptionFileRoute"));
 router.use("/MedicationDispense", auth, require("./medicationDispenseRoute"));
 router.use("/DispenseLog", auth, require("./dispenseLogRoute"));
 

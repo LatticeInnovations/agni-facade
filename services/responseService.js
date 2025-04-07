@@ -60,7 +60,10 @@ const setDefaultResponse = (resType, reqMethod, responseData) => {
   let response = [];
   let filteredData = responseData;
   filteredData.forEach((element) => {
+
+  console.info("element: ==============================>",element, element.resource.identifier[0])
     let data = getResponseData(element, reqMethod);
+    console.info("data is: ===========", data)
     data.err = getDataError(element, resType);
     data.fhirId = getFhirId(element, reqMethod);
     response.push(data);
