@@ -63,7 +63,7 @@ let setAppointmentData = async function (req, res) {
         console.log("get bundle json response: ", response.status)  
         if (response.status == 200 || response.status == 201) {
             let responseData = setAppointmentResponse(bundleData.bundle.entry, response.data.entry, "post");
-            res.status(201).json({ status: 1, message: "Patient data saved.", data: responseData })
+            res.status(201).json({ status: 1, message: "Appointment data saved.", data: responseData })
         }
         else {
                 return res.status(500).json({status: 0, message: "Unable to process. Please try again.", error: response})

@@ -283,20 +283,20 @@ const patchSymptomDiagnosisData = async (req, res) => {
       if (response.status == 200 || response.status == 201) {
           let resourceResponse = setSymptomDiagnosisResponse(bundleData.bundle.entry, response.data.entry, "patch");
           let responseData = [...resourceResponse, ...bundleData.errData];
-          res.status(201).json({ status: 1, message: "Patient data saved.", data: responseData })
+          res.status(201).json({ status: 1, message: "Symptom and diagnosis data saved.", data: responseData })
       }
       else {
           return res.status(500).json({
           status: 0, message: "Unable to process. Please try again.", error: response
           })
       }
-      }  catch(e) {
+    }  catch(e) {
               console.error("Error",e)
               return res.status(200).json({
                       status: 0,
                       message: "Unable to process. Please try again"
                   }) 
-      }
+    }
 }
 
 
