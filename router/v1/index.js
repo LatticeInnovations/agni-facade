@@ -15,6 +15,7 @@ router.use("/Schedule", auth, require("./scheduleRoute"))
 router.use("/Appointment", auth, require("./appointmentRoute"));
 router.use("/Vital", auth, require("./vitalRoute"));
 router.use("/SympDx", auth, require("./symDiagRoute"));
+router.use("/CVD", auth, require("./CVDRoute"));
 router.use("/Medication", auth, require("./medicationRoute"));
 router.use("/Prescription", auth, require("./prescriptionRoute"));
 router.use("/PrescriptionFile", auth, require("./prescriptionFileRoute"));

@@ -93,7 +93,8 @@ let getPrescriptionFile = async function (req, res) {
         const link = config.baseUrl + "Encounter";
         let queryParams = {
             "_revinclude": "MedicationRequest:encounter:Encounter",
-            "type": "prescription-encounter-form",
+            "service-provider": req.decoded.orgId,
+            "type": "prescription-encounter-document",
             "_total": "accurate",
             "_count": 3000,
             "patient": req.query.patientId
@@ -107,36 +108,30 @@ let getPrescriptionFile = async function (req, res) {
                 return res.status(200).json({ status: resStatus, message: "Data fetched", total: 0, data: []  })
         }
         const FHIRData = responseData.data.entry;
-        const prescriptionFormEncounter = FHIRData.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource)
-        let appointmentEncounterIds = [... new Set(prescriptionFormEncounter.map(e =>  parseInt(e.partOf.reference.split("/")[1])))]
+        const prescriptionDocumentEncounter = FHIRData.filter(e => e.resource.resourceType == "Encounter").map(e => e.resource);
+        let appointmentEncounterIds = [... new Set(prescriptionDocumentEncounter.map(e =>  parseInt(e.partOf.reference.split("/")[1])))];
         let appointmentEncounters = await bundleStructure.searchData(config.baseUrl + "Encounter", { "_id": appointmentEncounterIds.join(","), _count: 5000});
-        appointmentEncounters = appointmentEncounters.data.entry.map(e=> e.resource)
-        
-        for(let encData of prescriptionFormEncounter) {
-            // map the encounter from the list to sub encounter of prescription
+        appointmentEncounters = appointmentEncounters.data.entry.map(e=> e.resource);
+        for(let encData of prescriptionDocumentEncounter) {
+            console.info("encounter data", encData);
             let apptEncounter = appointmentEncounters.filter( e=> e.id == encData.partOf.reference.split("/")[1])
-            apptEncounter = new AppointmentEncounter({}, apptEncounter[0]);
+            apptEncounter = new Encounter({}, apptEncounter[0]);
             apptEncounter = apptEncounter.getFhirToJson();
-            console.info("apptEncounter: ", apptEncounter)
-            let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);    
-            let prescriptionData = {
-                "prescriptionId": encData.identifier[0].value,
-                "prescriptionFhirId": encData.id,
-                "generatedOn": encData.period.start
-            }   
-            prescriptionData = {...apptEncounter, ...prescriptionData}
-            prescriptionData.prescription = [];
-        //  let insert = false;
-            for(let medReq of medReqList) {   
-                medReq.prescriptionId = encData.prescriptionId                  
-                let medReqData = new MedicationRequest({}, medReq);
-                medReqData.getFhirToJson();
-                let medData = medReqData.getMedReqResource();
-                medData.qtyPrescribed = medData.qtyPerDose * medData.frequency * medData.duration;
-                prescriptionData.prescription.push(medData);
+            let medReqList = FHIRData.filter(e => e.resource.resourceType == "MedicationRequest" && e.resource.encounter.reference == "Encounter/"+encData.id).map(e => e.resource);
+            let documents = medReqList[0].supportingInformation;
+            let documentIds = documents.map((document) => document.reference.split('/')[1]);
+            let documentRefs = await bundleStructure.searchData(config.baseUrl + "DocumentReference", { "_id": documentIds.join(","), _count: 5000});
+            documentRefs = documentRefs?.data?.entry?.map(e=> e.resource) || [];
+            apptEncounter.prescriptionFiles = [];
+            apptEncounter.prescriptionDocumentFhirId = encData.id;
+            apptEncounter.status = medReqList?.[0]?.status == "entered-in-error" ? "deleted" : "saved";
+            apptEncounter.prescriptionId = encData?.identifier?.[0]?.value || null;
+            apptEncounter.generatedOn = encData?.period?.start || null;
+            for(let document of documentRefs){
+                let documentObj = new DocumentReference({}, document).getFHIRToJSON();
+                apptEncounter.prescriptionFiles.push(documentObj);
             }
-            if(prescriptionData.prescription.length > 0)
-                resourceResult.push(prescriptionData)
+            resourceResult.push(apptEncounter);
         }
         
         res.status(200).json({ status: resStatus, message: "Data fetched.", total: resourceResult.length,"offset": +queryParams?._offset, data: resourceResult  })
