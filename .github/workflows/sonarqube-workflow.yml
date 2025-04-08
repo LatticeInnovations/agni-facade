@@ -30,10 +30,11 @@ jobs:
         with:
           projectBaseDir: .
           args: >
-            -Dsonar.projectKey=${{ github.repository }}
+            -Dsonar.projectKey="${GITHUB_REPOSITORY##*/}"
             -Dsonar.scm.provider=git
             -Dsonar.analysis.analysisNumber="pr-${{ github.event.pull_request.number }}"
             -Dsonar.analysis.githubPrEmail=$AUTHOR_EMAIL
             -Dsonar.analysis.githubPrName=$AUTHOR_NAME
             -Dsonar.analysis.githubPrHandle=${{ github.event.pull_request.user.login }}
 
+# "${GITHUB_REPOSITORY##*/}"
