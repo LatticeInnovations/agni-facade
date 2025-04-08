@@ -7,17 +7,20 @@ on:
 
 jobs:
   on-merge:
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the repository
+      - name: Checkout PR code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: echo creds
+      - name: Get first commit author from PR
         run: |
-          echo "pr Number= ${{ github.event.pull_request.number }}"
-        shell: bash
+          FIRST_COMMIT=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "${{ github.event.pull_request.commits_url }}" | jq '.[0]')
+          echo "AUTHOR_NAME=$(echo "$FIRST_COMMIT" | jq -r '.commit.author.name')" >> $GITHUB_ENV
+          echo "AUTHOR_EMAIL=$(echo "$FIRST_COMMIT" | jq -r '.commit.author.email')" >> $GITHUB_ENV
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v4.2.0
@@ -27,7 +30,10 @@ jobs:
         with:
           projectBaseDir: .
           args: >
-            -Dsonar.projectKey="${GITHUB_REPOSITORY##*/}"
+            -Dsonar.projectKey=${{ github.repository }}
             -Dsonar.scm.provider=git
             -Dsonar.analysis.analysisNumber="pr-${{ github.event.pull_request.number }}"
-            -Dsonar.exclusions=**/*.java
+            -Dsonar.analysis.githubPrEmail=$AUTHOR_EMAIL
+            -Dsonar.analysis.githubPrName=$AUTHOR_NAME
+            -Dsonar.analysis.githubPrHandle=${{ github.event.pull_request.user.login }}
+
