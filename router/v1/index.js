@@ -21,5 +21,6 @@ router.use("/Prescription", auth, require("./prescriptionRoute"));
 router.use("/PrescriptionFile", auth, require("./prescriptionFileRoute"));
 router.use("/MedicationDispense", auth, require("./medicationDispenseRoute"));
 router.use("/DispenseLog", auth, require("./dispenseLogRoute"));
+router.use("/LabReport", auth, require("./LabReportRoute"));
 
 module.exports = router;
