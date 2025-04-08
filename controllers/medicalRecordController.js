@@ -1,4 +1,4 @@
-const DiagnosticReport = require("../class/DiagnosticReport");
+const DocumentManifest = require("../class/DocumentManifest");
 const DocumentReference = require("../class/DocumentReference");
 const Encounter = require("../class/encounter");
 let axios = require("axios");
@@ -8,7 +8,7 @@ const responseService = require("../services/responseService");
 const { v4: uuidv4 } = require('uuid');
 
 //  Save prescription File data
-let saveLabReport = async function (req, res) {
+let saveMedicalRecord = async function (req, res) {
     try {
         // let response = resourceValid(req.params);
         // if (response.error) {
@@ -17,25 +17,26 @@ let saveLabReport = async function (req, res) {
         //     return res.status(422).json(errData);
         // }
         let resourceResult = [];
-        for(let labReport of req.body){ 
-            let encounterData = await bundleStructure.searchData(config.baseUrl + "Encounter", { "appointment": labReport.appointmentId, _count: 5000 , "_include": "Encounter:appointment" });
+        for(let medicalRecord of req.body){ 
+            let encounterData = await bundleStructure.searchData(config.baseUrl + "Encounter", { "appointment": medicalRecord.appointmentId, _count: 5000 , "_include": "Encounter:appointment" });
+
             let encounterUuid = uuidv4();
             let encounter = new Encounter({ 
-                    id: encounterUuid,
-                    uuid: encounterUuid,
-                    encounterId: encounterData.data.entry[0].resource.id,
-                    patientId: labReport.patientId,
-                    practitionerId: req.decoded.userId,
-                    createdOn: labReport.createdOn,
-                    orgId: req.decoded.orgId
-            }, {}).getUserInputToFhirForLabReport();
+                id: encounterUuid,
+                encounterId: encounterData.data.entry[0].resource.id,
+                patientId: medicalRecord.patientId,
+                practitionerId: req.decoded.userId,
+                createdOn: medicalRecord.createdOn,
+                orgId: req.decoded.orgId
+            }, {}).getUserInputToFhirForMedicalReport();
             let encounterBundle = await bundleStructure.setBundlePost(encounter, encounter.identifier, encounter.id, "POST", "identifier");
             resourceResult.push(encounterBundle);
-            labReport.encounterId = encounter.id;
+            medicalRecord.encounterId = encounter.id;
+
             let documents = [];
-            for(let file of labReport.files) {
+            for(let file of medicalRecord.files) {
                 let document = new DocumentReference({
-                    uuid: file.labDocumentUuid,
+                    uuid: file.medicalDocumentUuid,
                     filename: file.filename, 
                     note: file.note
                 }, {}).getJSONtoFhir();
@@ -43,16 +44,18 @@ let saveLabReport = async function (req, res) {
                 document = await bundleStructure.setBundlePost(document, document.identifier, document.id, "POST", "identifier");
                 resourceResult.push(document);
             }
-            labReport.documents = documents;
-            let report = new DiagnosticReport(labReport, {}).getUserInputToFhir(); 
-            report = await bundleStructure.setBundlePost(report, null, labReport.diagnosticUuid, "POST", "identifier");
+            medicalRecord.documents = documents;
+            medicalRecord.practitionerId = req.decoded.userId;
+            medicalRecord.practitionerName = req.decoded.userName;
+            let report = new DocumentManifest(medicalRecord, {}).getUserInputToFhir(); 
+            report = await bundleStructure.setBundlePost(report, null, medicalRecord.medicalReportUuid, "POST", "identifier");
             resourceResult.push(report);
         }
         let bundleData = await bundleStructure.getBundleJSON({resourceResult})  
         let response = await axios.post(config.baseUrl, bundleData.bundle); 
         console.info("get bundle json response: ", response.status)  
         if (response.status == 200 || response.status == 201) {
-            let responseData = setLabReportResponse(bundleData.bundle.entry, response.data.entry, "post");        
+            let responseData = setMedicalRecordResponse(bundleData.bundle.entry, response.data.entry, "post");        
 
             res.status(201).json({ status: 1, message: "Lab report data saved.", data: responseData })
         }
@@ -74,12 +77,12 @@ let saveLabReport = async function (req, res) {
 }
 
 //  Get Practitioner data
-let getLabReport = async function (req, res) {
+let getMedicalRecord = async function (req, res) {
     try {
         const link = config.baseUrl + "Encounter";
         let queryParams = {
-            _revinclude : "DiagnosticReport:encounter:Encounter",
-            type :  "lab-report-encounter",
+            _revinclude : "DocumentManifest:related-ref:Encounter",
+            type :  "medical-report-encounter",
             "service-provider" :  req.decoded.orgId
         }
         let resourceResult = []
@@ -102,26 +105,26 @@ let getLabReport = async function (req, res) {
             let reportData = report.getEncounterResource();
             delete reportData.prescriptionId;
         
-            let reportList = FHIRData.filter(e => e.resource.resourceType == "DiagnosticReport" && e.resource.encounter.reference == "Encounter/"+encounter.id).map(e => e.resource);
-            reportData.diagnosticReport = [];
-            for(let diagnosticReport of reportList){
-                let data = new DiagnosticReport(reportData ,diagnosticReport).getFHIRToUserData();
+            let reportList = FHIRData.filter(e => e.resource.resourceType == "DocumentManifest" && e.resource?.related?.[0]?.ref?.reference == "Encounter/"+encounter.id).map(e => e.resource);
+            reportData.medicalRecord = [];
+            for(let medicalRecord of reportList){
+                let data = new DocumentManifest(reportData ,medicalRecord).getFHIRToUserData();
                 console.log("documentIds", data.documentIds);
                 if(data.documentIds.length > 0){
                     let documentReferenceResponse = await bundleStructure.searchData(config.baseUrl + "DocumentReference", { "_id": data.documentIds.join(','), _count: 5000 });
                     let documentReferenceData = documentReferenceResponse.data.entry;
                     data.documents = fetchDocumentData(documentReferenceData);
                     delete data.documentIds;
-                    reportData.diagnosticReport.push(data);
+                    reportData.medicalRecord.push(data);
                 }
                 else {
                     delete data.documentIds;
                     data.documents = [];
-                    reportData.diagnosticReport.push(data);
+                    reportData.medicalRecord.push(data);
                 }
             }
             delete reportData.labReport;
-            if(reportData.diagnosticReport.length > 0){
+            if(reportData.medicalRecord.length > 0){
                 resourceResult.push(reportData);
             }
         }
@@ -137,13 +140,13 @@ let getLabReport = async function (req, res) {
     }
 }
 
-const deleteLabReport = async (req, res) => {
+const deleteMedicalRecord = async (req, res) => {
     try {
-        let diagReportIds = req.body.join(',');
         let resourceResult = [];
-        let diagReportData = await bundleStructure.searchData(config.baseUrl + "DiagnosticReport", { _id: diagReportIds, _count: 5000});
-        diagReportData = diagReportData?.data?.entry?.map((e) => e?.resource) || [];
-        let encounterIds = diagReportData.map((e) => e.encounter.reference.split('/')[1]);
+        let documentManifestIds = req.body.join(',');
+        let documentManifestData = await bundleStructure.searchData(config.baseUrl + "DocumentManifest", { _id: documentManifestIds, _count: 5000});
+        documentManifestData = documentManifestData?.data?.entry?.map((e) => e?.resource) || [];
+        let encounterIds = documentManifestData.map((e) => e?.related?.[0]?.ref?.reference.split('/')[1]);
         encounterIds = encounterIds.join(',');
         let encounterData = await bundleStructure.searchData(config.baseUrl + "Encounter", { _id: encounterIds, _count: 5000});
         encounterData = encounterData?.data?.entry?.map((e) => e?.resource) || [];
@@ -153,23 +156,24 @@ const deleteLabReport = async (req, res) => {
             resourceResult.push(encounterDeleteBundle);
         }
         let documentReferenceIds = [];
-        diagReportData.forEach((diag) => {
-            let documents = diag?.extension || [];
+        documentManifestData.forEach((report) => {
+            let documents = report?.content || [];
             documents.forEach((doc) => {
-                let docId = doc.valueReference.reference.split('/')[1];
+                let docId = doc.reference.split('/')[1];
                 documentReferenceIds.push(docId);
             });
         });
         documentReferenceIds = documentReferenceIds.join(',');
         let documentReferenceData = await bundleStructure.searchData(config.baseUrl + "DocumentReference", { _id: documentReferenceIds, _count: 5000});
         documentReferenceData = documentReferenceData?.data?.entry?.map((e) => e?.resource) || [];
-        for(let diag of diagReportData){
-            let diagData = new DiagnosticReport({}, diag).deleteDiagnosticReport();
-            let diagReportDeleteBundle = await bundleStructure.setBundlePut(diagData, diagData.identifier, diagData.id, 'PUT'); 
-            resourceResult.push(diagReportDeleteBundle);
-            let documents = diagData?.extension || [];
+        
+        for(let report of documentManifestData){
+            let reportData = new DocumentManifest({}, report).deleteDocumentManifest();
+            let reportDeleteBundle = await bundleStructure.setBundlePut(reportData, reportData.identifier, reportData.id, 'PUT'); 
+            resourceResult.push(reportDeleteBundle);
+            let documents = reportData?.content || [];
             for(let doc of documents){
-                let docId = doc?.valueReference?.reference?.split('/')[1];
+                let docId = doc?.reference?.split('/')[1];
                 let docResource = documentReferenceData.find((d) => d.id == docId);
                 let docData = new DocumentReference({}, docResource).deleteDocument();
                 let documentReferenceDeleteBundle = await bundleStructure.setBundlePut(docData, docData.identifier, docData.id, 'PUT'); 
@@ -181,7 +185,7 @@ const deleteLabReport = async (req, res) => {
         let response = await axios.post(config.baseUrl, bundleData.bundle); 
         console.info("get bundle json response: ", response)  
         if (response.status == 200) {
-            let responseData = setDeleteLabReportResponse(bundleData.bundle.entry, response.data.entry, "delete");        
+            let responseData = setDeleteMedicalRecordResponse(bundleData.bundle.entry, response.data.entry, "delete");        
             console.info(responseData)
             res.status(201).json({ status: 1, message: "Lab report deleted.", data: responseData })
         }
@@ -206,44 +210,44 @@ const fetchDocumentData = (documents) => {
     let result = [];
     for(let document of documents){
         console.info(document.resource)
-        let documentData = new DocumentReference({}, document.resource).getFHIRToJSONForLabReport();
+        let documentData = new DocumentReference({}, document.resource).getFHIRToJSONForMedicalRecord();
         result.push(documentData)
     }
     return result;
 }
 
-const setLabReportResponse  = (reqBundleData, responseBundleData, type) => {
+const setMedicalRecordResponse  = (reqBundleData, responseBundleData, type) => {
     let filteredData = [];
     let response = [];
     const responseData = bundleStructure.mapBundleService(reqBundleData, responseBundleData)
 
-    filteredData = responseData.filter(e => e.resource.resourceType == "DiagnosticReport");
+    filteredData = responseData.filter(e => e.resource.resourceType == "DocumentManifest");
     let documentRefs = responseData.filter(e => e.resource.resourceType == "DocumentReference");
     filteredData = filteredData.map((e) => {
         e.documents = [];
-        e?.resource?.extension?.forEach((m) => {
-            let doc = documentRefs.find((d) => { return d.resource.id == m.valueReference.reference.split('/')[1].split(':')[2] });
+        e?.resource?.content?.forEach((m) => {
+            let doc = documentRefs.find((d) => { return d.resource.id == m.reference.split('/')[1].split(':')[2] });
             e.documents.push({
-                labDocumentfhirId: doc.response.location.split('/')[1],
-                labDocumentUuid: doc.resource.id,
+                "medicalDocumentfhirId": doc.response.location.split('/')[1],
+                "medicalDocumentUuid": doc.resource.id,
             });
         });
         return e;
     });
 
-    response = responseService.setDefaultResponse("DiagnosticReport", type, filteredData)
+    response = responseService.setDefaultResponse("DocumentManifest", type, filteredData)
     for(let i=0; i<response.length; i++) {
         response[i].files = filteredData[i].documents || []
     }
     return response;
 }
 
-const setDeleteLabReportResponse = (reqBundleData, responseBundleData) => {
+const setDeleteMedicalRecordResponse = (reqBundleData, responseBundleData) => {
     let filteredData = [];
     let response = [];
     const responseData = bundleStructure.mapBundleService(reqBundleData, responseBundleData)
 
-    filteredData = responseData.filter(e => e.request.url.split('/')[0] == "DiagnosticReport");
+    filteredData = responseData.filter(e => e.request.url.split('/')[0] == "DocumentManifest");
     console.info("filteredArray", JSON.stringify(filteredData));
     filteredData.forEach((element) => {
         response.push({
@@ -258,7 +262,7 @@ const setDeleteLabReportResponse = (reqBundleData, responseBundleData) => {
 
 
 module.exports = {
-    saveLabReport,
-    getLabReport,
-    deleteLabReport
+    saveMedicalRecord,
+    getMedicalRecord,
+    deleteMedicalRecord
 }
