@@ -80,7 +80,9 @@ let getLabReport = async function (req, res) {
         let queryParams = {
             _revinclude : "DiagnosticReport:encounter:Encounter",
             type :  "lab-report-encounter",
-            "service-provider" :  req.decoded.orgId
+            "service-provider" :  req.decoded.orgId,
+            "_count": req.query.count,
+            "_offset": req.query.offset
         }
         let resourceResult = []
         let responseData = await bundleStructure.searchData(link, queryParams);

@@ -83,7 +83,9 @@ let getMedicalRecord = async function (req, res) {
         let queryParams = {
             _revinclude : "DocumentManifest:related-ref:Encounter",
             type :  "medical-report-encounter",
-            "service-provider" :  req.decoded.orgId
+            "service-provider" :  req.decoded.orgId,
+            "_count": req.query.count,
+            "_offset": req.query.offset
         }
         let resourceResult = []
         let responseData = await bundleStructure.searchData(link, queryParams);

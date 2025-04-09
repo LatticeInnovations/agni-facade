@@ -5,7 +5,7 @@ let immunizationRecController = require("../../controllers/immunizationRecommend
 
 // router.post("/",  immunizationRecController.saveCVDData);
 
-router.get("/", immunizationRecController.getCVDData); 
+router.get("/", immunizationRecController.setImmunizationRecommendationData); 
 
 // router.patch("/", immunizationRecController.updateCVDData); 
 
