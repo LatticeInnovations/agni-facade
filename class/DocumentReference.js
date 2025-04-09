@@ -43,11 +43,9 @@ class DocumentReference {
 
     setContext() {
         if(this.documentObj.encounterUuid) {
-            this.fhirResource.context = {
-                "encounter": {
-                    "reference": "urn:uuid:" + this.documentObj.encounterUuid
-                }
-            }
+            this.fhirResource.context.encounter.push({
+                "reference": "urn:uuid:" + this.documentObj.encounterUuid
+            })
         }
     }
 
@@ -68,7 +66,10 @@ class DocumentReference {
         this.fhirResource.content = [];
         this.fhirResource.description = "";
         this.fhirResource.identifier = [];
-        this.fhirResource.subject = {}
+        this.fhirResource.subject = {};
+        this.fhirResource.context = {
+            "encounter": []
+        };
     }
 
     getFHIRToJSON(){
