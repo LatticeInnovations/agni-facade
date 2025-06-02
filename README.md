@@ -1,3 +1,15 @@
+# About
+The system serves as an intermediary layer that provides a simplified API interface for [Agni Android application](https://github.com/LatticeInnovations/agni-android) while maintaining full FHIR compliance for data storage and exchange.
+## Purpose and Scope
+The FHIR facade server acts as a healthcare data management platform that:
+
+- Simplifies FHIR interactions by providing streamlined APIs for common healthcare operations
+- Manages complex healthcare workflows including appointments, medications, immunizations, and clinical data
+- Ensures data interoperability through FHIR-compliant resource management
+- Provides secure access via JWT-based authentication with OTP verification
+- Integrates external services for notifications (Twilio, SendGrid) and document management
+
+
 # 🛠️ Backend Server Setup Guide
 
 This guide will help you set up and run the backend server locally.
