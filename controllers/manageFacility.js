@@ -43,8 +43,8 @@ let createFacility = async function (req, res) {
 
 let listFacilities = async function (req, res) {
     try {
-        let offset = parseInt(req.query.offset) || 0;
-        let count = parseInt(req.query.count) || 10;
+        let offset = parseInt(req.query.offset ?? req.query._offset) || 0;
+        let count = parseInt(req.query.count ?? req.query._count) || 10;
 
         let orgQuery = {
             type: "facility",
