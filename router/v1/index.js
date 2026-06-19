@@ -7,6 +7,7 @@ router.use("/user", auth, require("./user"));
 router.use("/sct", auth, require("./snomedCT"));
 router.use("/timestamp", auth, require('./timestamp'));
 router.use('/upload', auth, require('./fileUpload'));
+router.use("/facilities", auth, require("./facility"))
 router.use("/", auth, require("./resource"));
 router.use("/vaccine", auth, require("./vaccine"))
 
