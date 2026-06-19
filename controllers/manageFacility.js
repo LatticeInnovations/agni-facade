@@ -70,7 +70,7 @@ let listFacilities = async function (req, res) {
             let patientUuids = [];
             try {
                 let patientRes = await axios.get(config.baseUrl + "Patient", {
-                    params: { organization: "Organization/" + org.id, _elements: "identifier", _total: "accurate" }
+                    params: { organization: "Organization/" + org.id, _elements: "identifier", _total: "accurate", _count: 10000 }
                 });
                 patientCount = patientRes.data.total || 0;
                 if (patientRes.data.entry) {
@@ -128,7 +128,7 @@ let listFacilities = async function (req, res) {
             };
         }));
 
-        return res.status(200).json({ success: true, data: facilities });
+        return res.status(200).json({ success: true, total: total, data: facilities });
     } catch (e) {
         console.error(e);
         return res.status(500).json({
