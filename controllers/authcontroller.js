@@ -23,7 +23,6 @@ let login = async function (req, res) {
         let contactType = isEmail ? 'email' : 'phone';
         const platform = req.body.platform;
         let userDetail = await getUserDetail(contactType, req.body.userContact);
-        console.log(userDetail)
         let loginAttempts = 0, otp = 0;
         let OTPGenerateAttempt = 1;
         if (userDetail == null){
@@ -38,7 +37,6 @@ let login = async function (req, res) {
         }
             
         let authentication_detail = userDetail.dataValues.authentication_detail;
-        console.log("authentication details: ", authentication_detail)
         let timeData = await calculateTime(authentication_detail);
         // if user comes back after >= 5 mins reset every value 
         if (timeData.lastAttemptTimeDiff > config.lockTimeInMin) {
@@ -99,7 +97,6 @@ let OTPAuthentication = async function (req, res) {
         let contactType = isEmail ? 'email' : 'phone';
         const platform = req.body.platform;
         let userDetail = await getUserDetail(contactType, req.body.userContact);
-        console.log("userDetail: ", userDetail)
         if (platform === "web" && !["224608005", "analyst"].includes(userDetail.profile.role)) {
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
         }
@@ -117,9 +114,7 @@ let OTPAuthentication = async function (req, res) {
         let resMessage = {};
         let authentication_detail = userDetail.dataValues.authentication_detail;
         let timeData = await calculateTime(authentication_detail);
-        console.log(timeData)
         if (userDetail != null && userDetail.dataValues.authentication_detail.dataValues.otp == null) {
-            console.log("check here")
             return res.status(401).json({ status: 0, message: "OTP expired" });
         }
         else if (timeData.lastAttemptTimeDiff <= config.lockTimeInMin && (authentication_detail.dataValues.login_attempts >= config.totalLoginAttempts || authentication_detail.dataValues.otp_generate_attempt >= config.OTPGenAttempt)) {
@@ -203,7 +198,6 @@ async function sendOTP(isEmail, userDetail, otp) {
         }
         else {
             let text = `<#> Use OTP ${otp} for authentication in agni App\n` + config.OTPHash;
-            console.log("check text message", text);
             await sendSms(userDetail.profile.contact, text);
         }
     }
@@ -224,7 +218,6 @@ async function getUserDetail(contactType, contactVal) {
         else {
             let user_id = existingPractitioner[0].res_id;
             const practitionerData = JSON.parse(existingPractitioner[0].res_text_vc);
-            console.log("practitionerData; ", practitionerData)
             let user_name = practitionerData.name[0].given.join(' ');
             user_name += practitionerData?.name[0]?.family ? " " + practitionerData.name[0].family : '';
             //let email = practitionerData.telecom.filter(e => e.system == "email");
@@ -310,7 +303,6 @@ function generateOTP() {
 async function upsertOTP(otp, userDetail, currentTime, expireTime, loginAttempts, OTPGenerateAttempt) {
     try {
         let upsertJson = { "user_id": userDetail.user_id, "otp": otp, "expire_time": expireTime, "login_attempts": loginAttempts, "createdOn": currentTime, "otp_generate_attempt": OTPGenerateAttempt };
-        console.log(upsertJson)
         let upsertDetail = await db.authentication_detail.upsert(upsertJson, { conflictFields: ["user_id"] });
         return upsertDetail;
     }
@@ -368,7 +360,6 @@ const userWebVerification = async (req, res, next) => {
             }
             userdata = await client.hGetAll(id);
             if ((userdata.loginCount >= config.totalLoginAttempts) || userdata.otpVerifyCount >= 5) {
-                console.log("Login count reset");
                 return res.status(401).json({ status: 0, message: "Too many attempts. Please try after 5 mins" });
             }
         }
