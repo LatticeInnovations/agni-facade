@@ -186,10 +186,16 @@ const createUser = async (req, res, next) => {
         }
         let { firstName, lastName, mobile, email, role, clinicId } = req.body;
         
-
+        let queryParam ={"_total": "accurate", "_revinclude": "PractitionerRole:practitioner", "active" : true};
+        queryParam[contact] = contact == "email" ? req.body.userContact.toLowerCase() : req.body.userContact;
+        let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam);
+        console.info("existing Practitioner", existingPractioner.data);
+        if (existingPractioner.data.total == 0 || !existingPractioner?.data?.entry) {
+            return null;
+        }
+        //   check if the same userContact exists or not
         let practitioner = {
             "resourceType": "Practitioner",
-            "identifier": [{"system": "https://www.passportindia.gov.in", "value": mobile + firstName}],
             "active": true,
             "name": [{"family": lastName || '', "given": [firstName]} ],
             "telecom": [{"system": "phone","value": mobile,"rank": 1},{"system": "email","value": email || ''}]
