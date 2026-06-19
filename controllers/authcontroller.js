@@ -20,14 +20,20 @@ let login = async function (req, res) {
         }
         let isEmail = checkIsEmail(req.body.userContact);
         let contact = isEmail ? 'email' : 'phone';
+        const platform = req.body.platform;
         let userDetail = await getUserDetail(req, contact);
+        
         let loginAttempts = 0, otp = 0;
         let OTPGenerateAttempt = 1;
         if (userDetail == null){
             return res.status(401).json({ status: 0, message: "User does not exist" });
         }
-        else if(!userDetail.dataValues.is_active){
-            return res.status(401).json({ status: 0, message: "we received a delete request for your account, you can signup again after deletion" });
+
+        if (platform === "web" && !["224608005", "analyst"].includes(userDetail.dataValues.role)) {
+            return res.status(401).json({ status: 0, message: "Unauthorized user" });
+        }
+        else if(platform === "mobile" && ["224608005", "analyst"].includes(userDetail.dataValues.role)) {
+            return res.status(401).json({ status: 0, message: "Unauthorized user" });
         }
             
         let authentication_detail = userDetail.dataValues.authentication_detail;
@@ -89,7 +95,16 @@ let OTPAuthentication = async function (req, res) {
         }
         let isEmail = checkIsEmail(req.body.userContact);
         let contact = isEmail ? 'email' : 'phone';
+        const platform = req.body.platform;
         let userDetail = await getUserDetail(req, contact);
+        
+        if (platform === "web" && !["224608005", "analyst"].includes(userDetail.dataValues.role)) {
+            return res.status(401).json({ status: 0, message: "Unauthorized user" });
+        }
+        else if(platform === "mobile" && ["224608005", "analyst"].includes(userDetail.dataValues.role)) {
+            return res.status(401).json({ status: 0, message: "Unauthorized user" });
+        }
+
         if (userDetail == null){
             return res.status(401).json({ status: 0, message: "User does not exist" });
         }
@@ -134,11 +149,23 @@ let OTPAuthentication = async function (req, res) {
             }
             let userProfile = {
                 "userId": userDetail.dataValues.user_id, "userName": userDetail.dataValues.user_name,
-                "orgId": userDetail.dataValues.org_id
+                "orgId": userDetail?.dataValues?.org_id || null,
+                "platform": req.body.platform,
+                "role": userDetail?.dataValues?.role,
+                "contact": req.body.userContact
             }
             let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '5d' });
             upsertOTP(null, userDetail.dataValues, timeData.currentTime, null, 0, authentication_detail.dataValues.otp_generate_attempt);
-            resMessage = { status: 1, message: "Logged in successfully", data: { "token": `Bearer ${token}` } }
+            resMessage = { 
+                status: 1, 
+                message: "Logged in successfully", 
+                data: { 
+                    "token": `Bearer ${token}`, 
+                    name: userDetail.dataValues.user_name, 
+                    role: userDetail?.dataValues?.role,
+                    contact: req.body.userContact
+                } 
+            }
         }
         return res.status(apiStatus).json(resMessage);
     } catch (e) {
@@ -200,14 +227,16 @@ async function getUserDetail(req, contact) {
             // user_name += " " + existingPractioner?.data?.entry?.[0]?.resource?.name?.[0]?.family || '';
             let email = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "email");
             let phone = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "phone");
-            let orgId = existingPractioner.data.entry[1].resource.organization.reference.split('/')[1];
+            let orgId = existingPractioner?.data?.entry?.[1]?.resource?.organization?.reference?.split('/')[1] || null;
+            let role = existingPractioner?.data?.entry?.[1]?.resource?.code?.[0]?.coding?.[0]?.code || null;
             let userDetail = {}; userDetail.dataValues = {
                 "user_name": user_name,
                 "user_email" : email[0].value,
                 "mobile_number" : phone[0].value,
                 "is_active":  existingPractioner.data.entry[0].resource.active,
                 "user_id": user_id,
-                "org_id": orgId
+                "org_id": orgId,
+                role
             }
             let userData = await db.authentication_detail.findOne({
                 attributes:['auth_id', 'user_id', 'otp', 'expire_time', 'createdOn', 'login_attempts', 'otp_generate_attempt'],
@@ -260,7 +289,7 @@ async function upsertOTP(otp, userDetail, currentTime, expireTime, loginAttempts
 
 }
 
-const userVerification = async (req, res, next) => {
+const userWebVerification = async (req, res, next) => {
     try{
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -445,5 +474,5 @@ async function checkAuthAttempts(expire_time, currentTime) {
 }
 
 module.exports = {
-    login, OTPAuthentication, userVerification, userVerificationVerifyOTP
+    login, OTPAuthentication, userWebVerification, userVerificationVerifyOTP
 }
