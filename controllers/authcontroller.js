@@ -10,6 +10,7 @@ let { validationResult } = require('express-validator');
 let bundleOp = require("../services/bundleOperation");
 const crypto = require('crypto');
 let { client } = require('../services/redisConnect');
+const sequelize = require("sequelize");
  
 // login by using email or mobile number to send OTP
 let login = async function (req, res) {
@@ -19,24 +20,25 @@ let login = async function (req, res) {
             return response.sendInvalidDataError(res, errors);
         }
         let isEmail = checkIsEmail(req.body.userContact);
-        let contact = isEmail ? 'email' : 'phone';
+        let contactType = isEmail ? 'email' : 'phone';
         const platform = req.body.platform;
-        let userDetail = await getUserDetail(req, contact);
-        
+        let userDetail = await getUserDetail(contactType, req.body.userContact);
+        console.log(userDetail)
         let loginAttempts = 0, otp = 0;
         let OTPGenerateAttempt = 1;
         if (userDetail == null){
             return res.status(401).json({ status: 0, message: "User does not exist" });
         }
 
-        if (platform === "web" && !["224608005", "analyst"].includes(userDetail.dataValues.role)) {
+        if (platform === "web" && !["224608005", "analyst"].includes(userDetail.profile.role)) {
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
         }
-        else if(platform === "mobile" && ["224608005", "analyst"].includes(userDetail.dataValues.role)) {
+        else if(platform === "mobile" && ["224608005", "analyst"].includes(userDetail.profile.role)) {
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
         }
             
         let authentication_detail = userDetail.dataValues.authentication_detail;
+        console.log("authentication details: ", authentication_detail)
         let timeData = await calculateTime(authentication_detail);
         // if user comes back after >= 5 mins reset every value 
         if (timeData.lastAttemptTimeDiff > config.lockTimeInMin) {
@@ -72,7 +74,7 @@ let login = async function (req, res) {
             }
         }
 
-        await upsertOTP(otp, userDetail.dataValues, timeData.currentTime, timeData.expireTime, loginAttempts, OTPGenerateAttempt);
+        await upsertOTP(otp, userDetail.profile, timeData.currentTime, timeData.expireTime, loginAttempts, OTPGenerateAttempt);
         res.status(200).json({ status: 1, "message": "Authorized user" });
     }
     catch (e) {
@@ -94,21 +96,21 @@ let OTPAuthentication = async function (req, res) {
             return response.sendInvalidDataError(res, errors);
         }
         let isEmail = checkIsEmail(req.body.userContact);
-        let contact = isEmail ? 'email' : 'phone';
+        let contactType = isEmail ? 'email' : 'phone';
         const platform = req.body.platform;
-        let userDetail = await getUserDetail(req, contact);
-        
-        if (platform === "web" && !["224608005", "analyst"].includes(userDetail.dataValues.role)) {
+        let userDetail = await getUserDetail(contactType, req.body.userContact);
+        console.log("userDetail: ", userDetail)
+        if (platform === "web" && !["224608005", "analyst"].includes(userDetail.profile.role)) {
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
         }
-        else if(platform === "mobile" && ["224608005", "analyst"].includes(userDetail.dataValues.role)) {
+        else if(platform === "mobile" && ["224608005", "analyst"].includes(userDetail.profile.role)) {
             return res.status(401).json({ status: 0, message: "Unauthorized user" });
         }
 
         if (userDetail == null){
             return res.status(401).json({ status: 0, message: "User does not exist" });
         }
-        else if(!userDetail.dataValues.is_active){
+        else if(!userDetail.profile.is_active){
             return res.status(401).json({ status: 0, message: "we received a delete request for your account, you can signup again after deletion" });
         }
         let loginAttempts = 0, apiStatus = 200;
@@ -140,7 +142,7 @@ let OTPAuthentication = async function (req, res) {
             loginAttempts = authentication_detail.dataValues.login_attempts + 1;
             let e = loginAttempts >= config.totalLoginAttempts ? "Too many attempts. Please try after 5 mins" : `Invalid OTP`;
             resMessage = { status: 0, message: e };
-            await upsertOTP(authentication_detail.dataValues.otp, userDetail.dataValues, timeData.currentTime, authentication_detail.dataValues.expire_time, loginAttempts, authentication_detail.dataValues.otp_generate_attempt);
+            await upsertOTP(authentication_detail.dataValues.otp, userDetail.profile, timeData.currentTime, authentication_detail.dataValues.expire_time, loginAttempts, authentication_detail.dataValues.otp_generate_attempt);
         }
         else {
             // if otp is valid check espire time of otp  
@@ -148,21 +150,21 @@ let OTPAuthentication = async function (req, res) {
                 return res.status(401).json({ status: 0, message: `OTP expired` });
             }
             let userProfile = {
-                "userId": userDetail.dataValues.user_id, "userName": userDetail.dataValues.user_name,
-                "orgId": userDetail?.dataValues?.org_id || null,
+                "userId": userDetail.profile.user_id, "userName": userDetail.profile.user_name,
+                "orgId": userDetail?.profile?.orgId || null,
                 "platform": req.body.platform,
-                "role": userDetail?.dataValues?.role,
+                "role": userDetail?.profile?.role,
                 "contact": req.body.userContact
             }
             let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '5d' });
-            upsertOTP(null, userDetail.dataValues, timeData.currentTime, null, 0, authentication_detail.dataValues.otp_generate_attempt);
+            upsertOTP(null, userDetail.profile, timeData.currentTime, null, 0, authentication_detail.dataValues.otp_generate_attempt);
             resMessage = { 
                 status: 1, 
                 message: "Logged in successfully", 
                 data: { 
                     "token": `Bearer ${token}`, 
-                    name: userDetail.dataValues.user_name, 
-                    role: userDetail?.dataValues?.role,
+                    name: userDetail.profile.user_name, 
+                    role: userDetail?.profile?.role,
                     contact: req.body.userContact
                 } 
             }
@@ -192,9 +194,9 @@ async function sendOTP(isEmail, userDetail, otp) {
     try {
         if (isEmail) {
             let mailData = {
-                to: [{ email: userDetail.dataValues.user_email }],
+                to: [{ email: userDetail.profile.user_email }],
                 subject: util.format(`${(emailContent.find(e => e.notification_type_id == 1).subject)}`,),
-                content: util.format(`${(emailContent.find(e => e.notification_type_id == 1).content)}`, userDetail.dataValues.user_name, otp.toString())
+                content: util.format(`${(emailContent.find(e => e.notification_type_id == 1).content)}`, userDetail.profile.user_name, otp.toString())
             }
             console.info("check mail data")
             await sendEmail(mailData);
@@ -202,7 +204,7 @@ async function sendOTP(isEmail, userDetail, otp) {
         else {
             let text = `<#> Use OTP ${otp} for authentication in agni App\n` + config.OTPHash;
             console.log("check text message", text);
-            await sendSms(userDetail.dataValues.mobile_number, text);
+            await sendSms(userDetail.profile.contact, text);
         }
     }
     catch (e) {
@@ -211,38 +213,37 @@ async function sendOTP(isEmail, userDetail, otp) {
     }
 
 }
-// get user and his/her OTP details using sequelize
-async function getUserDetail(req, contact) {
+
+async function getUserDetail(contactType, contactVal) {
     try {
-        let queryParam ={"_total": "accurate", "_revinclude": "PractitionerRole:practitioner", "active" : true};
-        queryParam[contact] = contact == "email" ? req.body.userContact.toLowerCase() : req.body.userContact;
-        let existingPractioner = await bundleOp.searchData(config.baseUrl + "Practitioner", queryParam);
-        console.info("existing Practitioner", existingPractioner.data);
-        if (existingPractioner.data.total == 0 || !existingPractioner?.data?.entry) {
+        let existingPractitioner = await getUserData(contactType, contactVal);
+       
+        if (existingPractitioner.length < 1) {
             return null;
         }
         else {
-            let user_id = existingPractioner.data.entry[0].resource.id;
-            let user_name = existingPractioner.data.entry[0].resource.name[0].given.join(' ');
-            // user_name += " " + existingPractioner?.data?.entry?.[0]?.resource?.name?.[0]?.family || '';
-            let email = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "email");
-            let phone = existingPractioner.data.entry[0].resource.telecom.filter(e => e.system == "phone");
-            let orgId = existingPractioner?.data?.entry?.[1]?.resource?.organization?.reference?.split('/')[1] || null;
-            let role = existingPractioner?.data?.entry?.[1]?.resource?.code?.[0]?.coding?.[0]?.code || null;
-            let userDetail = {}; userDetail.dataValues = {
-                "user_name": user_name,
-                "user_email" : email[0].value,
-                "mobile_number" : phone[0].value,
-                "is_active":  existingPractioner.data.entry[0].resource.active,
-                "user_id": user_id,
-                "org_id": orgId,
-                role
-            }
-            let userData = await db.authentication_detail.findOne({
-                attributes:['auth_id', 'user_id', 'otp', 'expire_time', 'createdOn', 'login_attempts', 'otp_generate_attempt'],
-                where: { "user_id": user_id }
-            });
-            userDetail.dataValues.authentication_detail = userData;
+            let user_id = existingPractitioner[0].res_id;
+            const practitionerData = JSON.parse(existingPractitioner[0].res_text_vc);
+            console.log("practitionerData; ", practitionerData)
+            let user_name = practitionerData.name[0].given.join(' ');
+            user_name += practitionerData?.name[0]?.family ? " " + practitionerData.name[0].family : '';
+            //let email = practitionerData.telecom.filter(e => e.system == "email");
+            let phone = practitionerData.telecom.filter(e => e.system == "phone");
+            let roleData = JSON.parse(existingPractitioner[1].res_text_vc);
+            let roleList = roleData.code[0].coding.map(element => element.code);
+            let userDetail = {
+                profile: {
+                    "user_name": user_name,
+                    "contact": contactVal,
+                    // "is_active": practitionerData.active ? practitionerData.active : true,
+                    "is_active": practitionerData.active,
+                    "user_id": user_id,
+                    "role": roleList?.[0] || null,
+                    "orgId": roleData?.organization?.reference?.split("/")[1] || null
+                }, dataValues: {}
+            };
+            let userAuthData = await getUserById(user_id);
+            userDetail.dataValues.authentication_detail = userAuthData;
             return userDetail;
         }
 
@@ -250,6 +251,37 @@ async function getUserDetail(req, contact) {
     catch (e) {
         return Promise.reject(e);
     }
+}
+
+
+async function getUserById(user_id) {
+    try {
+        let userData = await db.authentication_detail.findOne({
+            attributes: ['auth_id', 'user_id', 'login_attempts', 'otp', "otp_generate_attempt", "expire_time"],
+            where: { "user_id": user_id }
+        });
+    
+        return userData;
+    }
+    catch(e) {
+        return Promise.reject(e);
+    }
+   
+}
+
+
+// get practitioner role and details from db
+async function getUserData(contactType, contactVal) {
+    
+    const practitionerResource = await db.sequelize.query(`SELECT res_id, res_type, res_text_vc FROM hfj_res_ver where res_id = (SELECT distinct res_id FROM hfj_spidx_token where res_type = 'Practitioner' and (sp_value='${contactVal}' and sp_name='${contactType}') and res_type='Practitioner') order by res_ver desc limit 1;`,{type: sequelize.QueryTypes.SELECT});
+    if(practitionerResource.length != 1) {
+        return [];
+    }    
+    const roleResource = await db.sequelize.query(`select res_id, res_type, res_text_vc FROM hfj_res_ver where res_type = 'PractitionerRole' and res_id = 
+    (SELECT src_resource_id FROM public.hfj_res_link where source_resource_type = 'PractitionerRole' and target_resource_id=${practitionerResource[0].res_id} order by pId limit 1)  order by res_ver desc limit 1;`,{type: sequelize.QueryTypes.SELECT});
+    
+    return [practitionerResource[0], roleResource[0]];
+    
 }
 
 /// check if provided contact is an email or not
@@ -310,9 +342,9 @@ const userWebVerification = async (req, res, next) => {
         }
         userDetail = {
             dataValues: {
-                user_name: type == "delete" ? userDetail?.dataValues?.user_name || null : req.body.userContact,
-                user_email: type == "delete" ? userDetail?.dataValues?.user_email || null :  req.body.userContact,
-                mobile_number: type == "delete" ? userDetail?.dataValues?.mobile_number || null : req.body.userContact,
+                user_name: type == "delete" ? userDetail?.profile?.user_name || null : req.body.userContact,
+                user_email: type == "delete" ? userDetail?.profile?.user_email || null :  req.body.userContact,
+                mobile_number: type == "delete" ? userDetail?.profile?.contact || null : req.body.userContact,
             }
         }
 
@@ -343,10 +375,10 @@ const userWebVerification = async (req, res, next) => {
         let otp = generateOTP();
         console.info("OTP is : ", otp)
         if(type == "delete"){
-            if(userDetail.dataValues.user_email){
+            if(userDetail.profile.user_email){
                 await sendOTP(true, userDetail, otp);
             }
-            if(userDetail.dataValues.mobile_number){
+            if(userDetail.profile.mobile_number){
                 await sendOTP(false, userDetail, otp);
             }
         }
