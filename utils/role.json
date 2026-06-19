@@ -28,5 +28,15 @@
         "system" : "https://snomed.info/sct",
         "code": "397897005",
         "display": "Paramedics"
+    },
+    {
+        "system" : "https://terminology.hl7.org/CodeSystem/practitioner-rol",
+        "code": "224608005",
+        "display": "Administrator"
+    },
+    {
+        "system" : "https://terminology.hl7.org/CodeSystem/practitioner-rol",
+        "code": "analyst",
+        "display": "Analyst"
     }
 ]

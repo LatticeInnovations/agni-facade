@@ -184,18 +184,9 @@ const createUser = async (req, res, next) => {
         if (!errors.isEmpty()) {
             return response.sendInvalidDataError(res, errors);
         }
-        let { firstName, lastName, mobile, email, clinicName } = req.body;
-        let { type } = req.token;
-        if(type != "register"){
-            return res.status(401).json({ status: 0, message: "Invalid Token" });
-        }
-        const organization = {
-            "resourceType": "Organization",
-            "active": true,
-            "type": [{"coding": [{"system": "https://terminology.hl7.org/CodeSystem/organization-type","code": "prov","display": "Private Hospital"}]}],
-            "name": clinicName,
-            "telecom": [{"system": "phone","value": mobile},{"system": "email","value": email}],
-        }
+        let { firstName, lastName, mobile, email, role, clinicId } = req.body;
+        
+
         let practitioner = {
             "resourceType": "Practitioner",
             "identifier": [{"system": "https://www.passportindia.gov.in", "value": mobile + firstName}],
@@ -203,12 +194,7 @@ const createUser = async (req, res, next) => {
             "name": [{"family": lastName || '', "given": [firstName]} ],
             "telecom": [{"system": "phone","value": mobile,"rank": 1},{"system": "email","value": email || ''}]
         }
-        let response = await axios.post(config.baseUrl+'Organization', organization);
-        let orgId = null;
-        let userId = null;
-        if(response.status == 201){
-            orgId = response.data.id;
-        }
+
         response = await axios.post(config.baseUrl+'Practitioner', practitioner);
         if(response.status == 201){
             userId = response.data.id;
@@ -217,24 +203,34 @@ const createUser = async (req, res, next) => {
         let practitionerRole = {
             "resourceType": "PractitionerRole",
             "practitioner": { "reference": `Practitioner/${userId}`},
-            "organization": { "reference": `Organization/${orgId}`},
-            "code": [{"coding": [{"system": "https://terminology.hl7.org/CodeSystem/practitioner-role","code": "doctor"}]}]
-        }
-        let location = { "resourceType": "Location", "status": "active", "name": clinicName,
-            "position": { "longitude": 28.537, "latitude": 77.383 },
-            "managingOrganization": { "reference": `Organization/${orgId}`}
+            "organization": { "reference": `Organization/${clinicId}`},
+            "code": [{"coding": [{"system": "https://terminology.hl7.org/CodeSystem/practitioner-role","code": role}]}]
         }
         response = await axios.post(config.baseUrl+'PractitionerRole', practitionerRole);
-        response = await axios.post(config.baseUrl+'Location', location);
         await db.authentication_detail.create({ user_id: userId });
         let userProfile = {
             "userId": userId, "userName": firstName + ' ' + lastName,
             "orgId": orgId
         }
-        let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '5d' });
-        res.json({ status : 1, message : "Registration successfull", data: { token : 'Bearer ' + token } });
+        
+        res.json({ status : 1, message : "RUser created", data: { id: userId } });
     }
     catch(e){
+        console.info(e)
+        return res.status(500).json({
+            status: 0,
+            message: "Unable to process. Please try again.",
+            error: e
+        });
+    }
+}
+
+
+const updateUser = async (req, res, next) => {
+    try {
+
+    }
+    catch(error) {
         console.info(e)
         return res.status(500).json({
             status: 0,
@@ -250,5 +246,6 @@ module.exports = {
     getTimestamp,
     updateTimestamp,
     deleteUserData,
-    createUser
+    createUser,
+    updateUser
 }
