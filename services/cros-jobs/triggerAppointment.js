@@ -2,7 +2,7 @@ let bundleOp = require("../bundleOperation");
 let config = require("../../config/nodeConfig");
 let sendSms = require('../../utils/twilio.util');
 let emailContent = require("../../utils/emailContent");
-let sendEmail = require("../../utils/sendgrid.util").sendEmail;
+let sendEmail = require("../../utils/mailgun.util").sendEmail;
 let util = require('util');
 
 const cron = require('node-cron')

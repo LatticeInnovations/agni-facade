@@ -3,7 +3,7 @@ const db = require('../models/index');
 let sendSms = require('../utils/twilio.util');
 let emailContent = require("../utils/emailContent");
 let util = require('util');
-let sendEmail = require("../utils/sendgrid.util").sendEmail
+let sendEmail = require("../utils/mailgun.util").sendEmail
 let jwt = require("jsonwebtoken");
 const config = require("../config/nodeConfig");
 let { validationResult } = require('express-validator');
@@ -63,7 +63,7 @@ let login = async function (req, res) {
         }
         else {
             otp = generateOTP();
-            console.log("check if otp is generated before sending")
+            userDetail.profile.contact = req.body.userContact;
             try {
                 await sendOTP(isEmail, userDetail, otp);
             }
@@ -192,11 +192,11 @@ async function sendOTP(isEmail, userDetail, otp) {
     try {
         if (isEmail) {
             let mailData = {
-                to: [{ email: userDetail.profile.user_email }],
+                to: [{ email: userDetail.profile.contact }],
                 subject: util.format(`${(emailContent.find(e => e.notification_type_id == 1).subject)}`,),
                 content: util.format(`${(emailContent.find(e => e.notification_type_id == 1).content)}`, userDetail.profile.user_name, otp.toString())
             }
-            console.info("check mail data")
+            console.info("check mail data", mailData)
             await sendEmail(mailData);
         }
         else {
