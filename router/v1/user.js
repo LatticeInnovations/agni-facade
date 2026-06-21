@@ -5,7 +5,7 @@ const { check, oneOf } = require("express-validator");
 
 
 /**
- * Get User detail
+ * Get Users list
  * @route GET /v1/user
  * @group User
  * @security JWT
@@ -16,7 +16,7 @@ const { check, oneOf } = require("express-validator");
  * @returns {Error} 504 - Database connection error
  */
 
-router.get("/", userController.getUserProfile); 
+router.get("/", userController.getUsersList); 
 
 /**
  * Delete user details
@@ -70,7 +70,7 @@ router.put("/:id", [
     check("firstName").notEmpty(),
     check("middleName").optional(),
     check("lastName").optional(),
-    check("role").notEmpty().isIn(["224608005", "analyst", "doctor"]),
+    check("role").notEmpty().isIn(["224608005", "analyst", "23278007"]),
     [oneOf([
         check("email").notEmpty().isEmail().isLength({max: 70}), 
         check("mobile").notEmpty().isNumeric().isLength({min: 10, max: 10})

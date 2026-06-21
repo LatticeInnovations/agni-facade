@@ -38,5 +38,10 @@
         "system" : "https://terminology.hl7.org/CodeSystem/practitioner-rol",
         "code": "analyst",
         "display": "Analyst"
+    },
+    {
+        "system" : "https://terminology.hl7.org/CodeSystem/practitioner-rol",
+        "code": "23278007",
+        "display": "Community health worker"
     }
 ]

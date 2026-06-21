@@ -116,16 +116,16 @@ class Practitioner  extends Person{
 
     getJsonToFhirTranslator() {
         this.setBasicStructure();
-        this.setIdentifier();
+        // this.setIdentifier();
         this.setFirstName();
         this.setMiddleName();
         this.setLastName();
         this.setActive();
-        this.setGender();
-        this.setBirthDate();
+        // this.setGender();
+        //this.setBirthDate();
         this.setPhone();
         this.setEmailAddress();
-        this.setWorkAddress("work");
+        // this.setWorkAddress("work");
 
     }
 
@@ -134,13 +134,13 @@ class Practitioner  extends Person{
         this.getFirstName();
         this.getMiddleName();
         this.getLastName();
-        this.getIdentifier();
+        // this.getIdentifier();
         this.getActive();
-        this.getGender();
-        this.getBirthDate();
+        // this.getGender();
+        // this.getBirthDate();
         this.getPhone();
         this.getEmailAddress();
-        this.getWorkAddress();
+        // this.getWorkAddress();
     }
 
     patchUserInputToFHIR(fetchedResourceData) {

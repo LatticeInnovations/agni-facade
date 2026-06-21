@@ -1,7 +1,7 @@
 const axios = require('axios');
 const config = require("../config/nodeConfig");
 let sendSms = require('../utils/twilio.util');
-let sendEmail = require("../utils/sendgrid.util").sendEmail
+let sendEmail = require("../utils/mailgun.util").sendEmail
 
 const parseData = (resource) => {
     let resourceData = resource?.data?.entry || [];

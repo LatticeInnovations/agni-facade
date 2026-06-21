@@ -3,13 +3,14 @@ class PractitionerRole {
     roleObj;
     fhirResource;
 
-    constructor(location_obj, fhir_resource) {
-        this.roleObj = location_obj;
+    constructor(roleObj, fhir_resource) {
+        this.roleObj = roleObj;
         this.fhirResource = fhir_resource;
     }
 
     setOrganizationReference() {
-        this.fhirResource.organization.reference = "Organization/"+this.roleObj.orgId;
+        if(this.roleObj.orgId != null) 
+            this.fhirResource.organization.reference = "Organization/"+this.roleObj.orgId;
     }
 
     getOrganizationRole() {
@@ -18,17 +19,18 @@ class PractitionerRole {
             this.roleObj.role = result.display
     }
     setPractitionerReference() {
-        this.fhirResource.practitioner.reference = "Practitioner/"+this.roleObj.orgId;
+        this.fhirResource.practitioner.reference = "urn:uuid:" + this.roleObj.userUUid
     }
 
     setRole() {
         let result = roleJson.find(a => a.code === this.roleObj.roleId);
-        this.fhirResource.code[0].coding = [
-            {
+        this.fhirResource.code = [{
+            "coding": [{
                 "system" : result.system,
                 "code": result.code,
-            }
-        ]
+            }],
+            "text" : result.display
+    }]
     }
 
 
@@ -54,6 +56,7 @@ class PractitionerRole {
         this.fhirResource.code = [];
         this.fhirResource.organization = {};
         this.fhirResource.practitioner = {};
+        this.fhirResource.resourceType = "PractitionerRole"
     }
 
 }

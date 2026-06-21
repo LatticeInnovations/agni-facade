@@ -3,7 +3,7 @@ const db = require('../models/index');
 let sendSms = require('../utils/twilio.util');
 let emailContent = require("../utils/emailContent");
 let util = require('util');
-let sendEmail = require("../utils/sendgrid.util").sendEmail
+let sendEmail = require("../utils/mailgun.util").sendEmail
 let jwt = require("jsonwebtoken");
 const config = require("../config/nodeConfig");
 let { validationResult } = require('express-validator');
@@ -63,7 +63,7 @@ let login = async function (req, res) {
         }
         else {
             otp = generateOTP();
-            console.log("check if otp is generated before sending")
+            userDetail.profile.contact = req.body.userContact;
             try {
                 await sendOTP(isEmail, userDetail, otp);
             }
@@ -152,7 +152,8 @@ let OTPAuthentication = async function (req, res) {
                 "contact": req.body.userContact
             }
             let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '5d' });
-            upsertOTP(null, userDetail.profile, timeData.currentTime, null, 0, authentication_detail.dataValues.otp_generate_attempt);
+            await upsertOTP(null, userDetail.profile, timeData.currentTime, null, 0, authentication_detail.dataValues.otp_generate_attempt);
+            await addUserLastActiveDetails(userProfile.userId, userProfile.orgId)
             resMessage = { 
                 status: 1, 
                 message: "Logged in successfully", 
@@ -160,7 +161,9 @@ let OTPAuthentication = async function (req, res) {
                     "token": `Bearer ${token}`, 
                     name: userDetail.profile.user_name, 
                     role: userDetail?.profile?.role,
-                    contact: req.body.userContact
+                    contact: req.body.userContact,
+                    orgId:  userDetail?.profile?.orgId,
+                    userId: userDetail?.profile?.userId
                 } 
             }
         }
@@ -189,11 +192,11 @@ async function sendOTP(isEmail, userDetail, otp) {
     try {
         if (isEmail) {
             let mailData = {
-                to: [{ email: userDetail.profile.user_email }],
+                to: [{ email: userDetail.profile.contact }],
                 subject: util.format(`${(emailContent.find(e => e.notification_type_id == 1).subject)}`,),
                 content: util.format(`${(emailContent.find(e => e.notification_type_id == 1).content)}`, userDetail.profile.user_name, otp.toString())
             }
-            console.info("check mail data")
+            console.info("check mail data", mailData)
             await sendEmail(mailData);
         }
         else {
@@ -311,6 +314,16 @@ async function upsertOTP(otp, userDetail, currentTime, expireTime, loginAttempts
     }
 
 
+}
+
+async function addUserLastActiveDetails(userId, orgId) {
+    try {
+       let upsertDetail = await db.UserLoginActivity.create({userId, orgId})
+        return upsertDetail;
+    }
+    catch (e) {
+        return Promise.reject(e);
+    }
 }
 
 const userWebVerification = async (req, res, next) => {
@@ -497,5 +510,5 @@ async function checkAuthAttempts(expire_time, currentTime) {
 }
 
 module.exports = {
-    login, OTPAuthentication, userWebVerification, userVerificationVerifyOTP
+    login, OTPAuthentication, userWebVerification, userVerificationVerifyOTP, addUserLastActiveDetails
 }

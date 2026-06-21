@@ -25,7 +25,9 @@ let config = function () {
             fhirCodeUrl : process.env.fhirCodeUrl,
             roleCodeUrl : process.env.roleCodeUrl,
             facadeUrl : process.env.facadeUrl,
-            medReqUuidUrl: "https://lattice.in/sid/medRequest"
+            medReqUuidUrl: "https://lattice.in/sid/medRequest",
+            mailgunApiKey:process.env.mailgunKey,
+            mailgunDomain: process.env.mailgunDomain
         };
 };
 module.exports = new config();
