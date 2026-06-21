@@ -160,7 +160,8 @@ let OTPAuthentication = async function (req, res) {
                     "token": `Bearer ${token}`, 
                     name: userDetail.profile.user_name, 
                     role: userDetail?.profile?.role,
-                    contact: req.body.userContact
+                    contact: req.body.userContact,
+                    orgId:  userDetail?.profile?.orgId
                 } 
             }
         }
