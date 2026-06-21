@@ -6,7 +6,6 @@ let mailgun = new Mailgun(formData);
 let mg = mailgun.client({
     username: 'api',
     key: config.mailgunApiKey,
-    url: 'https://api.eu.mailgun.net',
     timeout: 30000
 });
 
