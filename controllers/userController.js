@@ -199,7 +199,6 @@ const getUsersList = async (req, res, next) => {
             queryData._id = req.query._id
         }
         let practitionerBundle = await bundleOp.searchData(config.baseUrl + "Practitioner", queryData);
-        console.log(practitionerBundle)
         const entries = practitionerBundle.data.entry || [];
         const total = practitionerBundle.data.total || 0;
 
