@@ -28,7 +28,8 @@ class PractitionerRole {
             "coding": [{
                 "system" : result.system,
                 "code": result.code,
-            }]
+            }],
+            "text" : result.display
     }]
     }
 

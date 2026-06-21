@@ -152,7 +152,8 @@ let OTPAuthentication = async function (req, res) {
                 "contact": req.body.userContact
             }
             let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '5d' });
-            upsertOTP(null, userDetail.profile, timeData.currentTime, null, 0, authentication_detail.dataValues.otp_generate_attempt);
+            await upsertOTP(null, userDetail.profile, timeData.currentTime, null, 0, authentication_detail.dataValues.otp_generate_attempt);
+            await addUserLastActiveDetails(userProfile.userId, userProfile.orgId)
             resMessage = { 
                 status: 1, 
                 message: "Logged in successfully", 
@@ -161,7 +162,8 @@ let OTPAuthentication = async function (req, res) {
                     name: userDetail.profile.user_name, 
                     role: userDetail?.profile?.role,
                     contact: req.body.userContact,
-                    orgId:  userDetail?.profile?.orgId
+                    orgId:  userDetail?.profile?.orgId,
+                    userId: userDetail?.profile?.userId
                 } 
             }
         }
@@ -312,6 +314,16 @@ async function upsertOTP(otp, userDetail, currentTime, expireTime, loginAttempts
     }
 
 
+}
+
+async function addUserLastActiveDetails(userId, orgId) {
+    try {
+       let upsertDetail = await db.UserLoginActivity.create({userId, orgId})
+        return upsertDetail;
+    }
+    catch (e) {
+        return Promise.reject(e);
+    }
 }
 
 const userWebVerification = async (req, res, next) => {
@@ -498,5 +510,5 @@ async function checkAuthAttempts(expire_time, currentTime) {
 }
 
 module.exports = {
-    login, OTPAuthentication, userWebVerification, userVerificationVerifyOTP
+    login, OTPAuthentication, userWebVerification, userVerificationVerifyOTP, addUserLastActiveDetails
 }

@@ -19,7 +19,8 @@ const PractitionerRole = require("../class/practitionerRole");
 let bundleOp = require("../services/bundleOperation");
 const { v4: uuidv4 } = require('uuid');
 const { createBundle } = require("./manageBundle");
-
+const { addUserLastActiveDetails } = require("./authcontroller");
+const {fn, Op, col} = require("sequelize")
 // Get user profile
 let getUserProfile = async function (req, res, next) {
     try {
@@ -96,6 +97,7 @@ const updateTimestamp = async (req, res, next) => {
             return d;
         });      
         await model.userTimeMap.bulkCreate(data, { updateOnDuplicate: [ 'timestamp', 'orgId' ] });
+        await addUserLastActiveDetails(req.token.userId, req.token.orgId)
         res.json({ status: 1, message: "timestamp updated", data });
     }
     catch(e){
@@ -183,6 +185,110 @@ const deleteUserData = async (req, res, next) => {
     }
 }
 
+const getUsersList = async (req, res, next) => {
+    try{
+        let resourceResult = []
+        const queryData = {
+            _revinclude: "PractitionerRole:practitioner",
+             "_include:iterate": "PractitionerRole:organization",
+            _offset: req?.query?._offset|| 0,
+            _count: req?.query?._count| 10,
+            _total: "accurate"
+        }
+        if(req.query._id) {
+            queryData._id = req.query._id
+        }
+        let practitionerBundle = await bundleOp.searchData(config.baseUrl + "Practitioner", queryData);
+        console.log(practitionerBundle)
+        const entries = practitionerBundle.data.entry || [];
+        const total = practitionerBundle.data.total || 0;
+
+        const practitionerEntries = entries.filter(
+            (e) => e.resource?.resourceType === "Practitioner"
+        );
+        const roleEntries = entries.filter(
+            (e) => e.resource?.resourceType === "PractitionerRole"
+        );
+
+        const orgEntries = entries.filter(
+            (e) => e.resource?.resourceType === "Organization"
+        );
+
+        // Map orgId -> org name for quick lookup
+        const orgNameById = {};
+        for (const orgEntry of orgEntries) {
+            orgNameById[orgEntry.resource.id] = orgEntry.resource.name;
+        }
+
+        const rolesByPractitionerId = {};
+        for (const roleEntry of roleEntries) {
+            const practitionerRef = roleEntry.resource.practitioner?.reference || "";
+            const practitionerId = practitionerRef.split("/")[1];
+            if (!practitionerId) continue;
+
+            const orgRef = roleEntry?.resource?.organization?.reference || null;
+            const orgId = orgRef?.split("/")[1] || null;
+
+            if (!rolesByPractitionerId[practitionerId]) {
+                rolesByPractitionerId[practitionerId] = [];
+            }
+            rolesByPractitionerId[practitionerId] = { 
+                role: roleEntry.resource,
+                orgId,
+                orgName: orgNameById[orgId] || null
+            };
+        }
+
+        console.log(rolesByPractitionerId)
+        const practitionerIds = practitionerEntries.map((entry) => entry.resource.id);
+        const lastActivities = await db.UserLoginActivity.findAll({
+            attributes: [
+                'userId',
+                [fn('MAX', col('createdAt')), 'lastActiveAt']
+            ],
+            where: {
+                userId: { [Op.in]: practitionerIds }
+            },
+            group: ['userId'],
+            raw: true
+        });
+
+        const lastActiveByUserId = {};
+        for (const activity of lastActivities) {
+            lastActiveByUserId[activity.userId] = activity.lastActiveAt;
+        }
+        const users = practitionerEntries.map((entry) => {
+            const practitionerResource = entry.resource;
+            const role = rolesByPractitionerId[practitionerResource.id].role || {};
+            const email = practitionerResource.telecom.filter(e => e.system == "email")
+            const phone = practitionerResource.telecom.filter(e => e.system == "phone")
+            return {
+                userId: practitionerResource.id,
+                firstName: practitionerResource.name?.[0]?.given?.[0] || null,
+                middleName: practitionerResource.name?.[0]?.given?.[1] || null,
+                lastName: practitionerResource.name?.[0]?.family || null,
+                lastActiveAt: lastActiveByUserId[practitionerResource.id] || null,
+                roleId: role?.code?.[0]?.coding?.[0]?.code || null,
+                roleName: role?.code?.[0]?.text,
+                email: email?.[0]?.value || null,  
+                mobile: phone?.[0]?.value || null,
+                clinicId: rolesByPractitionerId[practitionerResource.id].orgId,
+                clinicName: rolesByPractitionerId[practitionerResource.id].orgName
+            };
+        });
+        return res.status(200).json({status: 1,  message: "Users data fetched", data: {total: practitionerBundle.data.total, users}})
+    }
+    catch(e){
+        console.info(e)
+        return res.status(500).json({
+            status: 0,
+            message: "Unable to process. Please try again.",
+            error: e
+        });
+    }
+}
+
+
 const createUser = async (req, res, next) => {
     try{
         const errors = validationResult(req);
@@ -226,6 +332,7 @@ const createUser = async (req, res, next) => {
 
         let result = await axios.post(config.baseUrl, bundle);
         console.log("result:", result)
+        await addUserLastActiveDetails(req.token.userId, req.token.orgId)
         if (result.status == 200) {   
             console.log(result.data.entry)           
             const practitionerEntry = result.data.entry.find(entry => entry.response.location.startsWith("Practitioner/"));
@@ -315,11 +422,12 @@ const updateUser = async (req, res, next) => {
 
         let result = await axios.post(config.baseUrl, bundle);
         console.log("result:", result)
+        await addUserLastActiveDetails(req.token.userId, req.token.orgId)
         if (result.status == 200) {   
             console.log(result.data.entry)           
             const practitionerEntry = result.data.entry.find(entry => entry.response.location.startsWith("Practitioner/"));
             const practitionerId = practitionerEntry.response.location.split("/")[1];               
-            return res.status(201).json({ status: 1, message: "Data saved successfully.", data: {userId: practitionerId} })
+            return res.status(201).json({ status: 1, message: "Data updated successfully.", data: {userId: practitionerId} })
         }
         else {
            return res.status(500).json({
@@ -345,5 +453,6 @@ module.exports = {
     updateTimestamp,
     deleteUserData,
     createUser,
-    updateUser
+    updateUser,
+    getUsersList
 }
