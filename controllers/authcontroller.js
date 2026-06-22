@@ -161,9 +161,10 @@ let OTPAuthentication = async function (req, res) {
                     "token": `Bearer ${token}`, 
                     name: userDetail.profile.user_name, 
                     role: userDetail?.profile?.role,
+                    roleName: userDetail?.profile?.roleName,
                     contact: req.body.userContact,
                     orgId:  userDetail?.profile?.orgId,
-                    userId: userDetail?.profile?.userId
+                    userId: userDetail?.profile?.user_id
                 } 
             }
         }
@@ -227,6 +228,7 @@ async function getUserDetail(contactType, contactVal) {
             let phone = practitionerData.telecom.filter(e => e.system == "phone");
             let roleData = JSON.parse(existingPractitioner[1].res_text_vc);
             let roleList = roleData.code[0].coding.map(element => element.code);
+            console.log("check role list: ", roleList, roleData)
             let userDetail = {
                 profile: {
                     "user_name": user_name,
@@ -235,6 +237,7 @@ async function getUserDetail(contactType, contactVal) {
                     "is_active": practitionerData.active,
                     "user_id": user_id,
                     "role": roleList?.[0] || null,
+                    "roleName": roleData?.code?.[0]?.text || null ,
                     "orgId": roleData?.organization?.reference?.split("/")[1] || null
                 }, dataValues: {}
             };
