@@ -10,7 +10,7 @@ let createFacility = async function (req, res) {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(422).json({ success: false, message: "Validation failed", errors: errors.array() });
+            return res.status(422).json({ status: 0, message: "Validation failed", errors: errors.array() });
         }
 
         let facilityData = req.body;
@@ -18,7 +18,7 @@ let createFacility = async function (req, res) {
 
         let orgResponse = await axios.post(config.baseUrl + "Organization", organization);
         if (orgResponse.status !== 201) {
-            return res.status(500).json({ success: false, message: "Failed to create facility" });
+            return res.status(500).json({ status: 0, message: "Failed to create facility" });
         }
 
         let facilityId = orgResponse.data.id;
@@ -27,14 +27,14 @@ let createFacility = async function (req, res) {
         await axios.post(config.baseUrl + "Location", location);
 
         return res.status(201).json({
-            success: true,
+            status: 1,
             message: "Facility created successfully",
             data: { facility_id: facilityId }
         });
     } catch (e) {
         console.error(e);
         return res.status(500).json({
-            success: false,
+            status: 0,
             message: "Unable to process. Please try again.",
             error: e.response ? e.response.data : e.message
         });
@@ -131,11 +131,11 @@ let listFacilities = async function (req, res) {
             };
         }));
 
-        return res.status(200).json({ success: true, total: total, data: facilities });
+        return res.status(200).json({ status: 1, total: total, data: facilities });
     } catch (e) {
         console.error(e);
         return res.status(500).json({
-            success: false,
+            status: 0,
             message: "Unable to process. Please try again.",
             error: e.response ? e.response.data : e.message
         });
@@ -148,7 +148,7 @@ let updateFacility = async function (req, res) {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(422).json({ success: false, message: "Validation failed", errors: errors.array() });
+            return res.status(422).json({ status: 0, message: "Validation failed", errors: errors.array() });
         }
 
         let facilityId = req.params.id;
@@ -169,14 +169,14 @@ let updateFacility = async function (req, res) {
         }
 
         return res.status(200).json({
-            success: true,
+            status: 1,
             message: "Facility updated successfully",
             data: { facility_id: parseInt(facilityId) }
         });
     } catch (e) {
         console.error(e);
         return res.status(500).json({
-            success: false,
+            status: 0,
             message: "Unable to process. Please try again.",
             error: e.response ? e.response.data : e.message
         });
@@ -244,7 +244,7 @@ let getFacilityById = async function (req, res) {
         }
 
         return res.status(200).json({
-            success: true,
+            status: 1,
             data: {
                 facility_id: parseInt(org.id),
                 name: org.name,
@@ -264,10 +264,10 @@ let getFacilityById = async function (req, res) {
     } catch (e) {
         console.error(e);
         if (e.response?.status === 404) {
-            return res.status(404).json({ success: false, message: "Facility not found" });
+            return res.status(404).json({ status: 0, message: "Facility not found" });
         }
         return res.status(500).json({
-            success: false,
+            status: 0,
             message: "Unable to process. Please try again.",
             error: e.response ? e.response.data : e.message
         });
