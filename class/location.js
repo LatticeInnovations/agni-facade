@@ -12,7 +12,7 @@ class Location {
     }
 
     getOrganizationReference() {
-        this.locationObj.organization = this.fhirResource.managingOrganization.reference
+        this.locationObj.organization = this.fhirResource?.managingOrganization?.reference || null
     }
 
    setStatus() {
@@ -20,7 +20,7 @@ class Location {
    }
 
    getStatus() {
-    this.locationObj.status = this.fhirResource.status;
+    this.locationObj.status = this.fhirResource?.status || null;
    }
 
    setPosition() {
@@ -32,8 +32,8 @@ class Location {
 
    getPosition() {
     this.locationObj.position = {
-        "latitude": this.fhirResource.position.latitude,
-        "longitude": this.fhirResource.position.longitude
+        "latitude": this.fhirResource?.position?.latitude || null,
+        "longitude": this.fhirResource?.position?.longitude || null
     }
    }
   
