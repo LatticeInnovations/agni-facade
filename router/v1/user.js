@@ -50,18 +50,18 @@ router.delete("/", userController.deleteUserData);
 router.post("/", [
     check("firstName").notEmpty(),
     check("middleName").optional(),
-    check("role").notEmpty().isIn(["224608005", "analyst", "doctor"]),
+    check("role").notEmpty().isIn(["224608005", "analyst", "23278007"]),
     check("lastName").optional(),
     [oneOf([
         check("email").notEmpty().isEmail().isLength({max: 70}), 
         check("mobile").notEmpty().isNumeric().isLength({min: 10, max: 10})
     ])],
    check("clinicId")
-  .if((value, { req }) => req.body.role === "doctor")
-  .notEmpty().withMessage("clinicId is required for doctors")
+  .if((value, { req }) => req.body.role === "23278007")
+  .notEmpty().withMessage("clinicId is required for Community health workers")
   .bail(),
   check("clinicId")
-    .if((value, { req }) => req.body.role !== "doctor")
+    .if((value, { req }) => req.body.role !== "23278007")
     .optional({ nullable: true }),
 ], userController.createUser); 
 
@@ -76,11 +76,11 @@ router.put("/:id", [
         check("mobile").notEmpty().isNumeric().isLength({min: 10, max: 10})
     ])],
    check("clinicId")
-  .if((value, { req }) => req.body.role === "doctor")
-  .notEmpty().withMessage("clinicId is required for doctors")
+  .if((value, { req }) => req.body.role === "23278007")
+  .notEmpty().withMessage("clinicId is required for Community health workers")
   .bail(),
   check("clinicId")
-    .if((value, { req }) => req.body.role !== "doctor")
+    .if((value, { req }) => req.body.role !== "23278007")
     .optional({ nullable: true }),
 ], userController.updateUser); 
 
