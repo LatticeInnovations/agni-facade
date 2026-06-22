@@ -30,5 +30,6 @@ router.put("/:id", [
 ], facilityController.updateFacility);
 
 router.get("/", facilityController.listFacilities);
+router.get("/:id", facilityController.getFacilityById);
 
 module.exports = router;
