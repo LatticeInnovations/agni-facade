@@ -95,7 +95,10 @@ class Person {
 
     getMiddleName() {
         if (this.fhirResource.name && !checkEmptyData(this.fhirResource.name[this.fhirResource.name.length - 1].given[1])) {
-            this.personObj.middleName = this.fhirResource.name[this.fhirResource.name.length - 1].given[1];
+            this.personObj.middleName = this.fhirResource?.name?.[this.fhirResource.name.length - 1]?.given?.[1] || null;
+        }
+        else {
+            this.personObj.middleName = null
         }
     }
 
@@ -153,11 +156,14 @@ class Person {
         if (this.fhirResource.identifier && this.fhirResource.identifier.length > 0) {
             this.personObj.identifier = [];
             this.fhirResource.identifier.forEach(element => {
-                this.personObj.identifier.push({
+                if(!element.type || (element.type && element.type.coding[0].code != "MR") ) {
+                    this.personObj.identifier.push({
                     identifierType: element.system,
                     identifierNumber: element.value,
                     code: element.type ? element.type.coding[0].code : null
                 })
+                }
+
                 this.personObj.id = element.type && element.type.coding[0].code == "MR" ? element.value : this.personObj.id;
             });
 
@@ -298,6 +304,10 @@ class Person {
             this.fhirResource.address.push({
                 use: type,
                 line: line,
+                extension: [{
+                    "url": "https://www.nesdr.gov.in/dataset/arunachal-pradesh-block-boundary",
+                    "valueString": this.personObj[addressType].block
+                }],
                 city: this.personObj[addressType].city,
                 district: this.personObj[addressType].district,
                 state: this.personObj[addressType].state,
@@ -310,13 +320,40 @@ class Person {
     addAddress() {
         let address = [];
         if(this.personObj.permanentAddress)
-            address.push({
-                use: "home", line: [this.personObj[permanentAddress].value.addressLine1, this.personObj[permanentAddress].value.addressLine2], city: this.personObj[permanentAddress].value.city, district: this.personObj[permanentAddress].value.district, state: this.personObj[permanentAddress].value.state, postalCode: this.personObj[permanentAddress].value.postalCode, country: this.personObj[permanentAddress].value.country
+            address.push(
+            {
+                use: "home", 
+                line: [this.personObj[permanentAddress].value.addressLine1, this.personObj[permanentAddress].value.addressLine2], 
+                city: this.personObj[permanentAddress].value.city, 
+                district: this.personObj[permanentAddress].value.district, 
+                state: this.personObj[permanentAddress].value.state, 
+                postalCode: this.personObj[permanentAddress].value.postalCode, 
+                country: this.personObj[permanentAddress].value.country, 
+                extension: [
+                    {
+                        "url": "https://www.nesdr.gov.in/dataset/arunachal-pradesh-block-boundary",
+                        "valueString": this.personObj[permanentAddress].value.block
+                    }
+                ]
             })
         if(this.personObj.tempAddress)
-        address.push({
-            use: "temp", line: [this.personObj[tempAddress].value.addressLine1, this.personObj[tempAddress].value.addressLine2], city: this.personObj[tempAddress].value.city, district: this.personObj[tempAddress].value.district, state: this.personObj[tempAddress].value.state, postalCode: this.personObj[tempAddress].value.postalCode, country: this.personObj[tempAddress].value.country
+        address.push(
+            {
+                use: "temp", 
+                line: [this.personObj[tempAddress].value.addressLine1, this.personObj[tempAddress].value.addressLine2], 
+                city: this.personObj[tempAddress].value.city, 
+                district: this.personObj[tempAddress].value.district, 
+                state: this.personObj[tempAddress].value.state, 
+                postalCode: this.personObj[tempAddress].value.postalCode, 
+                country: this.personObj[tempAddress].value.country, 
+                extension: [
+                    {
+                        "url": "https://www.nesdr.gov.in/dataset/arunachal-pradesh-block-boundary",
+                        "valueString": this.personObj[permanentAddress].value.block
+                    }
+                ]
         })
+
 
         this.fhirResource.push({"op": "add", "path": "/address", value: address})
     }
@@ -334,6 +371,12 @@ class Person {
             let jsonData = {
                 use: type,
                 line: line,
+                extension: [
+                    {
+                                "url": "https://www.nesdr.gov.in/dataset/arunachal-pradesh-block-boundary",
+                                "valueString": this.personObj[addressType].value.block
+                    }
+                ],
                 city: this.personObj[addressType].value.city,
                 district: this.personObj[addressType].value.district,
                 state: this.personObj[addressType].value.state,
@@ -344,6 +387,7 @@ class Person {
                 jsonData = {
                     use: type,
                     line: null,
+                    extension: null,
                     city: null,
                     district: null,
                     state: null,
@@ -366,15 +410,16 @@ class Person {
                 let addressType = i == 0 ? "permanentAddress" : "tempAddress";
                 this.personObj[addressType] = {
                    
-                    city: this.fhirResource.address[i].city,
+                    city: this.fhirResource?.address[i]?.city || null,
+                    block: this.fhirResource.address[i].extension?.[0]?.valueString || null,
                     district: this.fhirResource.address[i].district,
                     state: this.fhirResource.address[i].state,
-                    postalCode: this.fhirResource.address[i].postalCode,
+                    postalCode: this.fhirResource?.address?.[i]?.postalCode || null,
                     country: this.fhirResource.address[i].country
                 }
                 if (this.fhirResource.address[i].line) {
                     this.personObj[addressType].addressLine1 = this.fhirResource.address[i].line[0];
-                    this.personObj[addressType].addressLine2 = this.fhirResource.address[i].line[1];
+                    this.personObj[addressType].addressLine2 = this.fhirResource.address?.[i]?.line?.[1] || null;
                 }
 
             }
@@ -418,6 +463,7 @@ class Person {
     }
 
     setManagingOrg(){
+        console.log(this.token)
         this.fhirResource.managingOrganization = {
             reference : "Organization/"+this.token.orgId
         }
@@ -450,7 +496,7 @@ class Person {
         this.setGender();
         this.setBirthDate();
         this.setPhone();
-        this.setEmailAddress();
+        // this.setEmailAddress();
         this.setAddress("home");
         this.setAddress("temp");
         this.setManagingOrg();
@@ -467,10 +513,10 @@ class Person {
         this.getGender();
         this.getBirthDate();
         this.getPhone();
-        this.getEmailAddress();
+        // this.getEmailAddress();
         this.getAddress();
-        this.getManagingOrg();
-        this.getGeneralPractitioner();
+        // this.getManagingOrg();
+        // this.getGeneralPractitioner();
     }
 
     patchUserInputToFHIR(fetchedResourceData) {
@@ -478,18 +524,18 @@ class Person {
         this.patchMiddleName(fetchedResourceData);
         this.patchLastName(fetchedResourceData);
         this.patchIdentifier(fetchedResourceData);
-        this.patchActive();
+        // this.patchActive();
         this.patchGender();
         this.patchBirthDate();
-        if(this.personObj.mobileNumber || this.personObj.email)
+        if(this.personObj.mobileNumber)
             this.patchTelecom(fetchedResourceData);
         if(!fetchedResourceData.address) {
             this.addAddress();
         }        
         if (this.personObj["permanentAddress"] !== undefined && fetchedResourceData.address)
             this.patchAddress("home", fetchedResourceData);
-        if (this.personObj["tempAddress"] !== undefined && fetchedResourceData.address)
-            this.patchAddress("temp", fetchedResourceData);
+        // if (this.personObj["tempAddress"] !== undefined && fetchedResourceData.address)
+        //     this.patchAddress("temp", fetchedResourceData);
     }
 }
 
