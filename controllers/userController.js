@@ -193,13 +193,13 @@ const getUsersList = async (req, res, next) => {
              "_include:iterate": "PractitionerRole:organization",
             _offset: req?.query?._offset|| 0,
             _count: req?.query?._count| 10,
-            _total: "accurate"
+            _total: "accurate",
+            active: true
         }
         if(req.query._id) {
             queryData._id = req.query._id
         }
         let practitionerBundle = await bundleOp.searchData(config.baseUrl + "Practitioner", queryData);
-        console.log(practitionerBundle)
         const entries = practitionerBundle.data.entry || [];
         const total = practitionerBundle.data.total || 0;
 

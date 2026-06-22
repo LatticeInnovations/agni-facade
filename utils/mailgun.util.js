@@ -20,7 +20,7 @@ function normalizeRecipients(to) {
 module.exports.sendEmail = async function (data) {
     let msg = {
         to: normalizeRecipients(data.to),
-        from: `support@${config.mailgunDomain}`, // Use the email address or domain you verified above
+        from: `info@${config.mailgunDomain}`, // Use the email address or domain you verified above
         subject: data.subject,
         html: data.content,
         attachment: data.attachments
