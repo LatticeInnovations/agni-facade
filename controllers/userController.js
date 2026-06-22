@@ -9,12 +9,18 @@ const axios = require('axios');
 const config = require("../config/nodeConfig");
 let jwt = require("jsonwebtoken");
 let secretKey = require('../config/nodeConfig').jwtSecretKey;
-let Queue = require('bull');
-const deleteUserDataQueue =  new Queue('userQueue');
+// let Queue = require('bull');
+// const deleteUserDataQueue =  new Queue('userQueue');
 const db = require('../models/index');
-let sendEmail = require("../utils/sendgrid.util").sendEmail;
+let sendEmail = require("../utils/mailgun.util").sendEmail;
 let sendSms = require('../utils/twilio.util');
-// { redis: {port: '6379', host: 'localhost'}}
+const Practitioner = require("../class/practitioner");
+const PractitionerRole = require("../class/practitionerRole");
+let bundleOp = require("../services/bundleOperation");
+const { v4: uuidv4 } = require('uuid');
+const { createBundle } = require("./manageBundle");
+const { addUserLastActiveDetails } = require("./authcontroller");
+const {fn, Op, col} = require("sequelize")
 // Get user profile
 let getUserProfile = async function (req, res, next) {
     try {
@@ -91,6 +97,7 @@ const updateTimestamp = async (req, res, next) => {
             return d;
         });      
         await model.userTimeMap.bulkCreate(data, { updateOnDuplicate: [ 'timestamp', 'orgId' ] });
+        await addUserLastActiveDetails(req.token.userId, req.token.orgId)
         res.json({ status: 1, message: "timestamp updated", data });
     }
     catch(e){
@@ -178,61 +185,98 @@ const deleteUserData = async (req, res, next) => {
     }
 }
 
-const createUser = async (req, res, next) => {
+const getUsersList = async (req, res, next) => {
     try{
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return response.sendInvalidDataError(res, errors);
+        let resourceResult = []
+        const queryData = {
+            _revinclude: "PractitionerRole:practitioner",
+             "_include:iterate": "PractitionerRole:organization",
+            _offset: req?.query?._offset|| 0,
+            _count: req?.query?._count| 10,
+            _total: "accurate",
+            active: true
         }
-        let { firstName, lastName, mobile, email, clinicName } = req.body;
-        let { type } = req.token;
-        if(type != "register"){
-            return res.status(401).json({ status: 0, message: "Invalid Token" });
+        if(req.query._id) {
+            queryData._id = req.query._id
         }
-        const organization = {
-            "resourceType": "Organization",
-            "active": true,
-            "type": [{"coding": [{"system": "https://terminology.hl7.org/CodeSystem/organization-type","code": "prov","display": "Private Hospital"}]}],
-            "name": clinicName,
-            "telecom": [{"system": "phone","value": mobile},{"system": "email","value": email}],
-        }
-        let practitioner = {
-            "resourceType": "Practitioner",
-            "identifier": [{"system": "https://www.passportindia.gov.in", "value": mobile + firstName}],
-            "active": true,
-            "name": [{"family": lastName || '', "given": [firstName]} ],
-            "telecom": [{"system": "phone","value": mobile,"rank": 1},{"system": "email","value": email || ''}]
-        }
-        let response = await axios.post(config.baseUrl+'Organization', organization);
-        let orgId = null;
-        let userId = null;
-        if(response.status == 201){
-            orgId = response.data.id;
-        }
-        response = await axios.post(config.baseUrl+'Practitioner', practitioner);
-        if(response.status == 201){
-            userId = response.data.id;
+        let practitionerBundle = await bundleOp.searchData(config.baseUrl + "Practitioner", queryData);
+        const entries = practitionerBundle.data.entry || [];
+        const total = practitionerBundle.data.total || 0;
+
+        const practitionerEntries = entries.filter(
+            (e) => e.resource?.resourceType === "Practitioner"
+        );
+        const roleEntries = entries.filter(
+            (e) => e.resource?.resourceType === "PractitionerRole"
+        );
+
+        const orgEntries = entries.filter(
+            (e) => e.resource?.resourceType === "Organization"
+        );
+
+        // Map orgId -> org name for quick lookup
+        const orgNameById = {};
+        for (const orgEntry of orgEntries) {
+            orgNameById[orgEntry.resource.id] = orgEntry.resource.name;
         }
 
-        let practitionerRole = {
-            "resourceType": "PractitionerRole",
-            "practitioner": { "reference": `Practitioner/${userId}`},
-            "organization": { "reference": `Organization/${orgId}`},
-            "code": [{"coding": [{"system": "https://terminology.hl7.org/CodeSystem/practitioner-role","code": "doctor"}]}]
+        const rolesByPractitionerId = {};
+        for (const roleEntry of roleEntries) {
+            const practitionerRef = roleEntry.resource.practitioner?.reference || "";
+            const practitionerId = practitionerRef.split("/")[1];
+            if (!practitionerId) continue;
+
+            const orgRef = roleEntry?.resource?.organization?.reference || null;
+            const orgId = orgRef?.split("/")[1] || null;
+
+            if (!rolesByPractitionerId[practitionerId]) {
+                rolesByPractitionerId[practitionerId] = [];
+            }
+            rolesByPractitionerId[practitionerId] = { 
+                role: roleEntry.resource,
+                orgId,
+                orgName: orgNameById[orgId] || null
+            };
         }
-        let location = { "resourceType": "Location", "status": "active", "name": clinicName,
-            "position": { "longitude": 28.537, "latitude": 77.383 },
-            "managingOrganization": { "reference": `Organization/${orgId}`}
+
+        console.log(rolesByPractitionerId)
+        const practitionerIds = practitionerEntries.map((entry) => entry.resource.id);
+        const lastActivities = await db.UserLoginActivity.findAll({
+            attributes: [
+                'userId',
+                [fn('MAX', col('createdAt')), 'lastActiveAt']
+            ],
+            where: {
+                userId: { [Op.in]: practitionerIds }
+            },
+            group: ['userId'],
+            raw: true
+        });
+
+        const lastActiveByUserId = {};
+        for (const activity of lastActivities) {
+            lastActiveByUserId[activity.userId] = activity.lastActiveAt;
         }
-        response = await axios.post(config.baseUrl+'PractitionerRole', practitionerRole);
-        response = await axios.post(config.baseUrl+'Location', location);
-        await db.authentication_detail.create({ user_id: userId });
-        let userProfile = {
-            "userId": userId, "userName": firstName + ' ' + lastName,
-            "orgId": orgId
-        }
-        let token = jwt.sign(userProfile, config.jwtSecretKey, { expiresIn: '5d' });
-        res.json({ status : 1, message : "Registration successfull", data: { token : 'Bearer ' + token } });
+        const users = practitionerEntries.map((entry) => {
+            const practitionerResource = entry.resource;
+            const role = rolesByPractitionerId[practitionerResource.id].role || {};
+            const email = practitionerResource.telecom.filter(e => e.system == "email")
+            const phone = practitionerResource.telecom.filter(e => e.system == "phone")
+            return {
+                userId: practitionerResource.id,
+                firstName: practitionerResource.name?.[0]?.given?.[0] || null,
+                middleName: practitionerResource.name?.[0]?.given?.[1] || null,
+                lastName: practitionerResource.name?.[0]?.family || null,
+                lastActiveAt: lastActiveByUserId[practitionerResource.id] || null,
+                roleId: role?.code?.[0]?.coding?.[0]?.code || null,
+                roleName: role?.code?.[0]?.text,
+                email: email?.[0]?.value || null,  
+                mobile: phone?.[0]?.value || null,
+                clinicId: rolesByPractitionerId[practitionerResource.id].orgId,
+                clinicName: rolesByPractitionerId[practitionerResource.id].orgName
+            };
+        });
+        return res.status(200).json({status: 1,  message: "Users data fetched", data: {total: practitionerBundle.data.total, users}})
     }
     catch(e){
         console.info(e)
@@ -245,10 +289,170 @@ const createUser = async (req, res, next) => {
 }
 
 
+const createUser = async (req, res, next) => {
+    try{
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return response.sendInvalidDataError(res, errors);
+        }
+        let resourceResult = []
+        let { firstName, middleName, lastName, mobile, email, role, clinicId } = req.body;
+        const [emailCheck, phoneCheck] = await Promise.all([
+            email ? bundleOp.searchData(config.baseUrl + "Practitioner", {email: email.toLowerCase(), _total: "accurate"}) : null,
+            mobile ? bundleOp.searchData(config.baseUrl + "Practitioner", {phone: mobile, _total: "accurate"}) : null
+        ]);
+
+        if (email && emailCheck.data.entry?.length > 0) {
+            return res.status(400).json({ status: 0, message: "Email already exists." });
+        }
+        if (mobile && phoneCheck.data.entry?.length > 0) {
+            return res.status(400).json({ status: 0, message: "Phone number already exists." });
+        }            
+         
+        let practitioner = new Practitioner({...req.body, orgId: req.body.clinicId, mobileNumber: mobile, email, active: true}, {});
+        practitioner.getJsonToFhirTranslator();
+        let practitionerResource = practitioner.getFHIRResource();
+        practitionerResource.resourceType = "Practitioner"
+        practitionerResource.id = uuidv4();
+        console.log("practitionerResource: ", practitionerResource)
+        const practitionerBundle = await bundleFun.setBundlePost(practitionerResource, null, practitionerResource.id, "POST", "identifier");  
+
+
+        const roleData = new PractitionerRole({userUUid: practitionerResource.id, roleId: role, orgId: clinicId }, {});
+        roleData.getUserInputToFhir();
+        let practitionerRoleResource = roleData.getFHIRResource();
+        practitionerRoleResource.id = uuidv4()
+        const practitionerRoleBundle = await bundleFun.setBundlePost(practitionerRoleResource, null, practitionerRoleResource.id, "POST", "identifier");  
+        resourceResult.push(practitionerBundle, practitionerRoleBundle); 
+        let bundle = {
+                "resourceType": "Bundle",
+                "type": "transaction",
+                "entry": resourceResult
+        };
+
+        let result = await axios.post(config.baseUrl, bundle);
+        console.log("result:", result)
+        await addUserLastActiveDetails(req.token.userId, req.token.orgId)
+        if (result.status == 200) {   
+            console.log(result.data.entry)           
+            const practitionerEntry = result.data.entry.find(entry => entry.response.location.startsWith("Practitioner/"));
+            const practitionerId = practitionerEntry.response.location.split("/")[1];               
+            return res.status(201).json({ status: 1, message: "Data saved successfully.", data: {userId: practitionerId} })
+        }
+        else {
+           return res.status(500).json({
+                status: 0,
+                message: "Unable to process. Please try again."
+            }); 
+        }
+        
+    }
+    catch(e){
+        console.info(e)
+        return res.status(500).json({
+            status: 0,
+            message: "Unable to process. Please try again.",
+            error: e
+        });
+    }
+}
+
+
+const updateUser = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return response.sendInvalidDataError(res, errors);
+        }
+        let resourceResult = []
+        let { firstName, middleName, lastName, mobile, email, role, clinicId } = req.body;
+        const userId = req.params.id;      
+            
+        let existingPractitionerById = await bundleOp.searchData(config.baseUrl + "Practitioner",{ _id: userId });
+
+        if (!existingPractitionerById.data.entry || existingPractitionerById.data.entry.length === 0) {
+            return res.status(400).json({ status: 0, message: "User does not exist." });
+        }
+
+        const [emailCheck, phoneCheck] = await Promise.all([
+            email ? bundleOp.searchData(config.baseUrl + "Practitioner", { email: email.toLowerCase(),_total: "accurate"}) : null,
+            mobile ? bundleOp.searchData(config.baseUrl + "Practitioner", { phone: mobile, _total: "accurate" }) : null
+        ]);
+
+        if (email) {
+            const emailConflict = emailCheck.data.entry?.some((entry) => entry.resource.id !== userId);
+            if (emailConflict) {
+                return res.status(400).json({ status: 0, message: "Email already exists." });
+            }
+        }
+        if (mobile) {
+            const phoneConflict = phoneCheck.data.entry?.some((entry) => entry.resource.id !== userId);
+            if (phoneConflict) {
+                return res.status(400).json({ status: 0, message: "Mobile number already exists." });
+            }
+        }
+
+        let existingPractitionerRole = await bundleOp.searchData(config.baseUrl + "PractitionerRole",{ practitioner: userId, _total: "accurate" });
+        if (!existingPractitionerRole.data.entry || existingPractitionerRole.data.entry.length === 0) {
+            return res.status(400).json({ status: 0, message: "User role does not exist." });
+        }
+
+
+        let practitioner = new Practitioner({...req.body, orgId: req.body.clinicId, mobileNumber: mobile, email, active: true}, {});
+        practitioner.getJsonToFhirTranslator();
+        let practitionerResource = practitioner.getFHIRResource();
+        practitionerResource.resourceType = "Practitioner"
+        practitionerResource.id =userId
+        console.log("practitionerResource: ", practitionerResource)
+        const practitionerBundle = await bundleFun.setBundlePut(practitionerResource, null, userId, "PUT");  
+
+
+        const roleData = new PractitionerRole({userUUid: practitionerResource.id, roleId: role, orgId: clinicId }, {});
+        roleData.getUserInputToFhir();
+        let practitionerRoleResource = roleData.getFHIRResource();
+        practitionerRoleResource.id = existingPractitionerRole.data.entry[0].resource.id
+        practitionerRoleResource.practitioner.reference = "Practitioner/" + userId;
+        const practitionerRoleBundle = await bundleFun.setBundlePut(practitionerRoleResource, null, existingPractitionerRole.data.entry[0].resource.id, "PUT");  
+        resourceResult.push(practitionerBundle, practitionerRoleBundle); 
+        let bundle = {
+                "resourceType": "Bundle",
+                "type": "transaction",
+                "entry": resourceResult
+        };
+
+        let result = await axios.post(config.baseUrl, bundle);
+        console.log("result:", result)
+        await addUserLastActiveDetails(req.token.userId, req.token.orgId)
+        if (result.status == 200) {   
+            console.log(result.data.entry)           
+            const practitionerEntry = result.data.entry.find(entry => entry.response.location.startsWith("Practitioner/"));
+            const practitionerId = practitionerEntry.response.location.split("/")[1];               
+            return res.status(201).json({ status: 1, message: "Data updated successfully.", data: {userId: practitionerId} })
+        }
+        else {
+           return res.status(500).json({
+                status: 0,
+                message: "Unable to process. Please try again."
+            }); 
+        } 
+    }
+    catch(error) {
+        console.info(error)
+        return res.status(500).json({
+            status: 0,
+            message: "Unable to process. Please try again.",
+            error: error.message
+        });
+    }
+}
+
+
 module.exports = {
     getUserProfile,
     getTimestamp,
     updateTimestamp,
     deleteUserData,
-    createUser
+    createUser,
+    updateUser,
+    getUsersList
 }
