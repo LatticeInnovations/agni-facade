@@ -1,6 +1,6 @@
 module.exports = function (allowedRoles) {
   return function (req, res, next) {
-    let userType = req.token?.type;
+    let userType = req.token?.type || req.token?.role;
     if (allowedRoles.includes(userType)) {
       next();
     } else {
