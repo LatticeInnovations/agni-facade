@@ -8,6 +8,9 @@ const setPatientResponse  = (resType, reqMethod, responseData) => {
     if (["post", "POST", "put", "PUT"].includes(reqMethod)){
         filteredData = filterByResourceType(responseData, resType);
     }
+    else if(["PATCH", "patch"].includes(reqMethod)) {
+         filteredData = responseData.filter(e => e.fullUrl.split("/")[0] == "Patient");
+    }
     response = setDefaultResponse(resType, reqMethod, filteredData);
     return response;
 }
