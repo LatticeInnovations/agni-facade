@@ -59,7 +59,7 @@ let createFacilityData = async function (facilityData) {
             organization.address[0].text = facilityData.block;
         }
 
-        if (facilityData.block_code || facilityData.state_code) {
+        if (facilityData.block_code || facilityData.state_code || facilityData.dist_code) {
             organization.address[0].extension = [];
             if (facilityData.block_code) {
                 organization.address[0].extension.push({
@@ -71,6 +71,12 @@ let createFacilityData = async function (facilityData) {
                 organization.address[0].extension.push({
                     "url": "https://lattice.in/extension/address-state-code",
                     "valueString": facilityData.state_code
+                });
+            }
+            if (facilityData.dist_code) {
+                organization.address[0].extension.push({
+                    "url": "https://lattice.in/extension/address-dist-code",
+                    "valueString": facilityData.dist_code
                 });
             }
         }
@@ -100,4 +106,77 @@ let createFacilityData = async function (facilityData) {
     }
 };
 
-module.exports = { setOrganizationData, createFacilityData }
+let updateFacilityData = async function (facilityData, facilityId) {
+    try {
+        let organization = {
+            "resourceType": "Organization",
+            "id": facilityId,
+            "active": true,
+            "type": [{
+                "coding": [{
+                    "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+                    "code": "facility",
+                    "display": "Facility"
+                }]
+            }],
+            "name": facilityData.name,
+            "address": [{
+                "district": facilityData.district_id,
+                "state": facilityData.state
+            }]
+        };
+
+        if (facilityData.block) {
+            organization.address[0].text = facilityData.block;
+        }
+
+        if (facilityData.block_code || facilityData.state_code || facilityData.dist_code) {
+            organization.address[0].extension = [];
+            if (facilityData.block_code) {
+                organization.address[0].extension.push({
+                    "url": "https://lattice.in/extension/address-block-code",
+                    "valueString": facilityData.block_code
+                });
+            }
+            if (facilityData.state_code) {
+                organization.address[0].extension.push({
+                    "url": "https://lattice.in/extension/address-state-code",
+                    "valueString": facilityData.state_code
+                });
+            }
+            if (facilityData.dist_code) {
+                organization.address[0].extension.push({
+                    "url": "https://lattice.in/extension/address-dist-code",
+                    "valueString": facilityData.dist_code
+                });
+            }
+        }
+
+        let location = {
+            "resourceType": "Location",
+            "status": "active",
+            "name": facilityData.name,
+            "managingOrganization": {
+                "reference": "Organization/" + facilityId
+            }
+        };
+
+        if (facilityData.location_type === "google_maps_url") {
+            location.extension = [{
+                "url": "https://lattice.in/extension/google-maps-url",
+                "valueString": facilityData.google_maps_url
+            }];
+        } else if (facilityData.location_type === "manual") {
+            location.position = {
+                "latitude": facilityData.latitude,
+                "longitude": facilityData.longitude
+            };
+        }
+
+        return { organization, location };
+    } catch (e) {
+        return Promise.reject(e);
+    }
+};
+
+module.exports = { setOrganizationData, createFacilityData, updateFacilityData }

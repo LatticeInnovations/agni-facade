@@ -2,7 +2,7 @@ const config = require("../config/nodeConfig");
 const axios = require("axios");
 const { validationResult } = require("express-validator");
 const bundleOp = require("../services/bundleOperation");
-const { createFacilityData } = require("../services/manageOrganization");
+const { createFacilityData, updateFacilityData } = require("../services/manageOrganization");
 const model = require("../models/index");
 const Sequelize = require("sequelize");
 
@@ -100,6 +100,7 @@ let listFacilities = async function (req, res) {
             let address = org.address?.[0] || {};
             let blockCode = address.extension?.find(e => e.url === "https://lattice.in/extension/address-block-code")?.valueString || null;
             let stateCode = address.extension?.find(e => e.url === "https://lattice.in/extension/address-state-code")?.valueString || null;
+            let distCode = address.extension?.find(e => e.url === "https://lattice.in/extension/address-dist-code")?.valueString || null;
             let googleMapsUrl = null;
             let latitude = null;
             let longitude = null;
@@ -120,6 +121,7 @@ let listFacilities = async function (req, res) {
                 block: address.text || "",
                 block_code: blockCode,
                 state_code: stateCode,
+                dist_code: distCode,
                 last_sync_date: lastSyncDate,
                 total_patients_registered: patientCount,
                 google_maps_url: googleMapsUrl,
@@ -139,4 +141,45 @@ let listFacilities = async function (req, res) {
     }
 };
 
-module.exports = { createFacility, listFacilities };
+let updateFacility = async function (req, res) {
+    try {
+        let tokenType = req.token?.type;
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ success: false, message: "Validation failed", errors: errors.array() });
+        }
+
+        let facilityId = req.params.id;
+        let facilityData = req.body;
+        let { organization, location } = await updateFacilityData(facilityData, facilityId);
+
+        await axios.put(config.baseUrl + "Organization/" + facilityId, organization);
+
+        let locResponse = await axios.get(config.baseUrl + "Location", {
+            params: { organization: "Organization/" + facilityId }
+        });
+        if (locResponse.data.entry && locResponse.data.entry.length > 0) {
+            let locId = locResponse.data.entry[0].resource.id;
+            location.id = locId;
+            await axios.put(config.baseUrl + "Location/" + locId, location);
+        } else {
+            await axios.post(config.baseUrl + "Location", location);
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Facility updated successfully",
+            data: { facility_id: parseInt(facilityId) }
+        });
+    } catch (e) {
+        console.error(e);
+        return res.status(500).json({
+            success: false,
+            message: "Unable to process. Please try again.",
+            error: e.response ? e.response.data : e.message
+        });
+    }
+};
+
+module.exports = { createFacility, listFacilities, updateFacility };
