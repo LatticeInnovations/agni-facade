@@ -52,12 +52,12 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             break;
         case "Organization" : 
             url = config.baseUrl + resourceType;
-            queryParams.Organization = queryParams.orgId;
-            queryParams.type = "prov"
             queryParams = {
                 "_revinclude" : "Location:organization:Organization",
                 "_total": "accurate",
             };
+            queryParams.Organization = queryParams.orgId;
+            queryParams.type = "facility"
             nestedResource = 1;
             break;
         case "PractitionerRole":
