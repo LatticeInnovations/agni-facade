@@ -17,7 +17,7 @@ let medicalRecord = require('./manageMedicalRecord');
 let symDiag = require("./manageSymptomsAndDiagnosis");
 let ImmunizationRecommendation = require('./manageImmunizationRecommendation');
 let immunization = require("./manageImmunization")
-let { setPatientResponse, setAppointmentResponse, setMedicationRequestResponse, setCVDResponse, setObservationResponse, setPrescriptionFileResponse, setMedicationDispenseResponse, setDiagnosticReportResponse, setDocumentManifestResponse, setConditionResponse, setDefaultResponse } = require('./manageResponses');
+let { setPatientResponse, setAppointmentResponse, setMedicationRequestResponse, setCVDResponse, setObservationResponse, setPrescriptionFileResponse, setMedicationDispenseResponse, setDiagnosticReportResponse, setDocumentManifestResponse, setConditionResponse, setDefaultResponse, setImmunizationRecommendationResponse } = require('./manageResponses');
 let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQuery, token) {
     try {
         let bundleData = [];
@@ -61,7 +61,7 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
             break;
             case "Condition": bundleData = await symDiag.setConditionData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
             break;
-            case "ImmunizationRecommendation": bundleData = await ImmunizationRecommendation.setImmunizationRecommendationData(resType, inputData, FHIRData, reqMethod, reqQuery, token);
+            case "ImmunizationRecommendation": bundleData = await ImmunizationRecommendation.manageImmunizationRecommendationDetail(resType, inputData, FHIRData, reqMethod, reqQuery, token);
             break;
             case "Immunization": bundleData = await immunization.manageImmunizationDetail(resType, inputData, FHIRData,reqMethod,reqQuery,token);
             break;
@@ -73,7 +73,7 @@ let getResource = async function (resType, inputData, FHIRData, reqMethod, reqQu
     }
 }
 
-const getBundleResponse = async (bundleResponse, reqData, reqMethod, resType, reqInput) => {
+const getBundleResponse = async (bundleResponse, reqData, reqMethod, resType, reqInput, entryMeta) => {
     try{
         let response = [];
         let responseData = bundleResponse.map((data, i) => Object.assign({}, data, reqData[i]));
@@ -109,6 +109,8 @@ const getBundleResponse = async (bundleResponse, reqData, reqMethod, resType, re
             case "Condition":
                 response = setConditionResponse(resType, reqMethod, responseData);
                 break;
+            case "ImmunizationRecommendation": response = setImmunizationRecommendationResponse(resType, reqMethod, responseData, entryMeta);
+            break;
             default:
                 response = setDefaultResponse(resType, reqMethod, responseData);
                 break;

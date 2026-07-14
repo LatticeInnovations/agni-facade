@@ -15,7 +15,7 @@ class ImmunizationRecommendation {
         this.fhirResource.resourceType = "ImmunizationRecommendation";
         this.fhirResource.id = uuidv4();
         this.fhirResource.patient = {
-            reference: "Patient/" + "urn:uuid:" + this.data.patientId
+            reference: "Patient/" + this.data.patientId
         }
         this.fhirResource.date = new Date().toISOString();
         this.fhirResource.authority = {
@@ -23,11 +23,14 @@ class ImmunizationRecommendation {
         }
     }
 
-    createRecommendationData(code, birthDate, dose, doses, vaccineData) {
+    createRecommendationData(code, birthDate, doseNumber, dose, vaccineData) {
         // console.info("code", code, " birthdate ", birthDate, " dose ", dose, " vaccine data", vaccineData)
-        let startDate = moment(birthDate).add(vaccineData.doses[dose].start, 'weeks');
-        let endDate = moment(birthDate).add(vaccineData.doses[dose].end, 'weeks');
-        let midDate = moment(startDate).add(endDate.diff(startDate) / 2, 'milliseconds').toISOString();
+        // let startDate = moment(birthDate).add(vaccineData.doses[dose].start, 'weeks');
+        // let endDate = moment(birthDate).add(vaccineData.doses[dose].end, 'weeks');
+        // let midDate = moment(startDate).add(endDate.diff(startDate) / 2, 'milliseconds').toISOString();
+        const startDate = dose.startDate
+        const endDate = dose.endDate
+        const midDate = dose.midDate
         return {
             "vaccineCode": [
                 {
@@ -52,7 +55,7 @@ class ImmunizationRecommendation {
                             }
                         ]
                     },
-                    "value": moment(birthDate).add(vaccineData.doses[dose].start, 'weeks').toISOString()
+                    "value": startDate
                 },
                 {
                     "code": {
@@ -64,7 +67,7 @@ class ImmunizationRecommendation {
                             }
                         ]
                     },
-                    "value": midDate
+                    "value": endDate
                 },
                 {
                     "code": {
@@ -76,20 +79,29 @@ class ImmunizationRecommendation {
                             }
                         ]
                     },
-                    "value": moment(birthDate).add(vaccineData.doses[dose].end, 'weeks').toISOString()
+                    "value": midDate
                 }
             ],
-            "doseNumberString": dose,
-            "seriesDosesString": doses.length,
+            "doseNumberString": doseNumber,
+            "seriesDosesString": Object.keys(vaccineData.doses).length.toString(),
         }
     }
 
     setRecommendation() {
         this.fhirResource.recommendation = [];
-        let vaccineData = vaccines[this.data.code];
+        let vaccineDetail = vaccines[this.data.code];
+        const vaccineData = this.data.vaccineData
+        vaccineData.text = vaccineDetail.text
+        vaccineData.display = vaccineDetail.display
         let doses = Object.keys(vaccineData.doses);
         for (let dose of doses) {
-            this.fhirResource.recommendation.push(this.createRecommendationData(this.data.code, this.data.birthDate, dose, doses, vaccineData));
+            this.fhirResource.identifier = [
+            {
+                system: "https://www.thelattice.in/",
+                value: vaccineData.uuid
+            }
+        ]
+            this.fhirResource.recommendation.push(this.createRecommendationData(this.data.code, this.data.birthDate, dose, vaccineData.doses[dose], vaccineData));
         }
     }
 
