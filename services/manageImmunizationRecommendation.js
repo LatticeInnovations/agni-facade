@@ -3,6 +3,12 @@ let bundleFun = require("./bundleOperation");
 let config = require("../config/nodeConfig");
 const { v4: uuidv4 } = require("uuid");
 
+const DATE_CRITERION_MAP = {
+    "30981-5": "startDate", // Earliest date to give
+    "30980-7": "endDate",   // Date vaccine due
+    "59778-1": "midDate"    // Latest date to give immunization
+};
+
 const manageImmunizationRecommendationDetail = async (resType, reqInput, FHIRData, reqMethod, reqQuery, token) => {
     try {
         let resourceResult = [], errData = [], entryMeta = [];
@@ -132,5 +138,57 @@ const saveImmunizationRecommendation = async (reqInput, token) => {
     }
 };
 
+
+const getImmunizationDetails = async (FHIRData, reqQuery, token) => {
+    try {
+        const result = [];
+
+        FHIRData.forEach(entry => {
+            const resource = entry.resource || entry; // handles bundle entry ({resource:...}) or raw resource
+            if (!resource || resource.resourceType !== "ImmunizationRecommendation") return;
+
+            const patientId = resource.patient?.reference?.split("/")[1];
+            const fhirId = resource.id;
+            const uuid = resource.identifier?.[0]?.value || null;
+            if (!patientId) return;
+
+            // group this resource's recommendation[] entries by vaccine code first,
+            // in case a single resource ever holds multiple codes
+            const codeGroups = {};
+            (resource.recommendation || []).forEach(rec => {
+                const code = rec.vaccineCode?.[0]?.coding?.[0]?.code;
+                const doseNumber = rec.doseNumberString;
+                if (!code || !doseNumber) return;
+
+                if (!codeGroups[code]) codeGroups[code] = {};
+
+                const doseDates = {};
+                (rec.dateCriterion || []).forEach(dc => {
+                    const dcCode = dc.code?.coding?.[0]?.code;
+                    const fieldName = DATE_CRITERION_MAP[dcCode];
+                    if (fieldName) doseDates[fieldName] = dc.value;
+                });
+
+                codeGroups[code][doseNumber] = doseDates;
+            });
+
+            Object.keys(codeGroups).forEach(code => {
+                result.push({
+                    uuid,
+                    fhirId,
+                    patientId,
+                    vaccineCode: code,
+                    doses: codeGroups[code]
+                });
+            });
+        });
+
+        return result;
+    }
+    catch (e) {
+        console.error("get immunization recommendation details error", e);
+        return Promise.reject(e);
+    }
+};
 
 module.exports = { manageImmunizationRecommendationDetail };
