@@ -168,6 +168,55 @@ const setPrescriptionFileResponse = (resType, reqMethod, responseData) => {
     return response;
 }
 
+
+const setImmunizationRecommendationResponse = (resType, reqMethod, responseData, entryMeta) => {
+    let response = [];
+    console.log("check entry meta: ", entryMeta)
+    console.log("check response data: ", responseData)
+    console.log("Check other things: ", resType, reqMethod, )
+    if (["post", "POST", "put", "PUT"].includes(reqMethod)) {
+        const pendingEntries = entryMeta.filter(m => !m.resolved); // same order as bundle.entry / response.data.entry
+
+        responseData.forEach((element, idx) => {
+            const meta = pendingEntries[idx];
+            console.log("check meta; ", meta)
+            if (!meta) return;
+            meta.status = element.response.status;
+            meta.fhirId = getFhirId(element, reqMethod);
+            meta.err = getDataError(element, resType);
+            meta.resolved = true;
+        });
+
+        // entryMeta is now fully resolved - group by patientId
+        const patientGroups = {};
+        entryMeta.forEach(entry => {
+            if (!patientGroups[entry.patientId]) patientGroups[entry.patientId] = [];
+            patientGroups[entry.patientId].push({
+                uuid: entry.uuid,
+                fhirId: entry.fhirId,
+                status: entry.status,
+                err: entry.err
+            });
+        });
+
+        response = Object.keys(patientGroups).map(patientId => {
+            const vaccines = patientGroups[patientId];
+            const allFailed = vaccines.every(v =>
+                v.status !== "200 OK" && v.status !== "201 Created"
+            );
+
+            return {
+                fhirId: patientId,
+                status: allFailed ? "500" : "200 OK",
+                err: allFailed ? "Immunization recommendation already exists" : null,
+                vaccines: vaccines
+            };
+        });
+    }
+
+    return response;
+};
+
 const setMedicationDispenseResponse = (resType, reqMethod, responseData, reqInput) => {
     let filteredData = [];
     let response = [];
@@ -314,6 +363,9 @@ const getDataError = (element, resType) => {
             if(resType == "Schedule") {
                 error = "Schedule already exists"
             }
+            else if (resType == "ImmunizationRecommendation") {
+                error = "Immunization recommendation already exists";
+            }
             else {
                 error = null;
             }
@@ -344,4 +396,4 @@ const getFhirId = (element, reqMethod) => {
     return fhirId;
 }
 
-module.exports = { setPatientResponse, setAppointmentResponse, setMedicationRequestResponse, setCVDResponse, setObservationResponse, setPrescriptionFileResponse, setMedicationDispenseResponse, setDiagnosticReportResponse, setDocumentManifestResponse, setConditionResponse, setDefaultResponse }
+module.exports = { setPatientResponse, setAppointmentResponse, setMedicationRequestResponse, setCVDResponse, setObservationResponse, setPrescriptionFileResponse, setMedicationDispenseResponse, setDiagnosticReportResponse, setDocumentManifestResponse, setConditionResponse, setDefaultResponse, setImmunizationRecommendationResponse }

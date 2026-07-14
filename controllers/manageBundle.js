@@ -2,6 +2,7 @@ let axios = require("axios");
 let resourceFun = require("../services/resourceOperation");
 let config = require("../config/nodeConfig");
 let resourceValid = require("../utils/Validator/validateRsource").resourceValidation;
+
 let createBundle = async function (req, res) {
     try {
         let token = req.token;
@@ -23,14 +24,16 @@ let createBundle = async function (req, res) {
         if (bundle.entry.length > 0) {
             let response = await axios.post(config.baseUrl, bundle);
             if (response.status == 200) {
-                let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "POST", req.params.resourceType, reqInput);
+                let responseData = await resourceFun.getBundleResponse(response.data.entry, bundle.entry, "POST", resourceType, reqInput, resourceData.entryMeta);
                 responseData = [...responseData, ...resourceData.errData];
-                res.status(201).json({ status: 1, message: "Data saved successfully.", data: responseData })
+                return res.status(201).json({ status: 1, message: "Data saved successfully.", data: responseData });
             }
             else {
                 return res.status(500).json({
-                    status: 0, message: "Unable to process. Please try again.", error: response
-                })
+            status: 0,
+            message: "Unable to process. Please try again.",
+            error: response.data || response.statusText || null  
+        });
             }
         }
         else if (resourceData.errData.length > 0) {
@@ -47,14 +50,14 @@ let createBundle = async function (req, res) {
             return res.status(e.statusCode).json({
                 status: 0,
                 message: e.message == null ? "Unable to process. Please try again." : e.message,
-                error: e.response != null ? e.response.data : null
+                error: e?.response?.data || null 
             })
         }
         else {
             return res.status(500).json({
                 status: 0,
                 message: "Unable to process. Please try again.",
-                error: e.response != null ? e.response.data : null
+                error: e?.response?.data || null 
             })
         }
 
@@ -190,11 +193,13 @@ let getBundleJSON = async function (reqInput, resourceType, fhirResource, reqMet
         "entry": []
     };
     let errData = [];
+    let entryMeta = [];
     let resourceData = await resourceFun.getResource(resourceType, reqInput, fhirResource, reqMethod, null, token);
     console.info(resourceData)
     bundle.entry = resourceData.resourceResult
-    errData = resourceData.errData
-    return { bundle, errData };
+    errData = resourceData.errData;
+    entryMeta = resourceData.entryMeta || [];
+    return { bundle, errData, entryMeta };
 }
 
 

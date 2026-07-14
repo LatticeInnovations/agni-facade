@@ -23,20 +23,9 @@ let setPatientData = async function (resType, reqInput, FHIRData, reqMethod, tok
                 personResource.identifier = patientResource.identifier;
                 personResource.resourceType = "Person";
                 personResource.id = uuidv4();
-                const vaccineCodes = Object.keys(vaccines);
                 let patientBundle = await bundleFun.setBundlePost(patientResource, patientResource.identifier, patientData.id, "POST", "identifier");
                 let personBundle = await bundleFun.setBundlePost(personResource, patientResource.identifier, personResource.id, "POST", "identifier");
-                for (let code of vaccineCodes) {
-                    let ImmunizationRecommendationResource = new ImmunizationRecommendation({
-                        patientId: patientData.id,
-                        orgId: token.orgId,
-                        code: code,
-                        birthDate: patientData.birthDate
-                    }, {});
-                    ImmunizationRecommendationResource = ImmunizationRecommendationResource.getJsonToFhirTranslator();
-                    let ImmunizationRecommendationBundle = await bundleFun.setBundlePost(ImmunizationRecommendationResource, null, ImmunizationRecommendationResource.id, "POST", "identifier");
-                    resourceResult.push(ImmunizationRecommendationBundle);
-                }
+                
                 resourceResult.push(patientBundle, personBundle);
             }
         }
