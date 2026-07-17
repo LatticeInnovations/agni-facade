@@ -156,7 +156,7 @@ let getResourceUrl = async function (resourceType, queryParams, token) {
             case "ImmunizationRecommendation":
                 url = config.baseUrl + "ImmunizationRecommendation"
                 queryParams._total = "accurate"
-                queryParams._count = 10000
+                queryParams._sort = "-_lastUpdated";
                 nestedResource = 1
                 break;
             case "Immunization":
