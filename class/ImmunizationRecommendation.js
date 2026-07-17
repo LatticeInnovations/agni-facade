@@ -13,7 +13,7 @@ class ImmunizationRecommendation {
 
     setBasicStructure() {
         this.fhirResource.resourceType = "ImmunizationRecommendation";
-        this.fhirResource.id = uuidv4();
+        this.fhirResource.id = this.data?.fhirId || null
         this.fhirResource.patient = {
             reference: "Patient/" + this.data.patientId
         }

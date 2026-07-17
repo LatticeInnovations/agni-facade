@@ -334,7 +334,7 @@ const getResponseData = (element, reqMethod) => {
     return data;
 }
 
-const getDataError = (element, resType) => {
+const getDataError = (element, resType, reqMethod = null) => {
     let error;
     switch(element.response.status){
         case "201 Created":
@@ -344,7 +344,7 @@ const getDataError = (element, resType) => {
             if(resType == "Schedule") {
                 error = "Schedule already exists"
             }
-            else if (resType == "ImmunizationRecommendation") {
+            else if (resType == "ImmunizationRecommendation"  && ["post", "POST"].includes(reqMethod)) {
                 error = "Immunization recommendation already exists";
             }
             else {

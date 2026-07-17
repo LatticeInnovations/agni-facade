@@ -19,6 +19,9 @@ const manageImmunizationRecommendationDetail = async (resType, reqInput, FHIRDat
             entryMeta = saveResult.entryMeta;
             // errData intentionally stays [] - everything lives in entryMeta now
         } else if (["PUT", "PUT"].includes(reqMethod)) {
+            const updateResult = await updateImmunizationRecommendation(reqInput, token);
+            resourceResult = updateResult.resourceResult;
+            entryMeta = updateResult.entryMeta;
             return { resourceResult, errData, entryMeta };
         } else {
             resourceResult = await getImmunizationDetails(FHIRData, reqQuery, token);
@@ -163,6 +166,112 @@ const getImmunizationDetails = async (FHIRData, reqQuery, token) => {
     }
     catch (e) {
         console.error("get immunization recommendation details error", e);
+        return Promise.reject(e);
+    }
+};
+
+const updateImmunizationRecommendation = async (reqInput, token) => {
+    try {
+        const resourceResult = [];
+        const entryMeta = [];
+
+        const allFhirIds = [...new Set(reqInput.map(r => r.fhirId).filter(Boolean))];
+        console.log("allFhirIds: ", allFhirIds)
+        const existingResourcesResult = await bundleFun.searchData(
+            config.baseUrl + "ImmunizationRecommendation",
+            { _id: allFhirIds.join(","), _elements: "id,identifier,patient,authority", _count: 1000 }
+        );
+        const existingResourceMap = {}; // fhirId -> { identifier, orgId }
+        (existingResourcesResult?.data?.entry || []).forEach(e => {
+            const identifier = e.resource.identifier?.[0]?.value || null;
+            const authorityRef = e.resource.authority?.reference || null; // "Organization/119"
+            const orgId = authorityRef ? authorityRef.split("/")[1] : null;
+            const patientRef = e.resource.patient?.reference || null;     // "Patient/557"
+            const patientId = patientRef ? patientRef.split("/")[1] : null;
+            existingResourceMap[e.resource.id] = { identifier, orgId, patientId };
+        });
+
+        console.log("existingResourceMap: ",existingResourceMap)
+
+        const allPatientIds = [...new Set(Object.values(existingResourceMap).map(e => e.patientId).filter(Boolean))].join(",");
+        console.log("check all patientIds: ", allPatientIds)
+        const patientSearchResult = await bundleFun.searchData(
+            config.baseUrl + "Patient",
+            { _id: allPatientIds, _elements: "id,birthDate", _count: 1000 }
+        );
+        const patientMap = {};
+        (patientSearchResult?.data?.entry || []).forEach(e => {
+            patientMap[e.resource.id] = e.resource;
+        });
+
+        for (const row of reqInput) {
+                const { vaccineCode, doses, fhirId } = row; // no patientId destructured - not trusted from request
+
+            if (!fhirId) {
+                entryMeta.push({
+                    patientId: null, vaccineCode, uuid: null, fhirId: null,
+                    status: "500", err: `Missing fhirId for vaccine code ${vaccineCode}`, resolved: true
+                });
+                continue;
+            }
+
+            const existing = existingResourceMap[fhirId];
+
+            if (!existing || !existing.identifier) {
+                entryMeta.push({
+                    patientId: null, vaccineCode, uuid: null, fhirId,
+                    status: "500", err: `No existing resource found for fhirId ${fhirId}`, resolved: true
+                });
+                continue;
+            }
+
+            if (!existing.patientId) {
+                entryMeta.push({
+                    patientId: null, vaccineCode, uuid: existing.identifier, fhirId,
+                    status: "500", err: `Could not resolve patient for fhirId ${fhirId}`, resolved: true
+                });
+                continue;
+            }
+
+            const patientData = patientMap[existing.patientId];
+            console.log("patientData: ", patientData)
+
+            if (!patientData) {
+                entryMeta.push({
+                    patientId: existing.patientId, vaccineCode, uuid: existing.identifier, fhirId,
+                    status: "500", err: "Patient not found", resolved: true
+                });
+                continue;
+            }
+
+            const preservedOrgId = existing.orgId || token.orgId;
+
+
+            let resource = new ImmunizationRecommendation({
+                patientId: patientData.id,
+                orgId: token.orgId,
+                code: vaccineCode,
+                birthDate: patientData.birthDate,
+                fhirId: fhirId,
+                vaccineData: { doses, uuid:  existing.identifier},
+            }, {});
+            resource = resource.getJsonToFhirTranslator();
+
+            const bundleEntry = await bundleFun.setBundlePut(resource, null, fhirId, "PUT");
+            resourceResult.push(bundleEntry);
+
+            entryMeta.push({
+                patientId: patientData.id, vaccineCode,
+                uuid: existing.identifier, // preserved uuid, carried into the response
+                fhirId,
+                status: "pending", err: null, resolved: false
+            });
+        }
+
+        return { resourceResult, entryMeta };
+    }
+    catch (e) {
+        console.error("update immunization recommendation error", e);
         return Promise.reject(e);
     }
 };
