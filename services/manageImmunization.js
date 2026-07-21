@@ -134,8 +134,9 @@ async function getImmunizationRecommendation(reqInput, token) {
     try {
             const patientIds = reqInput.map(e => e.patientId).join(",");
             const vaccineCodes = reqInput.map(e => e.vaccineCode).join(",");
+            const ids = reqInput.map(e => e.immunizationRecommendationFhirId).join(",")
             const immunizationRecommendations = await bundleOp.searchData(config.baseUrl + "ImmunizationRecommendation",{
-                "vaccine-type": vaccineCodes,  "patient": patientIds,  "_count": 5000 },
+                "_id": ids,  "_count": 5000 },
               token );
               if (immunizationRecommendations.data.entry.length == 0) {
                 return [];
